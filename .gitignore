@@ -1,2 +1,6 @@
-# mdBook
+.DS_Store
+xcuserdata
+Package.resolved
+.swiftpm
+.build/
 book/
