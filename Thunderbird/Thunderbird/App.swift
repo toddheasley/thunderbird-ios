@@ -10,4 +10,3 @@ struct App: SwiftUI.App {
         }
     }
 }
-
