@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "201950B5-91ED-4DA7-893D-C432089C06A7",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Thunderbird.xcodeproj",
+        "identifier" : "1521D8232D9C4D6300C4DFDF",
+        "name" : "ThunderbirdTests"
+      }
+    }
+  ],
+  "version" : 1
+}

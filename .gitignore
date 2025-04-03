@@ -1,2 +1,9 @@
+# macOS and Xcode
+.DS_Store
+xcuserdata
+Package.resolved
+.swiftpm
+.build/
+
 # mdBook
 book/
