@@ -4,11 +4,10 @@ struct ContentView: View {
     
     // MARK: View
     var body: some View {
-        Text("Thunderbird")
-            .padding()
+        WelcomeScreen()
     }
 }
 
-#Preview {
+#Preview("Content View") {
     ContentView()
 }
