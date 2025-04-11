@@ -71,5 +71,5 @@ private extension LocalizedStringKey {
 }
 
 private extension URL {
-    static let donate: Self = Self(string: "https://www.thunderbird.net/en-US/donate/mobile/?form=tfi")!
+    static let donate: Self = Self(string: "https://www.thunderbird.net/donate/mobile/?form=tfi")!
 }
