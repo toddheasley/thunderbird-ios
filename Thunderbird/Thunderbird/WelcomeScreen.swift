@@ -5,36 +5,37 @@ struct WelcomeScreen: View {
     
     // MARK: View
     var body: some View {
-        VStack(alignment: .center) {
+        VStack {
+            Spacer()
             Image.logo
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(minHeight: 96.0, maxHeight: 160.0)
-                .accessibilityHidden(true)
-                .padding()
-            Image.logotype
-                .resizable()
-                .aspectRatio(contentMode: .fit)
                 .accessibilityLabel(.headline)
-                .padding()
+                .frame(height: 172.0)
             Text(.subheadline)
                 .multilineTextAlignment(.center)
-                .font(.subheadline)
+                .opacity(0.75)
                 .padding()
+            Spacer()
             Spacer()
             Button(action: {
                 openURL(.donate)
             }) {
                 Text(.donate)
+                    .padding(5.5)
             }
             .buttonStyle(.borderedProminent)
             .padding()
+            Spacer()
             Text(.caption)
+                .multilineTextAlignment(.center)
                 .font(.caption)
+                .opacity(0.75)
                 .padding()
         }
-        .frame(maxWidth: 512.0)
-        .padding()
+        .background {
+            Background()
+        }
     }
 }
 
@@ -42,14 +43,29 @@ struct WelcomeScreen: View {
     WelcomeScreen()
 }
 
+private struct Background: View {
+    
+    // MARK: View
+    var body: some View {
+        GeometryReader { proxy in
+            Image.background
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: proxy.size.width, height: proxy.size.height)
+                .opacity(proxy.size.width > 444.0 ? 0.0 : 1.0)
+        }
+        .ignoresSafeArea()
+    }
+}
+
 private extension Image {
+    static var background: Self { Self("Welcome/Background") }
     static var logo: Self { Self("Welcome/Logo") }
-    static var logotype: Self { Self("Welcome/Logotype") }
 }
 
 private extension LocalizedStringKey {
     static let headline: Self = "Thunderbird"
-    static let subheadline: Self = "An open source, privacy focused and ad-free email app for iOS."
+    static let subheadline: Self = "An open source, privacy focused\nand ad-free email app for iOS."
     static let caption: Self = "Developed by a dedicated team at MZLA Technologies and a global community of volunteers. Part of the Mozilla family."
     static let donate: Self = "Get started"
 }
