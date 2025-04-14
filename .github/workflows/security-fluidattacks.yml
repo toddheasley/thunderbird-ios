@@ -23,7 +23,7 @@ jobs:
 
       - name: "Run Fluidattacks scanner"
         run: |
-          bash scripts/security_fluidattacks_scan.sh
+          bash CI/security_fluidattacks_scan.sh
 
       - name: "Upload scan results"
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
