@@ -1,6 +1,6 @@
 # Lint project using `swift-format`
 
-name: Format
+name: Swift Format
 
 on:
   push:
