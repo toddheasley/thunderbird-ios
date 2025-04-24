@@ -7,3 +7,6 @@ Package.resolved
 
 # mdBook
 book/
+
+# Fluidattacks scanner
+fluidscan-results.sarif
