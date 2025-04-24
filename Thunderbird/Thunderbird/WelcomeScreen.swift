@@ -2,7 +2,7 @@ import SwiftUI
 
 struct WelcomeScreen: View {
     @Environment(\.openURL) private var openURL
-    
+
     // MARK: View
     var body: some View {
         VStack {
@@ -10,9 +10,9 @@ struct WelcomeScreen: View {
             Image.logo
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .accessibilityLabel(.appName)
+                .accessibilityLabel("app_name")
                 .frame(height: 172.0)
-            Text(.onboardingWelcomeText)
+            Text("onboarding_welcome_text")
                 .multilineTextAlignment(.center)
                 .opacity(0.75)
                 .padding()
@@ -21,13 +21,13 @@ struct WelcomeScreen: View {
             Button(action: {
                 openURL(.donate)
             }) {
-                Text(.onboardingWelcomeStartButton)
+                Text("onboarding_welcome_start_button")
                     .padding(5.5)
             }
             .buttonStyle(.borderedProminent)
             .padding()
             Spacer()
-            Text(.onboardingWelcomeDevelopedBy)
+            Text("onboarding_welcome_developed_by")
                 .multilineTextAlignment(.center)
                 .font(.caption)
                 .opacity(0.75)
@@ -44,7 +44,7 @@ struct WelcomeScreen: View {
 }
 
 private struct Background: View {
-    
+
     // MARK: View
     var body: some View {
         GeometryReader { proxy in
@@ -61,13 +61,6 @@ private struct Background: View {
 private extension Image {
     static var background: Self { Self("Welcome/Background") }
     static var logo: Self { Self("Welcome/Logo") }
-}
-
-private extension LocalizedStringKey {
-    static let appName: Self = "app_name"
-    static let onboardingWelcomeText: Self = "onboarding_welcome_text"
-    static let onboardingWelcomeDevelopedBy: Self = "onboarding_welcome_developed_by"
-    static let onboardingWelcomeStartButton: Self = "onboarding_welcome_start_button"
 }
 
 private extension URL {
