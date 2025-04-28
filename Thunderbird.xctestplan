@@ -19,6 +19,27 @@
         "identifier" : "1521D8232D9C4D6300C4DFDF",
         "name" : "ThunderbirdTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Mail",
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "BoltTests",
+        "name" : "BoltTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Mail",
+        "identifier" : "IMAPTests",
+        "name" : "IMAPTests"
+      }
     }
   ],
   "version" : 1
