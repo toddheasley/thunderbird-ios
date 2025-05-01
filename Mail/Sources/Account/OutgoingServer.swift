@@ -20,7 +20,7 @@ public struct OutgoingServer: Codable, Identifiable {
     }
     
     public init(
-        serverProtocol: ServerProtocol,
+        serverProtocol: ServerProtocol = .smtp,
         connectionSecurity: ConnectionSecurity = .none,
         authenticationType: AuthenticationType = .none,
         username: String,
@@ -41,7 +41,7 @@ public struct OutgoingServer: Codable, Identifiable {
         URLCredentialStorage.shared.set(password, for: user)
     }
     
-    private var user: String { // Generate unique keychain user label: "user@example.com SMTP:E621E1F8"
+    var user: String { // Generate unique keychain user label: "user@example.com SMTP:E621E1F8"
         "\(username) \(serverProtocol):\(id.uuidString.components(separatedBy: "-")[0])"
     }
     

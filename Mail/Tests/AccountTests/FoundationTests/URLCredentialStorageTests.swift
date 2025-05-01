@@ -39,7 +39,7 @@ struct URLCredentialStorageTests {
     }
 }
 
-private var isKeychainAvailable: Bool {
+var isKeychainAvailable: Bool {
 #if os(macOS)
     true // Keychain only accessible (to non-hosted tests) on macOS
 #else

@@ -46,7 +46,7 @@ public struct IncomingServer: Codable, Identifiable {
         URLCredentialStorage.shared.set(password, for: user)
     }
     
-    private var user: String { // Generate unique keychain user label: "user@example.com IMAP:E621E1F8"
+    var user: String { // Generate unique keychain user label: "user@example.com IMAP:E621E1F8"
         "\(username) \(serverProtocol):\(id.uuidString.components(separatedBy: "-")[0])"
     }
     
