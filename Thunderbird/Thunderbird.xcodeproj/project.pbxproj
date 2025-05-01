@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		15674D282DC2524500ECFCCC /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 15674D272DC2524500ECFCCC /* Account */; };
+		15674D2A2DC2524500ECFCCC /* IMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 15674D292DC2524500ECFCCC /* IMAP */; };
+		15674D2D2DC2525200ECFCCC /* Bolt in Frameworks */ = {isa = PBXBuildFile; productRef = 15674D2C2DC2525200ECFCCC /* Bolt */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		1521D8252D9C4D6300C4DFDF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -39,6 +45,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15674D282DC2524500ECFCCC /* Account in Frameworks */,
+				15674D2D2DC2525200ECFCCC /* Bolt in Frameworks */,
+				15674D2A2DC2524500ECFCCC /* IMAP in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +99,9 @@
 			);
 			name = Thunderbird;
 			packageProductDependencies = (
+				15674D272DC2524500ECFCCC /* Account */,
+				15674D292DC2524500ECFCCC /* IMAP */,
+				15674D2C2DC2525200ECFCCC /* Bolt */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -148,6 +160,10 @@
 			);
 			mainGroup = 1521D80D2D9C4D6200C4DFDF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				15674D262DC2524500ECFCCC /* XCLocalSwiftPackageReference "../Mail" */,
+				15674D2B2DC2525200ECFCCC /* XCLocalSwiftPackageReference "../Bolt" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1521D8172D9C4D6200C4DFDF /* Products */;
 			projectDirPath = "";
@@ -471,6 +487,32 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		15674D262DC2524500ECFCCC /* XCLocalSwiftPackageReference "../Mail" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Mail;
+		};
+		15674D2B2DC2525200ECFCCC /* XCLocalSwiftPackageReference "../Bolt" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Bolt;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		15674D272DC2524500ECFCCC /* Account */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Account;
+		};
+		15674D292DC2524500ECFCCC /* IMAP */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IMAP;
+		};
+		15674D2C2DC2525200ECFCCC /* Bolt */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Bolt;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1521D80E2D9C4D6200C4DFDF /* Project object */;
 }
