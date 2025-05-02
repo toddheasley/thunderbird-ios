@@ -11,7 +11,7 @@ struct URLCredentialStorageTests {
         URLCredentialStorage.shared.removeCredentials(for: space)
         #expect(URLCredentialStorage.shared.password(for: credential.user!, space: space) == nil)
     }
-    
+
     @Test(.enabled(if: isKeychainAvailable)) func setPassword() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "org.example")
         URLCredentialStorage.shared.set("zemhu8-omdRiz-zisbov", for: "user.name@icloud.com", space: space)
@@ -19,7 +19,7 @@ struct URLCredentialStorageTests {
         URLCredentialStorage.shared.set(nil, for: "user.name@icloud.com", space: space)
         #expect(URLCredentialStorage.shared.password(for: "user.name@icloud.com", space: space) == nil)
     }
-    
+
     @Test(.enabled(if: isKeychainAvailable)) func removeCredentials() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "net.example")
         URLCredentialStorage.shared.removeCredentials(for: space)
@@ -35,9 +35,9 @@ struct URLCredentialStorageTests {
 }
 
 var isKeychainAvailable: Bool {
-#if os(macOS)
+    #if os(macOS)
     true // Keychain only accessible (to non-hosted tests) on macOS
-#else
+    #else
     false
-#endif
+    #endif
 }
