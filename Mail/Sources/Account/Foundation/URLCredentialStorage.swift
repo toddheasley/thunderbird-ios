@@ -12,7 +12,7 @@ extension URLCredentialStorage {
         if let password, !password.isEmpty {
             set(URLCredential(user: user, password: password, persistence: .permanent), for: space)
         } else if let credential: URLCredential = credentials(for: space)?[user] {
-            remove(credential, for: space) // Remove existing credential on nil password
+            remove(credential, for: space)  // Remove existing credential on nil password
         }
     }
 

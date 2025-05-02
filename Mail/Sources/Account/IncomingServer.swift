@@ -36,9 +36,9 @@ public struct IncomingServer: Codable, Identifiable {
         self.hostname = hostname
         switch connectionSecurity {
         case .tls:
-            self.port = port ?? 993 // Secure IMAP
+            self.port = port ?? 993  // Secure IMAP
         default:
-            self.port = port ?? 143 // IMAP
+            self.port = port ?? 143  // IMAP
         }
         self.id = id
 
@@ -46,7 +46,7 @@ public struct IncomingServer: Codable, Identifiable {
         URLCredentialStorage.shared.set(password, for: user)
     }
 
-    var user: String { // Generate unique keychain user label: "user@example.com IMAP:E621E1F8"
+    var user: String {  // Generate unique keychain user label: "user@example.com IMAP:E621E1F8"
         "\(username) \(serverProtocol):\(id.uuidString.components(separatedBy: "-")[0])"
     }
 

@@ -25,9 +25,9 @@ struct URLCredentialStorageTests {
         URLCredentialStorage.shared.removeCredentials(for: space)
         URLCredentialStorage.shared.set(URLCredential(user: "user@netscape.net", password: "correct horse battery staple", persistence: .permanent), for: space)
         URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "abcd1234", persistence: .forSession), for: space)
-        URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "abcd1234", persistence: .permanent), for: space) // Duplicate credential
+        URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "abcd1234", persistence: .permanent), for: space)  // Duplicate credential
         URLCredentialStorage.shared.set(URLCredential(user: "admin@example.com", password: "gAAAAUTHtoKENb3arerJWe", persistence: .forSession), for: space)
-        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3) // Credentials are equatable and de-duplicated by by `username`
+        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3)  // Credentials are equatable and de-duplicated by by `username`
         #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3)
         URLCredentialStorage.shared.removeCredentials(for: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
@@ -36,7 +36,7 @@ struct URLCredentialStorageTests {
 
 var isKeychainAvailable: Bool {
     #if os(macOS)
-    true // Keychain only accessible (to non-hosted tests) on macOS
+    true  // Keychain only accessible (to non-hosted tests) on macOS
     #else
     false
     #endif

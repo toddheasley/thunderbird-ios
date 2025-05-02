@@ -34,14 +34,14 @@ public struct OutgoingServer: Codable, Identifiable {
         self.authenticationType = authenticationType
         self.username = username
         self.hostname = hostname
-        self.port = port ?? 25 // SMTP default
+        self.port = port ?? 25  // SMTP default
         self.id = id
 
         // Save password in keychain
         URLCredentialStorage.shared.set(password, for: user)
     }
 
-    var user: String { // Generate unique keychain user label: "user@example.com SMTP:E621E1F8"
+    var user: String {  // Generate unique keychain user label: "user@example.com SMTP:E621E1F8"
         "\(username) \(serverProtocol):\(id.uuidString.components(separatedBy: "-")[0])"
     }
 
