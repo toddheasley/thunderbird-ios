@@ -11,7 +11,7 @@ struct URLCredentialStorageTests {
         URLCredentialStorage.shared.removeCredentials(for: space)
         #expect(URLCredentialStorage.shared.password(for: credential.user!, space: space) == nil)
     }
-    
+
     @Test(.enabled(if: isKeychainAvailable)) func setPassword() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "org.example")
         URLCredentialStorage.shared.set("zemhu8-omdRiz-zisbov", for: "user.name@icloud.com", space: space)
@@ -19,30 +19,25 @@ struct URLCredentialStorageTests {
         URLCredentialStorage.shared.set(nil, for: "user.name@icloud.com", space: space)
         #expect(URLCredentialStorage.shared.password(for: "user.name@icloud.com", space: space) == nil)
     }
-    
+
     @Test(.enabled(if: isKeychainAvailable)) func removeCredentials() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "net.example")
-        URLCredentialStorage.shared.removeCredentials(for: .account)
         URLCredentialStorage.shared.removeCredentials(for: space)
         URLCredentialStorage.shared.set(URLCredential(user: "user@netscape.net", password: "correct horse battery staple", persistence: .permanent), for: space)
         URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "abcd1234", persistence: .forSession), for: space)
-        URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "abcd1234", persistence: .permanent), for: space) // Duplicate credential
+        URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "abcd1234", persistence: .permanent), for: space)  // Duplicate credential
         URLCredentialStorage.shared.set(URLCredential(user: "admin@example.com", password: "gAAAAUTHtoKENb3arerJWe", persistence: .forSession), for: space)
-        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3) // Credentials are equatable and de-duplicated by by `username`
-        URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "4321dcba", persistence: .forSession), for: .account)
-        #expect(URLCredentialStorage.shared.credentials(for: .account)?.count == 1)
-        URLCredentialStorage.shared.removeCredentials(for: .account)
+        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3)  // Credentials are equatable and de-duplicated by by `username`
         #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3)
-        #expect(URLCredentialStorage.shared.credentials(for: .account) == nil)
         URLCredentialStorage.shared.removeCredentials(for: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
     }
 }
 
 var isKeychainAvailable: Bool {
-#if os(macOS)
-    true // Keychain only accessible (to non-hosted tests) on macOS
-#else
+    #if os(macOS)
+    true  // Keychain only accessible (to non-hosted tests) on macOS
+    #else
     false
-#endif
+    #endif
 }

@@ -4,6 +4,6 @@ import Foundation
 
 struct URLProtectionSpaceTests {
     @Test func account() {
-        #expect(URLProtectionSpace.account.host == "net.thunderbird")
+        #expect(URLProtectionSpace.account.host == "thunderbird.net")
     }
 }

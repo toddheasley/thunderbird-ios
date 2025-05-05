@@ -14,7 +14,7 @@
       location = "group:Mail">
    </FileRef>
    <FileRef
-         location = "group:Bolt">
+      location = "group:Bolt">
    </FileRef>
    <FileRef
       location = "group:docs">
