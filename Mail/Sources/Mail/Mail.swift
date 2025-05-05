@@ -4,6 +4,6 @@ import SwiftUI
 
 @Observable public class Mail {
     public init() {
-        
+
     }
 }
