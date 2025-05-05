@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.0
 
 import PackageDescription
 
@@ -11,6 +11,11 @@ let package: Package = Package(
     ],
     products: [
         .library(
+            name: "Mail",
+            targets: [
+                "Mail"
+            ]),
+        .library(
             name: "Account",
             targets: [
                 "Account"
@@ -22,6 +27,17 @@ let package: Package = Package(
             ])
     ],
     targets: [
+        .target(
+            name: "Mail",
+            dependencies: [
+                "Account",
+                "IMAP"
+            ]),
+        .testTarget(
+            name: "MailTests",
+            dependencies: [
+                "Mail"
+            ]),
         .target(name: "Account"),
         .testTarget(
             name: "AccountTests",

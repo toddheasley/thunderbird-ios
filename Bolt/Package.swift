@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.0
 
 import PackageDescription
 
@@ -14,13 +14,28 @@ let package: Package = Package(
             name: "Bolt",
             targets: [
                 "Bolt"
+            ]),
+        .library(
+            name: "Editor",
+            targets: [
+                "Editor"
             ])
     ],
     targets: [
-        .target(name: "Bolt"),
+        .target(
+            name: "Bolt",
+            dependencies: [
+                "Editor"
+            ]),
         .testTarget(
             name: "BoltTests",
             dependencies: [
                 "Bolt"
+            ]),
+        .target(name: "Editor"),
+        .testTarget(
+            name: "EditorTests",
+            dependencies: [
+                "Editor"
             ])
     ])

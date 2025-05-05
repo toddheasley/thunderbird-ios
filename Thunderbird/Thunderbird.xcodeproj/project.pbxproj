@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		15674D282DC2524500ECFCCC /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 15674D272DC2524500ECFCCC /* Account */; };
-		15674D2A2DC2524500ECFCCC /* IMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 15674D292DC2524500ECFCCC /* IMAP */; };
 		15674D2D2DC2525200ECFCCC /* Bolt in Frameworks */ = {isa = PBXBuildFile; productRef = 15674D2C2DC2525200ECFCCC /* Bolt */; };
+		15EC20F62DC8E50F0039FB48 /* Mail in Frameworks */ = {isa = PBXBuildFile; productRef = 15EC20F52DC8E50F0039FB48 /* Mail */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,9 +44,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15674D282DC2524500ECFCCC /* Account in Frameworks */,
 				15674D2D2DC2525200ECFCCC /* Bolt in Frameworks */,
-				15674D2A2DC2524500ECFCCC /* IMAP in Frameworks */,
+				15EC20F62DC8E50F0039FB48 /* Mail in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +64,7 @@
 			children = (
 				1521D85A2D9C4EED00C4DFDF /* Thunderbird */,
 				1521D8272D9C4D6300C4DFDF /* ThunderbirdTests */,
+				15EC20F42DC8E50F0039FB48 /* Frameworks */,
 				1521D8172D9C4D6200C4DFDF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,6 +76,13 @@
 				1521D8242D9C4D6300C4DFDF /* ThunderbirdTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		15EC20F42DC8E50F0039FB48 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -99,9 +105,8 @@
 			);
 			name = Thunderbird;
 			packageProductDependencies = (
-				15674D272DC2524500ECFCCC /* Account */,
-				15674D292DC2524500ECFCCC /* IMAP */,
 				15674D2C2DC2525200ECFCCC /* Bolt */,
+				15EC20F52DC8E50F0039FB48 /* Mail */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -352,7 +357,7 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -390,7 +395,7 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -500,17 +505,13 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		15674D272DC2524500ECFCCC /* Account */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Account;
-		};
-		15674D292DC2524500ECFCCC /* IMAP */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = IMAP;
-		};
 		15674D2C2DC2525200ECFCCC /* Bolt */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Bolt;
+		};
+		15EC20F52DC8E50F0039FB48 /* Mail */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Mail;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
