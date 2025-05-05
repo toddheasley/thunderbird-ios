@@ -12,7 +12,7 @@ struct IntTests {
         #expect(0x00FF00.red == 0.0)
         #expect(0x0000FF.red == 0.0)
     }
-    
+
     @Test func green() {
         #expect(0x000000.green == 0.0)
         #expect(0x333333.green == 0.2)
@@ -22,7 +22,7 @@ struct IntTests {
         #expect(0x00FF00.green == 1.0)
         #expect(0x0000FF.green == 0.0)
     }
-    
+
     @Test func blue() {
         #expect(0x000000.blue == 0.0)
         #expect(0x333333.blue == 0.2)
@@ -32,7 +32,7 @@ struct IntTests {
         #expect(0x00FF00.blue == 0.0)
         #expect(0x0000FF.blue == 1.0)
     }
-    
+
     @Test func componentsInit() {
         #expect(Int([0.0, 0.0, 0.0, 1.0]) == 0x000000)
         #expect(Int([0.0, 1.0]) == 0x000000)
@@ -59,7 +59,7 @@ struct StringTests {
         #expect("3".hex == 0x333333)
         #expect("".hex == 0x0)
     }
-    
+
     @Test func hexInit() {
         #expect(String(hex: 0xFFFFFF) == "#FFFFFF")
         #expect(String(hex: 0xFF) == "#0000FF")
