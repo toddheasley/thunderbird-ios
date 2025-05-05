@@ -2,14 +2,20 @@ import Foundation
 
 public struct Account: Codable, Identifiable {
     public let name: String
-    public let incomingServer: IncomingServer
 
-    public init(name: String, incomingServer: IncomingServer, id: UUID = UUID()) {
+    public init(name: String, id: UUID = UUID()) {
         self.name = name
-        self.incomingServer = incomingServer
         self.id = id
     }
 
     // MARK: Identifiable
     public let id: UUID
+}
+
+extension Account: CaseIterable {
+    
+    // MARK: CaseIterable
+    public static var allCases: [Self] {
+        (try? FileManager.default.accounts) ?? []
+    }
 }
