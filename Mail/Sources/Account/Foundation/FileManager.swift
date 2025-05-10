@@ -1,41 +1,35 @@
 import Foundation
 
 extension FileManager {
-    var accounts: [Account] {
-        get throws {
-            lock.lock()
-            defer {
-                lock.unlock()
-            }
-            guard fileExists(atPath: URL.accounts.path()) else { return [] }
-            let data: Data = try Data(contentsOf: .accounts)
-            return try JSONDecoder().decode([Account].self, from: data)
+    func readAccounts(from url: URL) throws -> [Account]  {
+        lock.lock()
+        defer {
+            lock.unlock()
         }
+        guard try fileExists(at: url) else {
+            throw URLError(.fileDoesNotExist)
+        }
+        let data: Data = try Data(contentsOf: url)
+        return try JSONDecoder().decode([Account].self, from: data)
     }
     
-    func save(_ accounts: [Account]) throws {
+    func write(_ accounts: [Account], to url: URL) throws {
         lock.lock()
         defer {
             lock.unlock()
         }
         let data: Data = try JSONEncoder().encode(accounts)
-        if fileExists(atPath: URL.accounts.path()) {
-            try removeItem(at: .accounts)
-        }
+        try? removeItem(at: url)
         guard !accounts.isEmpty else { return }
-        try data.write(to: .accounts)
+        try data.write(to: url)
     }
-    
+
     func fileExists(at url: URL) throws -> Bool {
         guard url.isFileURL else {
             throw URLError(.unsupportedURL)
         }
         return fileExists(atPath: url.path())
     }
-}
-
-extension URL {
-    static var accounts: Self { .documentsDirectory.appending(path: "Accounts.json") }
 }
 
 private let lock: NSLock = NSLock()
