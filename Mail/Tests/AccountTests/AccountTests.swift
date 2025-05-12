@@ -28,7 +28,7 @@ struct AccountTests {
         try Account.allCases.first?.delete()
         #expect(Account.allCases.count == 0)
     }
-    
+
     @Test func save() throws {
         lock.lock()
         defer {

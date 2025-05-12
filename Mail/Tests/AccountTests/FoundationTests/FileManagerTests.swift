@@ -15,10 +15,11 @@ struct FileManagerTests {
         #expect(try FileManager.default.readAccounts(from: url)[0].id == accounts[0].id)
         #expect(try FileManager.default.readAccounts(from: url)[1].id == accounts[1].id)
         #expect(try FileManager.default.readAccounts(from: url)[2].id == accounts[2].id)
-        try FileManager.default.write([
-            accounts[2],
-            accounts[1]
-        ], to: url)
+        try FileManager.default.write(
+            [
+                accounts[2],
+                accounts[1]
+            ], to: url)
         #expect(try FileManager.default.readAccounts(from: url).count == 2)
         #expect(try FileManager.default.readAccounts(from: url)[0].id == accounts[2].id)
         #expect(try FileManager.default.readAccounts(from: url)[1].id == accounts[1].id)
