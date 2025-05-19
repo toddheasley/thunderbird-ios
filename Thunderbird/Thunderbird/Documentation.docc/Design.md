@@ -20,13 +20,13 @@ The Xcode project includes a [documentation catalog](https://developer.apple.com
 
 Tfi intends to launch with language support comparable to [Thunderbird for Android](https://github.com/thunderbird/thunderbird-android) (TfA) by extending and using the same [Weblate translations](hosted.weblate.org/projects/tb-android), published as `Localizable.strings`. User-facing string localization can then be accomplished automatically using [`LocalizedStringKey`](https://developer.apple.com/documentation/swiftui/localizedstringkey) and SwiftUI.
 
------
+### Swift Packages
 
-[Local Swift packages](https://developer.apple.com/documentation/xcode/organizing-your-code-with-local-packages) break app functionality into discrete libraries. Each library is a module and namespace exposing the smallest possible public interface. For project legibility and ergonomics, packages contain multiple libraries that depend on each other and/or are always used together, plus an "umbrella" library that rolls together the package's child libraries and exports them as a single `import`.
+[Local Swift packages](https://developer.apple.com/documentation/xcode/organizing-your-code-with-local-packages) break app functionality into discrete libraries. Each library is a module and namespace.
 
-### Mail Package
+#### Mail Package
 
-`Mail` starts with 4 library targets under one umbrella:
+`Mail` rolls the entire Thunderbird backend into a unified `@Observable` interface for use in SwiftUI apps. `Mail` starts with 4 library targets:
 
 * `Account`: Configure and persist mail account settings, identities, incoming and outgoing server configurations.
 * `JMAP`, `IMAP`: Connect to mail servers and retrieve folders and messages.
@@ -37,11 +37,11 @@ Tfi intends to launch with language support comparable to [Thunderbird for Andro
 
 ![Account model diagram](design-account.svg)
 
-### Bolt Package
+#### Bolt Package
 
-`Bolt` includes 2 library targets:
+[Bolt](https://bolt.thunderbird.net) is Thunderbird's design system. `Bolt` package is where all design system things live, as well as any reusable UI components:
 
-* `Bolt`: Vend SwiftUI components of [Thunderbird's design system.](https://bolt.thunderbird.net) 
+* `Bolt`: Vend SwiftUI design system components
 * `Editor`: Read and compose messages in [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview) and [GeckoView](https://github.com/mozilla/geckoview)
 
 -----
