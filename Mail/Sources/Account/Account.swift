@@ -28,13 +28,13 @@ extension Account: CaseIterable {
         }
         try FileManager.default.write(accounts, to: .accounts)
     }
-    
+
     public static func deleteAll() {
         for account in Self.allCases {
             try? account.delete()
         }
     }
-    
+
     // MARK: CaseIterable
     public static var allCases: [Self] {
         (try? FileManager.default.readAccounts(from: .accounts)) ?? []

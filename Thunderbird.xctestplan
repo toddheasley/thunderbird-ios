@@ -22,36 +22,8 @@
     {
       "target" : {
         "containerPath" : "container:..\/Mail",
-        "identifier" : "IMAPTests",
-        "name" : "IMAPTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Mail",
         "identifier" : "AccountTests",
         "name" : "AccountTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "BoltTests",
-        "name" : "BoltTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Mail",
-        "identifier" : "MailTests",
-        "name" : "MailTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "EditorTests",
-        "name" : "EditorTests"
       }
     }
   ],

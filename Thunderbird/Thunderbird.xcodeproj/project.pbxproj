@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		15674D2D2DC2525200ECFCCC /* Bolt in Frameworks */ = {isa = PBXBuildFile; productRef = 15674D2C2DC2525200ECFCCC /* Bolt */; };
-		15EC20F62DC8E50F0039FB48 /* Mail in Frameworks */ = {isa = PBXBuildFile; productRef = 15EC20F52DC8E50F0039FB48 /* Mail */; };
+		152E827A2DC43AF700FB787B /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 152E82792DC43AF700FB787B /* Account */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,8 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15674D2D2DC2525200ECFCCC /* Bolt in Frameworks */,
-				15EC20F62DC8E50F0039FB48 /* Mail in Frameworks */,
+				152E827A2DC43AF700FB787B /* Account in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,8 +103,7 @@
 			);
 			name = Thunderbird;
 			packageProductDependencies = (
-				15674D2C2DC2525200ECFCCC /* Bolt */,
-				15EC20F52DC8E50F0039FB48 /* Mail */,
+				152E82792DC43AF700FB787B /* Account */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -166,8 +163,7 @@
 			mainGroup = 1521D80D2D9C4D6200C4DFDF;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				15674D262DC2524500ECFCCC /* XCLocalSwiftPackageReference "../Mail" */,
-				15674D2B2DC2525200ECFCCC /* XCLocalSwiftPackageReference "../Bolt" */,
+				152E82782DC43AF700FB787B /* XCLocalSwiftPackageReference "../Mail" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1521D8172D9C4D6200C4DFDF /* Products */;
@@ -498,24 +494,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		15674D262DC2524500ECFCCC /* XCLocalSwiftPackageReference "../Mail" */ = {
+		152E82782DC43AF700FB787B /* XCLocalSwiftPackageReference "../Mail" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Mail;
-		};
-		15674D2B2DC2525200ECFCCC /* XCLocalSwiftPackageReference "../Bolt" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Bolt;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		15674D2C2DC2525200ECFCCC /* Bolt */ = {
+		152E82792DC43AF700FB787B /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Bolt;
-		};
-		15EC20F52DC8E50F0039FB48 /* Mail */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Mail;
+			productName = Account;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
