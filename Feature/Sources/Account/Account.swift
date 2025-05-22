@@ -22,7 +22,7 @@ extension Account: CaseIterable {
         let index: Int? = index ?? accounts.firstIndex(where: { $0.id == id })  // Target index OR current index OR nil (append to end)
         accounts = accounts.filter { $0.id != id }  // Remove existing account
         if let index, index < accounts.count {
-            accounts.insert(self, at: index) // Insert at previous or new target index
+            accounts.insert(self, at: index)  // Insert at previous or new target index
         } else {
             accounts.append(self)  // Append to end of array
         }
