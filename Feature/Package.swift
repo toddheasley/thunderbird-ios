@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package: Package = Package(
-    name: "Mail",
+    name: "Feature",
     platforms: [
         .macOS(.v15),
         .iOS(.v18),

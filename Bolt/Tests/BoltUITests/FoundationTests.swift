@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import Bolt
+@testable import BoltUI
 
 struct IntTests {
     @Test func red() {

@@ -1,6 +1,6 @@
 import SwiftUI
 import Testing
-@testable import Bolt
+@testable import BoltUI
 
 struct ColorTests {
     @Test func hexInit() {

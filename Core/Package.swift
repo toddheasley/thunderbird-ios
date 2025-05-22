@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package: Package = Package(
-    name: "Bolt",
+    name: "Core",
     platforms: [
         .macOS(.v15),
         .iOS(.v18),
@@ -11,31 +11,26 @@ let package: Package = Package(
     ],
     products: [
         .library(
-            name: "BoltUI",
+            name: "Core",
             targets: [
-                "BoltUI"
+                "Core"
             ]),
         .library(
-            name: "Editor",
+            name: "Log",
             targets: [
-                "Editor"
+                "Log"
             ])
     ],
     targets: [
         .target(
-            name: "BoltUI",
+            name: "Core",
             dependencies: [
-                "Editor"
+                "Log"
             ]),
+        .target(name: "Log"),
         .testTarget(
-            name: "BoltUITests",
+            name: "LogTests",
             dependencies: [
-                "BoltUI"
-            ]),
-        .target(name: "Editor"),
-        .testTarget(
-            name: "EditorTests",
-            dependencies: [
-                "Editor"
+                "Log"
             ])
     ])
