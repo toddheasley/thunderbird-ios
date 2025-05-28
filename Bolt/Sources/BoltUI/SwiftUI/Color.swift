@@ -127,94 +127,12 @@ extension Color {
     }
 }
 
-#Preview("Color") {
-    ScrollView {
-        VStack(alignment: .leading, spacing: 17.0) {
-            VStack(alignment: .leading) {
-                Text("Neutral")
-                HStack {
-                    ForEach(Color.Style.allCases) { style in
-                        Swatch(.neutral(style))
-                    }
-                    Spacer()
-                }
-            }
-            VStack(alignment: .leading) {
-                Text("Primary")
-                HStack {
-                    ForEach(Color.State.allCases) { state in
-                        Swatch(.primary(state))
-                    }
-                    Spacer()
-                }
-            }
-            VStack(alignment: .leading) {
-                Text("Secondary")
-                HStack {
-                    ForEach(Color.State.allCases) { state in
-                        Swatch(.secondary(state))
-                    }
-                    Spacer()
-                }
-            }
-            VStack(alignment: .leading) {
-                Text("Success")
-                HStack {
-                    ForEach(Color.State.allCases) { state in
-                        Swatch(.success(state))
-                    }
-                    Spacer()
-                }
-            }
-            VStack(alignment: .leading) {
-                Text("Warning")
-                HStack {
-                    ForEach(Color.State.allCases) { state in
-                        Swatch(.warning(state))
-                    }
-                    Spacer()
-                }
-            }
-            VStack(alignment: .leading) {
-                Text("Critical")
-                HStack {
-                    ForEach(Color.State.allCases) { state in
-                        Swatch(.critical(state))
-                    }
-                    Spacer()
-                }
-            }
-            VStack(alignment: .leading) {
-                Text("Text + Icon")
-                HStack {
-                    ForEach(Color.Context.allCases) { context in
-                        Swatch(.text(context))
-                    }
-                    Spacer()
-                }
-            }
-            VStack(alignment: .leading) {
-                Text("Accent")
-                HStack {
-                    ForEach(Color.Accent.allCases) { accent in
-                        Swatch(.accent(accent))
-                    }
-                    Spacer()
-                }
-            }
-        }
-        .padding()
-    }
-}
-
-// Extend `Color`; construct from hex value
 extension Color {
     init(hex: Int, opacity: Double = 1.0) {
         self.init(red: hex.red, green: hex.green, blue: hex.blue, opacity: opacity)
     }
 }
 
-// Extend `Color`; programmatically specify dynamic colors
 extension Color {
     var isDynamic: Bool { resolved().dark != nil }
 
@@ -264,15 +182,59 @@ extension Color {
     }
 }
 
+private extension EnvironmentValues {
+    init(_ colorScheme: ColorScheme) {
+        self.init()
+        self.colorScheme = colorScheme
+    }
+}
+
+private struct ColorPreview: View {
+    let text: LocalizedStringKey
+    let colors: [Color]
+
+    init(_ text: LocalizedStringKey, colors: [Color]) {
+        self.text = text
+        self.colors = colors
+    }
+
+    // MARK: View
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(text)
+                    .textStyle(.subhead)
+                    .foregroundStyle(.secondary)
+                HStack {
+                    ForEach(colors, id: \.self) { color in
+                        Swatch(color)
+                    }
+                }
+            }
+            Spacer()
+        }
+        .padding()
+    }
+}
+
 private func Swatch(_ color: Color, size: CGFloat = 44.0) -> some View {
     Rectangle()
         .fill(color)
         .frame(width: size, height: size)
 }
 
-private extension EnvironmentValues {
-    init(_ colorScheme: ColorScheme) {
-        self.init()
-        self.colorScheme = colorScheme
+#Preview("Color") {
+    ScrollView {
+        VStack {
+            ColorPreview("neutral", colors: Color.Style.allCases.map { .neutral($0) })
+            ColorPreview("primary", colors: Color.State.allCases.map { .primary($0) })
+            ColorPreview("secondary", colors: Color.State.allCases.map { .secondary($0) })
+            ColorPreview("success", colors: Color.State.allCases.map { .success($0) })
+            ColorPreview("warning", colors: Color.State.allCases.map { .warning($0) })
+            ColorPreview("critical", colors: Color.State.allCases.map { .critical($0) })
+            ColorPreview("text + icon", colors: Color.Context.allCases.map { .text($0) })
+            ColorPreview("accent", colors: Color.Accent.allCases.map { .accent($0) })
+        }
     }
+    .containerRelativeFrame(.horizontal)
 }
