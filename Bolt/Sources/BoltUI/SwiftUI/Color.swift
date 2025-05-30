@@ -217,10 +217,21 @@ private struct ColorPreview: View {
     }
 }
 
-private func Swatch(_ color: Color, size: CGFloat = 44.0) -> some View {
-    Rectangle()
-        .fill(color)
-        .frame(width: size, height: size)
+private struct Swatch: View {
+    let color: Color
+    let size: CGSize
+
+    init(_ color: Color, size: CGSize = CGSize(width: 44.0, height: 44.0)) {
+        self.color = color
+        self.size = size
+    }
+
+    // MARK: View
+    var body: some View {
+        Rectangle()
+            .fill(color)
+            .frame(width: size.width, height: size.height)
+    }
 }
 
 #Preview("Color") {
