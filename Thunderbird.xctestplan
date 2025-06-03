@@ -15,8 +15,8 @@
     {
       "target" : {
         "containerPath" : "container:..\/Feature",
-        "identifier" : "AccountTests",
-        "name" : "AccountTests"
+        "identifier" : "MailTests",
+        "name" : "MailTests"
       }
     },
     {
@@ -28,16 +28,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Thunderbird.xcodeproj",
-        "identifier" : "1521D8232D9C4D6300C4DFDF",
-        "name" : "ThunderbirdTests"
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "IMAPTests",
+        "name" : "IMAPTests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:..\/Feature",
-        "identifier" : "MailTests",
-        "name" : "MailTests"
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
       }
     },
     {
@@ -49,16 +49,23 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "LogTests",
-        "name" : "LogTests"
+        "containerPath" : "container:",
+        "identifier" : "JMAPTests",
+        "name" : "JMAPTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
-        "identifier" : "IMAPTests",
-        "name" : "IMAPTests"
+        "containerPath" : "container:Thunderbird.xcodeproj",
+        "identifier" : "1521D8232D9C4D6300C4DFDF",
+        "name" : "ThunderbirdTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Core",
+        "identifier" : "LogTests",
+        "name" : "LogTests"
       }
     }
   ],
