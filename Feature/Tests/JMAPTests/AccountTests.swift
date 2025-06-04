@@ -4,10 +4,7 @@ import Foundation
 
 struct AccountTests {
     @Test func decoderInit() throws {
-        #expect(throws: DecodingError.self) {
-            let _: Account = try JSONDecoder.jmap().decode(Account.self, from: accountJSON)
-        }
-        let account: Account = try JSONDecoder.jmap(id: "u7a5e4041").decode(Account.self, from: accountJSON)
+        let account: Account = try JSONDecoder().decode(Account.self, from: accountJSON)
         #expect(account.name == "toddheasley@fastmail.com")
         #expect(account.capabilities.count == 3)
         #expect(account.capabilities[.mail]?.maxSizeMailboxName == 490)
@@ -21,7 +18,6 @@ struct AccountTests {
         #expect(account.capabilities[.contacts] == nil)
         #expect(account.isReadOnly == false)
         #expect(account.isPersonal == true)
-        #expect(account.id == "u7a5e4041")
     }
 }
 

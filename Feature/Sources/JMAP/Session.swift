@@ -1,5 +1,77 @@
 import Foundation
 
-public struct Session {
+public struct Session: CustomStringConvertible, Decodable {
+    public let username: String
+    public let accounts: [String: Account]
+    public let primaryAccounts: [Capability.Key: String]
+    public let capabilities: [Capability.Key: Capability]
+    public let downloadURLTemplate: String
+    public let uploadURLTemplate: String
+    public let eventSourceURL: URL
+    public let apiURL: URL
     
+    public func account(_ id: String?) -> Account? {
+        accounts[id ?? ""]
+    }
+    
+    public func primaryAccount(for key: Capability.Key) -> Account? {
+        account(primaryAccounts[key])
+    }
+    
+    public func capability(for key: Capability.Key) -> Capability? {
+        capabilities[key]
+    }
+    
+    @discardableResult public func downloadURL(account id: String, blob: String, name: String, type: String) throws -> URL {
+        var downloadURLTemplate: String = downloadURLTemplate.replacingOccurrences(of: "{accountId}", with: id)
+        downloadURLTemplate = downloadURLTemplate.replacingOccurrences(of: "{blobId}", with: blob)
+        downloadURLTemplate = downloadURLTemplate.replacingOccurrences(of: "{name}", with: name)
+        downloadURLTemplate = downloadURLTemplate.replacingOccurrences(of: "{type}", with: type)
+        guard !id.isEmpty, !blob.isEmpty, !name.isEmpty,
+              let url: URL = URL(string: downloadURLTemplate) else {
+            throw URLError(.unsupportedURL)
+        }
+        return url
+    }
+    
+    @discardableResult public func uploadURL(account id: String) throws -> URL {
+        let uploadURLTemplate: String = uploadURLTemplate.replacingOccurrences(of: "{accountId}", with: id)
+        guard !id.isEmpty,
+              let url: URL = URL(string: uploadURLTemplate) else {
+            throw URLError(.unsupportedURL)
+        }
+        return url
+    }
+    
+    // MARK: CustomStringConvertible
+    public var description: String { username }
+    
+    // MARK: Decodable
+    public init(from decoder: any Decoder) throws {
+        let container: KeyedDecodingContainer<Key> = try decoder.container(keyedBy: Key.self)
+        username = try container.decode(String.self, forKey: .username)
+        accounts = try container.decode([String: Account].self, forKey: .accounts)
+        let primaryAccountsDictionary: [String: String] = try container.decode([String: String].self, forKey: .primaryAccounts)
+        var primaryAccounts: [Capability.Key: String] = [:]
+        for key in primaryAccountsDictionary.keys {
+            guard let _key: Capability.Key = Capability.Key(rawValue: key) else { continue }
+            primaryAccounts[_key] = primaryAccountsDictionary[key]
+        }
+        self.primaryAccounts = primaryAccounts
+        let capabilitiesDictionary: [String: Capability] = try container.decode([String: Capability].self, forKey: .capabilities)
+        var capabilities: [Capability.Key: Capability] = [:]
+        for key in capabilitiesDictionary.keys {
+            guard let _key: Capability.Key = Capability.Key(rawValue: key) else { continue }
+            capabilities[_key] = capabilitiesDictionary[key]
+        }
+        self.capabilities = capabilities
+        downloadURLTemplate = try container.decode(String.self, forKey: .downloadUrl)
+        uploadURLTemplate = try container.decode(String.self, forKey: .uploadUrl)
+        eventSourceURL = try container.decode(URL.self, forKey: .eventSourceUrl)
+        apiURL = try container.decode(URL.self, forKey: .apiUrl)
+    }
+    
+    private enum Key: CodingKey {
+        case username, accounts, primaryAccounts, capabilities, eventSourceUrl, uploadUrl, downloadUrl, apiUrl
+    }
 }
