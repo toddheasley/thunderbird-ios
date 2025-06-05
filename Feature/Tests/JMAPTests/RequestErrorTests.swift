@@ -2,9 +2,9 @@ import Testing
 @testable import JMAP
 import Foundation
 
-struct JMAPRequestTests {
-    @Test func errorDecoderInit() throws {
-        let errors: [JMAPRequest.Error] = try JSONDecoder().decode([JMAPRequest.Error].self, from: errorJSON)
+struct RequestErrorTests {
+    @Test func decoderInit() throws {
+        let errors: [RequestError] = try JSONDecoder().decode([RequestError].self, from: data)
         #expect(errors.count == 2)
         #expect(errors.first?.code == .unknownCapability)
         #expect(errors.first?.description == "The request object used capability which is not supported by this server.")
@@ -13,7 +13,7 @@ struct JMAPRequestTests {
     }
 }
 
-private let errorJSON: Data = """
+private let data: Data = """
 [
     {
         "type": "urn:ietf:params:jmap:error:unknownCapability",

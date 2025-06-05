@@ -4,7 +4,7 @@ import Foundation
 
 struct SessionTests {
     @Test func decoderInit() throws {
-        let session: Session = try JSONDecoder().decode(Session.self, from: sessionJSON)
+        let session: Session = try JSONDecoder().decode(Session.self, from: data)
         #expect(session.username == "toddheasley@fastmail.com")
         #expect(session.accounts.count == 1)
         #expect(session.accounts["u7a51e404"]?.name == "toddheasley@fastmail.com")
@@ -18,7 +18,7 @@ struct SessionTests {
     }
     
     @Test func downloadURL() throws {
-        let session: Session = try JSONDecoder().decode(Session.self, from: sessionJSON)
+        let session: Session = try JSONDecoder().decode(Session.self, from: data)
         #expect(session.downloadURLTemplate == "https://www.fastmailusercontent.com/jmap/download/{accountId}/{blobId}/{name}?type={type}")
         #expect(try session.downloadURL(account: "u7a51e404", blob: "b404e15a7", name: "file_name", type: "pdf").absoluteString
          == "https://www.fastmailusercontent.com/jmap/download/u7a51e404/b404e15a7/file_name?type=pdf")
@@ -36,7 +36,7 @@ struct SessionTests {
     }
     
     @Test func uploadURL() throws {
-        let session: Session = try JSONDecoder().decode(Session.self, from: sessionJSON)
+        let session: Session = try JSONDecoder().decode(Session.self, from: data)
         #expect(session.uploadURLTemplate == "https://api.fastmail.com/jmap/upload/{accountId}/")
         #expect(try session.uploadURL(account: "u7a51e404").absoluteString == "https://api.fastmail.com/jmap/upload/u7a51e404/")
         #expect(throws: URLError.self) {
@@ -45,7 +45,7 @@ struct SessionTests {
     }
 }
 
-private let sessionJSON: Data = """
+private let data: Data = """
 {
     "state": "cyrus-0;p-67bb868361;s-68403d307e150478",
     "username": "toddheasley@fastmail.com",

@@ -1,0 +1,38 @@
+import Testing
+@testable import JMAP
+import Foundation
+
+struct URLRequestTests {
+    @Test func setAuthorization() {
+        var request: URLRequest = URLRequest(url: url)
+        request.setAuthorization("fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+    }
+    
+    @Test func setContentType() {
+        var request: URLRequest = URLRequest(url: url)
+        request.setContentType("text/html")
+        #expect(request.value(forHTTPHeaderField: "Content-Type") == "text/html")
+        request.setContentType()
+        #expect(request.value(forHTTPHeaderField: "Content-Type") == "application/json; charset=utf-8")
+    }
+    
+    @Test func setAccept() {
+        var request: URLRequest = URLRequest(url: url)
+        request.setAccept("text/xml")
+        #expect(request.value(forHTTPHeaderField: "Accept") == "text/xml")
+        request.setAccept()
+        #expect(request.value(forHTTPHeaderField: "Accept") == "application/json")
+    }
+    
+    @Test func setAcceptLanguage() {
+        var request: URLRequest = URLRequest(url: url)
+        request.setAcceptLanguage("en-US, es:q=0.9, *")
+        #expect(request.value(forHTTPHeaderField: "Accept-Language") == "en-US, es:q=0.9, *")
+        request.setAcceptLanguage()
+        #expect(request.value(forHTTPHeaderField: "Accept-Language")?.hasSuffix("*;q=0.5") == true)
+        #expect(request.value(forHTTPHeaderField: "Accept-Language")?.hasPrefix("*") == false)
+    }
+}
+
+private let url: URL = URL(string: "https://api.fastmail.com")!

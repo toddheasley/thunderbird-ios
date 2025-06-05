@@ -23,12 +23,13 @@ public struct Session: CustomStringConvertible, Decodable {
     }
     
     @discardableResult public func downloadURL(account id: String, blob: String, name: String, type: String) throws -> URL {
-        var downloadURLTemplate: String = downloadURLTemplate.replacingOccurrences(of: "{accountId}", with: id)
-        downloadURLTemplate = downloadURLTemplate.replacingOccurrences(of: "{blobId}", with: blob)
-        downloadURLTemplate = downloadURLTemplate.replacingOccurrences(of: "{name}", with: name)
-        downloadURLTemplate = downloadURLTemplate.replacingOccurrences(of: "{type}", with: type)
         guard !id.isEmpty, !blob.isEmpty, !name.isEmpty,
-              let url: URL = URL(string: downloadURLTemplate) else {
+              let url: URL = URL(string: downloadURLTemplate.replacingOccurrences([
+                ("{accountId}", id),
+                ("{blobId}", blob),
+                ("{name}", name),
+                ("{type}", type)
+              ])) else {
             throw URLError(.unsupportedURL)
         }
         return url
@@ -73,5 +74,15 @@ public struct Session: CustomStringConvertible, Decodable {
     
     private enum Key: CodingKey {
         case username, accounts, primaryAccounts, capabilities, eventSourceUrl, uploadUrl, downloadUrl, apiUrl
+    }
+}
+
+private extension String {
+    func replacingOccurrences(_ occurrences: [(target: Self, replacement: Self)]) -> Self {
+        var string: Self = self
+        for occurrence in occurrences {
+            string = string.replacingOccurrences(of: occurrence.target, with: occurrence.replacement)
+        }
+        return string
     }
 }

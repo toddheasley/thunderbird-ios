@@ -4,7 +4,7 @@ import Foundation
 
 struct AccountTests {
     @Test func decoderInit() throws {
-        let account: Account = try JSONDecoder().decode(Account.self, from: accountJSON)
+        let account: Account = try JSONDecoder().decode(Account.self, from: data)
         #expect(account.name == "toddheasley@fastmail.com")
         #expect(account.capabilities.count == 3)
         #expect(account.capabilities[.mail]?.maxSizeMailboxName == 490)
@@ -21,7 +21,7 @@ struct AccountTests {
     }
 }
 
-private let accountJSON: Data = """
+private let data: Data = """
 {
     "accountCapabilities": {
         "urn:ietf:params:jmap:submission": {
