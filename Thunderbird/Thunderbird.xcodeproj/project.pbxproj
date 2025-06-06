@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		152E827A2DC43AF700FB787B /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 152E82792DC43AF700FB787B /* Account */; };
+		1560FEE22DDF60C100F6295C /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE12DDF60C100F6295C /* Core */; };
+		1560FEE52DDF60FA00F6295C /* Mail in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE42DDF60FA00F6295C /* Mail */; };
+		1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE72DDF611F00F6295C /* BoltUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,7 +45,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				152E827A2DC43AF700FB787B /* Account in Frameworks */,
+				1560FEE22DDF60C100F6295C /* Core in Frameworks */,
+				1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */,
+				1560FEE52DDF60FA00F6295C /* Mail in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +66,7 @@
 			children = (
 				1521D85A2D9C4EED00C4DFDF /* Thunderbird */,
 				1521D8272D9C4D6300C4DFDF /* ThunderbirdTests */,
+				15EC20F42DC8E50F0039FB48 /* Frameworks */,
 				1521D8172D9C4D6200C4DFDF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -73,6 +78,13 @@
 				1521D8242D9C4D6300C4DFDF /* ThunderbirdTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		15EC20F42DC8E50F0039FB48 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -95,7 +107,9 @@
 			);
 			name = Thunderbird;
 			packageProductDependencies = (
-				152E82792DC43AF700FB787B /* Account */,
+				1560FEE12DDF60C100F6295C /* Core */,
+				1560FEE42DDF60FA00F6295C /* Mail */,
+				1560FEE72DDF611F00F6295C /* BoltUI */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -155,7 +169,9 @@
 			mainGroup = 1521D80D2D9C4D6200C4DFDF;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				152E82782DC43AF700FB787B /* XCLocalSwiftPackageReference "../Mail" */,
+				1560FEE02DDF60C100F6295C /* XCLocalSwiftPackageReference "../Core" */,
+				1560FEE32DDF60FA00F6295C /* XCLocalSwiftPackageReference "../Feature" */,
+				1560FEE62DDF611F00F6295C /* XCLocalSwiftPackageReference "../Bolt" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1521D8172D9C4D6200C4DFDF /* Products */;
@@ -348,7 +364,7 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -389,7 +405,7 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -488,16 +504,32 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		152E82782DC43AF700FB787B /* XCLocalSwiftPackageReference "../Mail" */ = {
+		1560FEE02DDF60C100F6295C /* XCLocalSwiftPackageReference "../Core" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Mail;
+			relativePath = ../Core;
+		};
+		1560FEE32DDF60FA00F6295C /* XCLocalSwiftPackageReference "../Feature" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Feature;
+		};
+		1560FEE62DDF611F00F6295C /* XCLocalSwiftPackageReference "../Bolt" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Bolt;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		152E82792DC43AF700FB787B /* Account */ = {
+		1560FEE12DDF60C100F6295C /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Account;
+			productName = Core;
+		};
+		1560FEE42DDF60FA00F6295C /* Mail */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Mail;
+		};
+		1560FEE72DDF611F00F6295C /* BoltUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BoltUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
