@@ -1,9 +1,9 @@
 public struct RequestError: Error, Decodable, CustomStringConvertible {
     public enum Code: String, CaseIterable, Codable, CustomStringConvertible, Identifiable, Sendable {
-        case unknownCapability = "urn:ietf:params:jmap:error:unknownCapability"
+        case limit = "urn:ietf:params:jmap:error:limit"
         case notJSON = "urn:ietf:params:jmap:error:notJSON"
         case notRequest = "urn:ietf:params:jmap:error:notRequest"
-        case limit = "urn:ietf:params:jmap:error:limit"
+        case unknownCapability = "urn:ietf:params:jmap:error:unknownCapability"
         
         // MARK: CustomStringConvertible
         public var description: String { rawValue.components(separatedBy: ":").last! }

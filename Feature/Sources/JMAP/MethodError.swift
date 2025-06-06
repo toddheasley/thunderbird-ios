@@ -1,16 +1,11 @@
 import Foundation
 
 public enum MethodError: String, CaseIterable, CustomStringConvertible, Decodable, Error, Identifiable {
-    case serverUnavailable
-    case serverFail
-    case serverPartialFail
-    case unknownMethod
-    case invalidArguments
-    case invalidResultReference
+    case accountNotFound, accountNotSupportedByMethod, accountReadOnly
     case forbidden
-    case accountNotFound
-    case accountNotSupportedByMethod
-    case accountReadOnly
+    case invalidArguments, invalidResultReference
+    case serverFail, serverPartialFail, serverUnavailable
+    case unknownMethod
     
     // MARK: CustomStringConvertible
     public var description: String { rawValue }

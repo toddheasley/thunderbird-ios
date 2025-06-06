@@ -1,10 +1,10 @@
 public struct Capability: Decodable {
     public enum Key: String, CaseIterable, Codable, CustomStringConvertible, Identifiable, Sendable {
-        case mail = "urn:ietf:params:jmap:mail"
-        case submission = "urn:ietf:params:jmap:submission"
         case calendars = "urn:ietf:params:jmap:calendars"
         case contacts = "urn:ietf:params:jmap:contacts"
         case core = "urn:ietf:params:jmap:core"
+        case mail = "urn:ietf:params:jmap:mail"
+        case submission = "urn:ietf:params:jmap:submission"
         
         // MARK: CustomStringConvertible
         public var description: String { rawValue.components(separatedBy: ":").last! }
@@ -25,6 +25,16 @@ public struct Capability: Decodable {
         public var id: String { rawValue }
     }
     
+    // MARK: Core
+    public let maxSizeUpload: Int?
+    public let maxConcurrentUpload: Int?
+    public let maxSizeRequest: Int?
+    public let maxConcurrentRequests: Int?
+    public let maxCallsInRequest: Int?
+    public let maxObjectsInGet: Int?
+    public let maxObjectsInSet: Int?
+    public let collationAlgorithms: [String]?
+    
     // MARK: Mail
     public let maxSizeMailboxName: Int?
     public let maxMailboxDepth: Int?
@@ -36,14 +46,4 @@ public struct Capability: Decodable {
     // MARK: Submission
     public let maxDelayedSend: Int?
     // public let submissionExtensions: [String]?
-    
-    // MARK: Core
-    public let maxSizeUpload: Int?
-    public let maxConcurrentUpload: Int?
-    public let maxSizeRequest: Int?
-    public let maxConcurrentRequests: Int?
-    public let maxCallsInRequest: Int?
-    public let maxObjectsInGet: Int?
-    public let maxObjectsInSet: Int?
-    public let collationAlgorithms: [String]?
 }

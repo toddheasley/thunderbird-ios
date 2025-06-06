@@ -3,9 +3,16 @@ import Testing
 import Foundation
 
 struct URLRequestTests {
-    @Test func setAuthorization() {
+    @Test func session() throws {
+        let request: URLRequest = try .session(url.host()!, token: "fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+        #expect(request.url?.absoluteString == "https://api.fastmail.com/jmap/session")
+        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+        #expect(request.httpMethod == "GET")
+    }
+    
+    @Test func setAuthorization() throws {
         var request: URLRequest = URLRequest(url: url)
-        request.setAuthorization("fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+        try request.setAuthorization("fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
         #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
     }
     
