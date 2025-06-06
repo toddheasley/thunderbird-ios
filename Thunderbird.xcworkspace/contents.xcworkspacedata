@@ -11,7 +11,13 @@
       location = "group:Thunderbird.xctestplan">
    </FileRef>
    <FileRef
-      location = "group:Mail">
+      location = "group:Feature">
+   </FileRef>
+   <FileRef
+      location = "group:Bolt">
+   </FileRef>
+   <FileRef
+      location = "group:Core">
    </FileRef>
    <FileRef
       location = "group:Weblate">
