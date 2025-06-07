@@ -9,13 +9,13 @@ struct URLRequestTests {
         #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
         #expect(request.httpMethod == "GET")
     }
-    
+
     @Test func setAuthorization() throws {
         var request: URLRequest = URLRequest(url: url)
         try request.setAuthorization("fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
         #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
     }
-    
+
     @Test func setContentType() {
         var request: URLRequest = URLRequest(url: url)
         request.setContentType("text/html")
@@ -23,7 +23,7 @@ struct URLRequestTests {
         request.setContentType()
         #expect(request.value(forHTTPHeaderField: "Content-Type") == "application/json; charset=utf-8")
     }
-    
+
     @Test func setAccept() {
         var request: URLRequest = URLRequest(url: url)
         request.setAccept("text/xml")
@@ -31,7 +31,7 @@ struct URLRequestTests {
         request.setAccept()
         #expect(request.value(forHTTPHeaderField: "Accept") == "application/json")
     }
-    
+
     @Test func setAcceptLanguage() {
         var request: URLRequest = URLRequest(url: url)
         request.setAcceptLanguage("en-US, es:q=0.9, *")

@@ -16,6 +16,11 @@ let package: Package = Package(
                 "Core"
             ]),
         .library(
+            name: "Autodiscovery",
+            targets: [
+                "Autodiscovery"
+            ]),
+        .library(
             name: "Log",
             targets: [
                 "Log"
@@ -25,7 +30,14 @@ let package: Package = Package(
         .target(
             name: "Core",
             dependencies: [
+                "Autodiscovery",
                 "Log"
+            ]),
+        .target(name: "Autodiscovery"),
+        .testTarget(
+            name: "AutodiscoveryTests",
+            dependencies: [
+                "Autodiscovery"
             ]),
         .target(name: "Log"),
         .testTarget(

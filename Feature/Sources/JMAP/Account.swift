@@ -5,14 +5,14 @@ public struct Account: CustomStringConvertible, Decodable {
     public let capabilities: [Capability.Key: Capability]
     public let isReadOnly: Bool
     public let isPersonal: Bool
-    
+
     public func capability(for key: Capability.Key) -> Capability? {
         capabilities[key]
     }
-    
+
     // MARK: CustomStringConvertible
     public var description: String { name }
-    
+
     // MARK: Decodable
     public init(from decoder: any Decoder) throws {
         let container: KeyedDecodingContainer<Key> = try decoder.container(keyedBy: Key.self)
@@ -27,7 +27,7 @@ public struct Account: CustomStringConvertible, Decodable {
         isReadOnly = try container.decode(Bool.self, forKey: .isReadOnly)
         isPersonal = try container.decode(Bool.self, forKey: .isPersonal)
     }
-    
+
     private enum Key: CodingKey {
         case name, accountCapabilities, isReadOnly, isPersonal, id
     }

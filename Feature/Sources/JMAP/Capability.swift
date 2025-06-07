@@ -5,26 +5,26 @@ public struct Capability: Decodable {
         case core = "urn:ietf:params:jmap:core"
         case mail = "urn:ietf:params:jmap:mail"
         case submission = "urn:ietf:params:jmap:submission"
-        
+
         // MARK: CustomStringConvertible
         public var description: String { rawValue.components(separatedBy: ":").last! }
-        
+
         // MARK: Identifiable
         public var id: String { rawValue }
     }
-    
+
     public enum SortOption: String, CaseIterable, Codable, CustomStringConvertible, Identifiable {
         case received = "receivedAt"
         case from, to, subject, size
         case spamScore = "header.x-spam-score"
-        
+
         // MARK: CustomStringConvertible
         public var description: String { rawValue }
-        
+
         // MARK: Identifiable
         public var id: String { rawValue }
     }
-    
+
     // MARK: Core
     public let maxSizeUpload: Int?
     public let maxConcurrentUpload: Int?
@@ -34,7 +34,7 @@ public struct Capability: Decodable {
     public let maxObjectsInGet: Int?
     public let maxObjectsInSet: Int?
     public let collationAlgorithms: [String]?
-    
+
     // MARK: Mail
     public let maxSizeMailboxName: Int?
     public let maxMailboxDepth: Int?
@@ -42,7 +42,7 @@ public struct Capability: Decodable {
     public let maxSizeAttachmentsPerEmail: Int?
     public let mayCreateTopLevelMailbox: Bool?
     public let emailQuerySortOptions: [SortOption]?
-    
+
     // MARK: Submission
     public let maxDelayedSend: Int?
     // public let submissionExtensions: [String]?

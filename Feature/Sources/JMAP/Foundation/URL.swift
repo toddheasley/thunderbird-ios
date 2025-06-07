@@ -4,7 +4,7 @@ extension URL {
     static func session(_ host: String) throws -> Self {
         try jmap(host, path: "jmap/session")
     }
-    
+
     static func jmap(_ host: String, path: String? = nil) throws -> Self {
         var components: URLComponents = URLComponents()
         components.scheme = "https"

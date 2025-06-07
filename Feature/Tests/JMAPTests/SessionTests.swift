@@ -16,14 +16,16 @@ struct SessionTests {
         #expect(session.eventSourceURL.absoluteString == "https://api.fastmail.com/jmap/event/")
         #expect(session.apiURL.absoluteString == "https://api.fastmail.com/jmap/api/")
     }
-    
+
     @Test func downloadURL() throws {
         let session: Session = try JSONDecoder().decode(Session.self, from: data)
         #expect(session.downloadURLTemplate == "https://www.fastmailusercontent.com/jmap/download/{accountId}/{blobId}/{name}?type={type}")
-        #expect(try session.downloadURL(account: "u7a51e404", blob: "b404e15a7", name: "file_name", type: "pdf").absoluteString
-         == "https://www.fastmailusercontent.com/jmap/download/u7a51e404/b404e15a7/file_name?type=pdf")
-        #expect(try session.downloadURL(account: "u7a51e404", blob: "b404e15a7", name: "file_name", type: "").absoluteString
-         == "https://www.fastmailusercontent.com/jmap/download/u7a51e404/b404e15a7/file_name?type=")
+        #expect(
+            try session.downloadURL(account: "u7a51e404", blob: "b404e15a7", name: "file_name", type: "pdf").absoluteString
+                == "https://www.fastmailusercontent.com/jmap/download/u7a51e404/b404e15a7/file_name?type=pdf")
+        #expect(
+            try session.downloadURL(account: "u7a51e404", blob: "b404e15a7", name: "file_name", type: "").absoluteString
+                == "https://www.fastmailusercontent.com/jmap/download/u7a51e404/b404e15a7/file_name?type=")
         #expect(throws: URLError.self) {
             try session.downloadURL(account: "u7a51e404", blob: "b404e15a7", name: "", type: "")
         }
@@ -34,7 +36,7 @@ struct SessionTests {
             try session.downloadURL(account: "", blob: "b404e15a7", name: "file_name", type: "")
         }
     }
-    
+
     @Test func uploadURL() throws {
         let session: Session = try JSONDecoder().decode(Session.self, from: data)
         #expect(session.uploadURLTemplate == "https://api.fastmail.com/jmap/upload/{accountId}/")

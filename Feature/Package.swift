@@ -31,6 +31,9 @@ let package: Package = Package(
                 "IMAP"
             ])
     ],
+    dependencies: [
+        .package(name: "Core", path: "../Core")
+    ],
     targets: [
         .target(
             name: "Mail",
@@ -50,7 +53,11 @@ let package: Package = Package(
             dependencies: [
                 "Account"
             ]),
-        .target(name: "JMAP"),
+        .target(
+            name: "JMAP",
+            dependencies: [
+                "Core"
+            ]),
         .testTarget(
             name: "JMAPTests",
             dependencies: [

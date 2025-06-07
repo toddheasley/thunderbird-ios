@@ -9,44 +9,47 @@ public struct Session: CustomStringConvertible, Decodable {
     public let uploadURLTemplate: String
     public let eventSourceURL: URL
     public let apiURL: URL
-    
+
     public func account(_ id: String?) -> Account? {
         accounts[id ?? ""]
     }
-    
+
     public func primaryAccount(for key: Capability.Key) -> Account? {
         account(primaryAccounts[key])
     }
-    
+
     public func capability(for key: Capability.Key) -> Capability? {
         capabilities[key]
     }
-    
+
     @discardableResult public func downloadURL(account id: String, blob: String, name: String, type: String) throws -> URL {
         guard !id.isEmpty, !blob.isEmpty, !name.isEmpty,
-              let url: URL = URL(string: downloadURLTemplate.replacingOccurrences([
-                ("{accountId}", id),
-                ("{blobId}", blob),
-                ("{name}", name),
-                ("{type}", type)
-              ])) else {
+            let url: URL = URL(
+                string: downloadURLTemplate.replacingOccurrences([
+                    ("{accountId}", id),
+                    ("{blobId}", blob),
+                    ("{name}", name),
+                    ("{type}", type)
+                ]))
+        else {
             throw URLError(.unsupportedURL)
         }
         return url
     }
-    
+
     @discardableResult public func uploadURL(account id: String) throws -> URL {
         let uploadURLTemplate: String = uploadURLTemplate.replacingOccurrences(of: "{accountId}", with: id)
         guard !id.isEmpty,
-              let url: URL = URL(string: uploadURLTemplate) else {
+            let url: URL = URL(string: uploadURLTemplate)
+        else {
             throw URLError(.unsupportedURL)
         }
         return url
     }
-    
+
     // MARK: CustomStringConvertible
     public var description: String { username }
-    
+
     // MARK: Decodable
     public init(from decoder: any Decoder) throws {
         let container: KeyedDecodingContainer<Key> = try decoder.container(keyedBy: Key.self)
@@ -71,7 +74,7 @@ public struct Session: CustomStringConvertible, Decodable {
         eventSourceURL = try container.decode(URL.self, forKey: .eventSourceUrl)
         apiURL = try container.decode(URL.self, forKey: .apiUrl)
     }
-    
+
     private enum Key: CodingKey {
         case username, accounts, primaryAccounts, capabilities, eventSourceUrl, uploadUrl, downloadUrl, apiUrl
     }

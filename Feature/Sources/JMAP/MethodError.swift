@@ -6,11 +6,10 @@ public enum MethodError: String, CaseIterable, CustomStringConvertible, Decodabl
     case invalidArguments, invalidResultReference
     case serverFail, serverPartialFail, serverUnavailable
     case unknownMethod
-    
+
     // MARK: CustomStringConvertible
     public var description: String { rawValue }
-    
-    
+
     // MARK: Decodable
     public init(from decoder: any Decoder) throws {
         var container: UnkeyedDecodingContainer = try decoder.unkeyedContainer()
@@ -21,7 +20,7 @@ public enum MethodError: String, CaseIterable, CustomStringConvertible, Decodabl
         }
         self = error
     }
-    
+
     // MARK: Identifiable
     public var id: String { rawValue }
 }

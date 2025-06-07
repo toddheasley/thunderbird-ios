@@ -49,6 +49,20 @@
     },
     {
       "target" : {
+        "containerPath" : "container:..\/Core",
+        "identifier" : "AutodiscoveryTests",
+        "name" : "AutodiscoveryTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Core",
+        "identifier" : "LogTests",
+        "name" : "LogTests"
+      }
+    },
+    {
+      "target" : {
         "containerPath" : "container:..\/Bolt",
         "identifier" : "BoltUITests",
         "name" : "BoltUITests"
@@ -59,13 +73,6 @@
         "containerPath" : "container:..\/Bolt",
         "identifier" : "EditorTests",
         "name" : "EditorTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "LogTests",
-        "name" : "LogTests"
       }
     }
   ],
