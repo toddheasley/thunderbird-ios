@@ -12,9 +12,7 @@ public class SRV {
         public let weight: Int
 
         init(_ data: Data) throws {
-            guard data.count > 8,
-                let host: String = String(bytes: data.suffix(from: 7), encoding: .utf8)
-            else {
+            guard data.count > 8, let host: String = String(bytes: data.suffix(from: 7), encoding: .utf8) else {
                 throw URLError(.cannotDecodeRawData)
             }
             self.host = host.components(separatedBy: .controlCharacters).filter { !$0.isEmpty }.joined(separator: ".")
@@ -38,12 +36,11 @@ public class SRV {
                 case .failure(let error):
                     continuation.resume(throwing: error)
                 }
-
             }
         }
     }
 
-    public init(timeoutInterval: TimeInterval = 5.0) {
+    public init(timeoutInterval: TimeInterval = 1.0) {
         self.timeoutInterval = timeoutInterval
     }
 
@@ -60,10 +57,9 @@ public class SRV {
     private let queue: DispatchQueue = DispatchQueue(label: "SRV")
     private let callback: DNSServiceQueryRecordReply = { _, flags, _, _, _, _, _, rdlen, rdata, _, context in
         guard let context else { return }
-        let srv: SRV = bridge(context)
+        let srv: SRV = Unmanaged.fromOpaque(context).takeUnretainedValue()
         if let bytes = rdata?.assumingMemoryBound(to: UInt8.self),
-            let record: Record = try? Record(Data(bytes: bytes, count: Int(rdlen)))
-        {
+           let record: Record = try? Record(Data(bytes: bytes, count: Int(rdlen))) {
             srv.records.append(record)
         }
         if (flags & kDNSServiceFlagsMoreComing) == 0 {
@@ -84,7 +80,7 @@ public class SRV {
             UInt16(kDNSServiceType_SRV),
             UInt16(kDNSServiceClass_IN),
             callback,
-            bridge(self)
+            Unmanaged.passUnretained(self).toOpaque()
         )
         switch error {
         case DNSServiceErrorType(kDNSServiceErr_NoError):
@@ -126,12 +122,4 @@ public class SRV {
         dispatchSourceRead?.cancel()
         timeoutTimer?.cancel()
     }
-}
-
-private func bridge<T: AnyObject>(_ pointer: UnsafeMutableRawPointer) -> T {
-    Unmanaged<T>.fromOpaque(pointer).takeUnretainedValue()
-}
-
-private func bridge<T: AnyObject>(_ object: T) -> UnsafeMutableRawPointer {
-    Unmanaged.passUnretained(object).toOpaque()
 }
