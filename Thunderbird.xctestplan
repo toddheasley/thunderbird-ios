@@ -14,20 +14,6 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
-        "identifier" : "AccountTests",
-        "name" : "AccountTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "EditorTests",
-        "name" : "EditorTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:Thunderbird.xcodeproj",
         "identifier" : "1521D8232D9C4D6300C4DFDF",
         "name" : "ThunderbirdTests"
@@ -42,16 +28,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "BoltUITests",
-        "name" : "BoltUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "LogTests",
-        "name" : "LogTests"
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
       }
     },
     {
@@ -59,6 +38,34 @@
         "containerPath" : "container:..\/Feature",
         "identifier" : "IMAPTests",
         "name" : "IMAPTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "BoltUITests",
+        "name" : "BoltUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "EditorTests",
+        "name" : "EditorTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Core",
+        "identifier" : "AutodiscoverTests",
+        "name" : "AutodiscoverTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Core",
+        "identifier" : "LogTests",
+        "name" : "LogTests"
       }
     }
   ],
