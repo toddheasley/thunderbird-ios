@@ -21,6 +21,7 @@ struct AccountTests {
     }
 }
 
+// swift-format-ignore
 private let data: Data = """
 {
     "accountCapabilities": {
@@ -28,9 +29,7 @@ private let data: Data = """
             "maxDelayedSend": 44236800,
             "submissionExtensions": {}
         },
-        "urn:ietf:params:jmap:core": {
-            
-        },
+        "urn:ietf:params:jmap:core": {},
         "urn:ietf:params:jmap:mail": {
             "maxSizeMailboxName": 490,
             "emailQuerySortOptions": [
@@ -46,9 +45,7 @@ private let data: Data = """
             "maxMailboxDepth": null,
             "maxMailboxesPerEmail": 1000
         },
-        "https://www.fastmail.com/dev/maskedemail": {
-            
-        }
+        "https://www.fastmail.com/dev/maskedemail": {}
     },
     "name": "toddheasley@fastmail.com",
     "isReadOnly": false,

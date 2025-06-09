@@ -47,6 +47,7 @@ struct SessionTests {
     }
 }
 
+// swift-format-ignore
 private let data: Data = """
 {
     "state": "cyrus-0;p-67bb868361;s-68403d307e150478",
@@ -61,12 +62,8 @@ private let data: Data = """
         "https://www.fastmail.com/dev/maskedemail": "u7a51e404"
     },
     "capabilities": {
-        "urn:ietf:params:jmap:submission": {
-            
-        },
-        "urn:ietf:params:jmap:mail": {
-            
-        },
+        "urn:ietf:params:jmap:submission": {},
+        "urn:ietf:params:jmap:mail": {},
         "urn:ietf:params:jmap:core": {
             "maxSizeRequest": 10000000,
             "maxObjectsInSet": 4096,
@@ -81,23 +78,17 @@ private let data: Data = """
             ],
             "maxSizeUpload": 250000000
         },
-        "https://www.fastmail.com/dev/maskedemail": {
-            
-        }
+        "https://www.fastmail.com/dev/maskedemail": {}
     },
     "accounts": {
         "u7a51e404": {
             "isReadOnly": false,
             "accountCapabilities": {
                 "urn:ietf:params:jmap:submission": {
-                    "submissionExtensions": {
-                        
-                    },
+                    "submissionExtensions": {},
                     "maxDelayedSend": 44236800
                 },
-                "urn:ietf:params:jmap:core": {
-                    
-                },
+                "urn:ietf:params:jmap:core": {},
                 "urn:ietf:params:jmap:mail": {
                     "maxSizeMailboxName": 490,
                     "maxSizeAttachmentsPerEmail": 50000000,
@@ -113,9 +104,7 @@ private let data: Data = """
                     ],
                     "maxMailboxesPerEmail": 1000
                 },
-                "https://www.fastmail.com/dev/maskedemail": {
-                    
-                }
+                "https://www.fastmail.com/dev/maskedemail": {}
             },
             "name": "toddheasley@fastmail.com",
             "isPersonal": true

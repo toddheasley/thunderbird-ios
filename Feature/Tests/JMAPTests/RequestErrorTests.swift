@@ -13,6 +13,7 @@ struct RequestErrorTests {
     }
 }
 
+// swift-format-ignore
 private let data: Data = """
 [
     {

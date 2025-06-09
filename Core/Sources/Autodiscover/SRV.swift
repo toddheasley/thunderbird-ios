@@ -59,7 +59,8 @@ public class SRV {
         guard let context else { return }
         let srv: SRV = Unmanaged.fromOpaque(context).takeUnretainedValue()
         if let bytes = rdata?.assumingMemoryBound(to: UInt8.self),
-           let record: Record = try? Record(Data(bytes: bytes, count: Int(rdlen))) {
+            let record: Record = try? Record(Data(bytes: bytes, count: Int(rdlen)))
+        {
             srv.records.append(record)
         }
         if (flags & kDNSServiceFlagsMoreComing) == 0 {
