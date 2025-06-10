@@ -6,8 +6,8 @@ extension URLRequest {
     /// - Parameter host: Host name of the JMAP service provider; e.g., `api.fastmail.com`
     /// - Parameter token: OAuth bearer token to authenticate with service provider
     /// - Returns: `URLRequest` configured to GET an authenticated session with a JMAP service provider
-    public static func session(_ host: String, token: String) throws -> Self {
-        var request: Self = Self(url: try .session(host))
+    public static func session(_ host: String, port: Int? = nil, token: String) throws -> Self {
+        var request: Self = Self(url: try .session(host, port: port))
         try request.setJMAPHeaders(token)
         return request
     }
