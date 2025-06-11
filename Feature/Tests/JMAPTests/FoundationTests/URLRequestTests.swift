@@ -3,8 +3,25 @@ import Testing
 import Foundation
 
 struct URLRequestTests {
-    @Test func session() throws {
-        let request: URLRequest = try .session(url.host()!, token: "fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+    @Test func jmapAPI() throws {
+        let request: URLRequest = try .jmapAPI([
+            Mailbox.GetMethod("u7a51e404")
+        ], url: url, token: "fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+        #expect(request.httpMethod == "POST")
+        #expect(request.httpBody?.count ?? 0 > 100)
+        #expect(throws: Error.self) {
+            try URLRequest.jmapAPI([], url: url, token: "fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
+        }
+        #expect(throws: Error.self) {
+            try URLRequest.jmapAPI([
+                Mailbox.GetMethod("u7a51e404")
+            ], url: url, token: "")
+        }
+    }
+    
+    @Test func jmapSession() throws {
+        let request: URLRequest = try .jmapSession(url.host()!, token: "fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
         #expect(request.url?.absoluteString == "https://api.fastmail.com/jmap/session")
         #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer fmu1-1e911257e86b1f194daa-0-a89faae5c11f")
         #expect(request.httpMethod == "GET")
@@ -42,4 +59,4 @@ struct URLRequestTests {
     }
 }
 
-private let url: URL = URL(string: "https://api.fastmail.com")!
+let url: URL = URL(string: "https://api.fastmail.com/jmap/api/")!

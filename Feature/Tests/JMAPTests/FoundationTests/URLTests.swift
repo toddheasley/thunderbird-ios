@@ -3,10 +3,10 @@ import Testing
 import Foundation
 
 struct URLTests {
-    @Test func session() throws {
-        #expect(try URL.session("api.fastmail.com").absoluteString == "https://api.fastmail.com/jmap/session")
+    @Test func jmapSession() throws {
+        #expect(try URL.jmapSession("api.fastmail.com").absoluteString == "https://api.fastmail.com/jmap/session")
         #expect(throws: URLError.self) {
-            try URL.session("")
+            try URL.jmapSession("")
         }
     }
 
