@@ -2,7 +2,7 @@ import Foundation
 import Autodiscover
 
 extension URLSession {
-    
+
     /// Post methods to JMAP service.
     /// - Parameter methods: One or more ``Method``s for JMAP service to perform
     /// - Parameter url: API endpoint URL from ``Session``
@@ -12,7 +12,7 @@ extension URLSession {
         let data: Data = try await data(for: try .jmapAPI(methods, url: url, token: token)).0
         throw MethodError.unknownMethod
     }
-    
+
     /// Get JMAP session object from a service provider.
     /// - Parameter host: Host name of the JMAP service provider; e.g., `api.fastmail.com`
     /// - Parameter token: OAuth bearer token to authenticate with service provider

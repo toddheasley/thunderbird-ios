@@ -3,14 +3,14 @@ import Foundation
 public struct Mailbox: CustomStringConvertible, Decodable, Identifiable {
     public enum Role: String, CaseIterable, CustomStringConvertible, Decodable, Identifiable {
         case inbox, archive, drafts, sent, junk, trash
-        
+
         // MARK: CustomStringConvertible
         public var description: String { rawValue }
-        
+
         // MARK:  Identifiable
         public var id: String { rawValue }
     }
-    
+
     public struct Rights: Decodable {
         public let mayReadItems: Bool
         public let mayAddItems: Bool
@@ -22,7 +22,7 @@ public struct Mailbox: CustomStringConvertible, Decodable, Identifiable {
         public let mayDelete: Bool
         public let maySubmit: Bool
     }
-    
+
     public let name: String
     public let parentID: String?
     public let role: Role?
@@ -32,14 +32,14 @@ public struct Mailbox: CustomStringConvertible, Decodable, Identifiable {
     public let unreadEmails: Int
     public let unreadThreads: Int
     public let isSubscribed: Bool
-    
+
     public var rights: Rights { myRights }
-    
+
     let myRights: Rights
-    
+
     // MARK: CustomStringConvertible
     public var description: String { name }
-    
+
     // MARK:  Identifiable
     public let id: String
 }
@@ -47,7 +47,7 @@ public struct Mailbox: CustomStringConvertible, Decodable, Identifiable {
 extension Mailbox {
     struct GetMethod: Method {
         let ids: [String]?
-        
+
         init(_ accountID: String, ids: [String]? = nil, id: UUID = UUID()) throws {
             guard !accountID.isEmpty else {
                 throw MethodError.accountNotFound
@@ -56,12 +56,12 @@ extension Mailbox {
             self.ids = ids
             self.id = id
         }
-        
+
         // MARK: Method
         static let name: String = "\(prefix)get"
         let accountID: String
         let id: UUID
-        
+
         var object: [Any] {
             [
                 Self.name,
@@ -73,6 +73,6 @@ extension Mailbox {
             ]
         }
     }
-    
+
     static let prefix: String = "Mailbox/"
 }

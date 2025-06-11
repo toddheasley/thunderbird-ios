@@ -1,7 +1,7 @@
 import Foundation
 
 extension URLRequest {
-    
+
     /// Request one or more operations from a  JMAP service.
     /// - Parameter methods: One or more ``Method``s for JMAP service to perform
     /// - Parameter url: API endpoint URL from ``Session``
@@ -21,7 +21,6 @@ extension URLRequest {
         request.httpBody = try JSONSerialization.data(withJSONObject: object)
         return request
     }
-    
 
     /// Request JMAP session object from a service provider.
     /// - Parameter host: Host name of the JMAP service provider; e.g., `api.fastmail.com`
@@ -65,7 +64,7 @@ extension URLRequest {
 }
 
 private extension [any Method] {
-    
+
     /// Aggregate capabilities for each method in request.
     var using: [Capability.Key] {
         var using: Set<Capability.Key> = []
