@@ -16,6 +16,26 @@ extension Method {
     public var using: [Capability.Key] { [.core, .mail] }
 }
 
+public struct MethodResponse: Identifiable {
+    public let name: String
+    public let data: Data
+    public let notFound: [String]
+    
+    init(_ name: String, data: Data, notFound: [String], id: UUID) {
+        self.name = name
+        self.data = data
+        self.notFound = notFound
+        self.id = id
+    }
+    
+    public func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
+        try JSONDecoder().decode(type, from: data)
+    }
+    
+    // MARK: Identifiable
+    public let id: UUID
+}
+
 public enum MethodError: String, CaseIterable, CustomStringConvertible, Decodable, Error, Identifiable {
     case accountNotFound, accountNotSupportedByMethod, accountReadOnly
     case forbidden

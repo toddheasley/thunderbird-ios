@@ -5,9 +5,9 @@ import Foundation
 struct MethodErrorTests {
     @Test func decoderInit() throws {
         let errors: [MethodError] = try JSONDecoder().decode([MethodError].self, from: data)
-        #expect(errors.count == 2)
-        #expect(errors.first == .accountNotSupportedByMethod)
-        #expect(errors.last == .unknownMethod)
+        try #require(errors.count == 2)
+        #expect(errors[0] == .accountNotSupportedByMethod)
+        #expect(errors[1] == .unknownMethod)
     }
 }
 

@@ -61,4 +61,4 @@ struct URLRequestTests {
     }
 }
 
-let url: URL = URL(string: "https://api.fastmail.com/jmap/api/")!
+private let url: URL = URL(string: "https://api.fastmail.com/jmap/api/")!
