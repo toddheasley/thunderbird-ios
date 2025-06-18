@@ -55,6 +55,13 @@
       }
     },
     {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "SRVTests"
+          }
+        ]
+      },
       "target" : {
         "containerPath" : "container:..\/Core",
         "identifier" : "AutodiscoverTests",
