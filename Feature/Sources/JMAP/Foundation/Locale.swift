@@ -2,9 +2,9 @@ import Foundation
 
 extension Locale {
 
-    /// Generate a weighted `Accept-Language` HTTP request header value from device user's configured locales.
+    /// Generate a weighted `Accept-Language` HTTP request header from device user's configured locales.
     ///
-    /// JMAP server should [localize user-facing strings](https://jmap.io/spec-core.html#localisation-of-user-visible-strings) according to header value.
+    /// JMAP service should [localize user-facing strings](https://jmap.io/spec-core.html#localisation-of-user-visible-strings) according to header value.
     static func acceptedLanguages() -> String {
         var languages: [String] = []
         for (index, language) in preferredLanguages.prefix(5).enumerated() {

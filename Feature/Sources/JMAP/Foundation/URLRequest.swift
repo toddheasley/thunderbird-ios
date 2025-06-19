@@ -65,7 +65,7 @@ extension URLRequest {
 
 private extension [any Method] {
 
-    /// Aggregate capabilities for each method in request.
+    /// Compile unique list of all capabilities used by methods in request.
     var using: [Capability.Key] {
         var using: Set<Capability.Key> = []
         for key in map({ $0.using }).joined() {

@@ -1,6 +1,10 @@
 import Foundation
 
 extension URL {
+
+    /// Generate ``Session`` URL from (autodiscovery) components.
+    ///
+    /// All additional URLs and URL templates needed to implement a complete JMAP service are provided in the ``Session``.
     static func jmapSession(_ host: String, port: Int? = nil) throws -> Self {
         try jmap(host, port: port, path: "jmap/session")
     }

@@ -38,7 +38,9 @@ public struct Session: CustomStringConvertible, Decodable {
     }
 
     @discardableResult public func uploadURL(account id: String) throws -> URL {
-        let uploadURLTemplate: String = uploadURLTemplate.replacingOccurrences(of: "{accountId}", with: id)
+        let uploadURLTemplate: String = uploadURLTemplate.replacingOccurrences([
+            ("{accountId}", id)
+        ])
         guard !id.isEmpty,
             let url: URL = URL(string: uploadURLTemplate)
         else {

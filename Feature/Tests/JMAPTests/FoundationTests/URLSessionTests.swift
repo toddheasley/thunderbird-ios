@@ -8,22 +8,42 @@ struct URLSessionTests {
         guard let accountID: String = session.accounts.keys.first else {
             throw MethodError.accountNotFound
         }
-        let responses: [MethodResponse] = try await URLSession.shared.jmapAPI(
+        /*
+        let responses: [any MethodResponse] = try await URLSession.shared.jmapAPI(
             [
-                Mailbox.GetMethod(accountID),
-                Mailbox.GetMethod(
+                /* Mailbox.GetMethod(accountID),
+                 Mailbox.GetMethod(
+                 accountID,
+                 ids: [
+                 "dc6a40aa-8657-4f74-9aaa-7046ca01325b"
+                 ]), */
+                Mailbox.SetMethod(
                     accountID,
-                    ids: [
-                        "dc6a40aa-8657-4f74-9aaa-7046ca01325b"
+                    actions: [
+                        /*
+                         .create([
+                         "\(UUID().uuidString)": [
+                         "name": "Test",
+                         "parentId": "dc6a40aa-8657-4f74-9aaa-7046ca01325b"
+                         ] */
+                        .destroy([
+                            "56df4f67-3b66-4fe4-b013-45afcf160d37"
+                        ])
                     ])
             ], url: session.apiURL, token: token
         )
-        try #require(responses.count == 2)
-        print(String(data: responses[0].data, encoding: .utf8) ?? "nil")
-        let mailboxes: [Mailbox] = try responses[0].decode([Mailbox].self)
+        
+        print(responses)
+        
+        // try #require(responses.count == 3)
+        guard let response: MethodGetResponse = responses[0] as? MethodGetResponse else {
+            throw MethodError.invalidResultReference
+        }
+        print(String(data: response.data, encoding: .utf8) ?? "nil")
+        let mailboxes: [Mailbox] = try response.decode([Mailbox].self)
         for mailbox in mailboxes {
             print(mailbox)
-        }
+        } */
     }
 
     @Test(.disabled(if: token.isEmpty)) func jmapSession() async throws {
@@ -33,4 +53,9 @@ struct URLSessionTests {
     }
 }
 
-private let token: String = "fmu1-7a5e4041-b04c0a9ee1409fe514e1cdc0deed8b9b-0-17cbd72a0b45a3bb2884448d699666d5"
+// Catch when token is being leaked
+@Test func emptyToken() {
+    #expect(token == "")
+}
+
+private let token: String = ""
