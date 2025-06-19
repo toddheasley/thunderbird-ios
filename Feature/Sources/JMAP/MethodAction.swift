@@ -1,3 +1,5 @@
+
+/// Possible `set` ``Method`` mutations, part of [JMAP corel](https://jmap.io/spec-core.html#set)
 public enum MethodAction: CustomStringConvertible {
     case create([String: Any])
     case update([String: Any])

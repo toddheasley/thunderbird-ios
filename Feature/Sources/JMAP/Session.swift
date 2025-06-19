@@ -1,5 +1,6 @@
 import Foundation
 
+/// Sessions include details about the data and capabilities the server can provide to the client, part of [JMAP core.](https://jmap.io/spec-core.html#the-jmap-session-resource)
 public struct Session: CustomStringConvertible, Decodable {
     public let username: String
     public let accounts: [String: Account]

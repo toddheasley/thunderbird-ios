@@ -1,5 +1,6 @@
 import Foundation
 
+/// Errors describing impossible or ineligible``Method`` operation, part of [JMAP core](https://jmap.io/spec-core.html#errors)
 public enum MethodError: String, CaseIterable, CustomStringConvertible, Decodable, Error, Identifiable {
     case accountNotFound, accountNotSupportedByMethod, accountReadOnly
     case forbidden

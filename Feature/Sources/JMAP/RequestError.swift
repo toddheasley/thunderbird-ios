@@ -1,3 +1,5 @@
+
+/// Request-level configuration errors, part of [JMAP core](https://jmap.io/spec-core.html#errors)
 public struct RequestError: Error, Decodable, CustomStringConvertible {
     public enum Code: String, CaseIterable, Codable, CustomStringConvertible, Identifiable, Sendable {
         case limit = "urn:ietf:params:jmap:error:limit"

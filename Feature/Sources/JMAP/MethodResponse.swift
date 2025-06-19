@@ -1,5 +1,6 @@
 import Foundation
 
+/// Standard ``Method`` responses with generic response components modeled, part of [JMAP core](https://jmap.io/spec-core.html#the-response-object)
 public protocol MethodResponse: Identifiable {
     var name: String { get }
     var id: UUID { get }

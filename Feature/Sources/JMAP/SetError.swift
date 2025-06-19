@@ -1,3 +1,5 @@
+
+/// Errors encountered during a `set` ``Method`` operation, returned exclusively in ``MethodResponse``
 public enum SetError: String, CaseIterable, CustomStringConvertible, Error, Identifiable {
     case forbidden
     case invalidPatch, invalidProperties

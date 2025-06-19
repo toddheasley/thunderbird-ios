@@ -11,12 +11,16 @@ extension URLSession {
     public func jmapAPI(_ methods: [any Method], url: URL, token: String) async throws -> [any MethodResponse] {
         let data: Data = try await data(for: try .jmapAPI(methods, url: url, token: token)).0
         let object: Any = try JSONSerialization.jsonObject(with: data)
+        
+        // Unwrap and map responses from "envelope" array
         guard let object: [String: Any] = object as? [String: Any],
             let responses: [[Any]] = object["methodResponses"] as? [[Any]], !responses.isEmpty
         else {
             throw URLError(.cannotDecodeContentData)
         }
         return try responses.map { response in
+            
+            // Parse each raw response into return response types
             guard response.count == 3,
                 let name: String = response[0] as? String, name.contains("/"),
                 let object: [String: Any] = response[1] as? [String: Any],
@@ -26,25 +30,35 @@ extension URLSession {
             }
             switch name.components(separatedBy: "/").last {
             case "get":
+                
+                // Map generic parts of [get response.](https://jmap.io/spec-core.html#get)
                 guard let notFound: [String] = object["notFound"] as? [String],
                     let list: [Any] = object["list"] as? [Any]
                 else {
                     throw URLError(.cannotDecodeContentData)
                 }
+                
+                // Re-encode as `Decodable` data; now synthesized `Codable` conformance can be used for decoding models.
                 let data: Data = try JSONSerialization.data(withJSONObject: list)
                 return MethodGetResponse(name, data: data, notFound: notFound, id: id)
             case "set":
-                print(object)
+                
+                // Map generic parts of [set response.](https://jmap.io/spec-core.html#set)
+                func mapErrorValues(for key: String) -> [String: SetError] {
+                    (object[key] as? [String: Any] ?? [:])
+                        .mapValues { SetError($0) ?? .notFound }
+                }
+                
+                let created: [String: Any] = object["created"] as? [String: Any] ?? [:]
+                let updated: [String] = (object["updated"] as? [String: Any] ?? [:]).keys.map { "\($0)" }
+                let destroyed: [String] = object["destroyed"] as? [String] ?? []
                 return MethodSetResponse(
-                    created: object["created"] as? [String: Any] ?? [:],
-                    updated: (object["updated"] as? [String: Any] ?? [:]).keys.map { "\($0)" },
-                    destroyed: object["destroyed"] as? [String] ?? [],
-                    notCreated: (object["notCreated"] as? [String: Any] ?? [:])
-                        .mapValues { SetError($0) ?? .notFound },
-                    notUpdated: (object["notUpdated"] as? [String: Any] ?? [:])
-                        .mapValues { SetError($0) ?? .notFound },
-                    notDestroyed: (object["notDestroyed"] as? [String: Any] ?? [:])
-                        .mapValues { SetError($0) ?? .notFound },
+                    created: created,
+                    updated: updated,
+                    destroyed: destroyed,
+                    notCreated: mapErrorValues(for: "notCreated"),
+                    notUpdated: mapErrorValues(for: "notUpdated"),
+                    notDestroyed: mapErrorValues(for: "notDestroyed"),
                     name: name,
                     id: id
                 )

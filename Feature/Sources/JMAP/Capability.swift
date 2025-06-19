@@ -1,3 +1,5 @@
+
+/// Capabilities are a component of the JMAP ``Session`` object, part of [JMAP core.](https://jmap.io/spec-core.html#the-jmap-session-resource)
 public struct Capability: Decodable {
     public enum Key: String, CaseIterable, Codable, CustomStringConvertible, Identifiable, Sendable {
         case calendars = "urn:ietf:params:jmap:calendars"
@@ -45,5 +47,4 @@ public struct Capability: Decodable {
 
     // MARK: Submission
     public let maxDelayedSend: Int?
-    // public let submissionExtensions: [String]?
 }
