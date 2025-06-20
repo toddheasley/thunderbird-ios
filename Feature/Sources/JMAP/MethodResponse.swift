@@ -26,6 +26,24 @@ public struct MethodGetResponse: MethodResponse {
     public let id: UUID
 }
 
+public struct MethodQueryResponse: MethodResponse {
+    public let ids: [String]
+    public let position: Int
+    public let total: Int
+
+    init(_ name: String, ids: [String], position: Int, total: Int, id: UUID) {
+        self.name = name
+        self.ids = ids
+        self.position = position
+        self.total = total
+        self.id = id
+    }
+
+    // MARK: MethodResponse
+    public let name: String
+    public let id: UUID
+}
+
 public struct MethodSetResponse: MethodResponse {
     public let created: [String: Any]
     public let updated: [String]
@@ -33,6 +51,26 @@ public struct MethodSetResponse: MethodResponse {
     public let notCreated: [String: SetError]
     public let notUpdated: [String: SetError]
     public let notDestroyed: [String: SetError]
+
+    init(
+        _ name: String,
+        created: [String: Any],
+        updated: [String],
+        destroyed: [String],
+        notCreated: [String: SetError],
+        notUpdated: [String: SetError],
+        notDestroyed: [String: SetError],
+        id: UUID
+    ) {
+        self.name = name
+        self.created = created
+        self.updated = updated
+        self.destroyed = destroyed
+        self.notCreated = notCreated
+        self.notUpdated = notUpdated
+        self.notDestroyed = notDestroyed
+        self.id = id
+    }
 
     // MARK: MethodResponse
     public let name: String
