@@ -16,3 +16,24 @@ extension Method {
     // MARK: Method
     public var using: [Capability.Key] { [.core, .mail] }
 }
+
+struct EchoMethod: Method {
+    init(id: UUID = UUID()) throws {
+        self.id = id
+    }
+
+    // MARK: Method
+    static let name: String = "Core/echo"
+    let accountID: String = ""
+    let id: UUID
+
+    var object: [Any] {
+        [
+            Self.name,
+            [
+                "hello": true
+            ],
+            id.uuidString
+        ]
+    }
+}

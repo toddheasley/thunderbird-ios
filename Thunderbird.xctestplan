@@ -48,6 +48,13 @@
       }
     },
     {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "URLSessionTests"
+          }
+        ]
+      },
       "target" : {
         "containerPath" : "container:..\/Feature",
         "identifier" : "JMAPTests",

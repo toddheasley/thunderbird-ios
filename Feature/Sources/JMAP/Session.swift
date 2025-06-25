@@ -1,7 +1,7 @@
 import Foundation
 
 /// Sessions include details about the data and capabilities the server can provide to the client, part of [JMAP core.](https://jmap.io/spec-core.html#the-jmap-session-resource)
-public struct Session: CustomStringConvertible, Decodable {
+public struct Session: CustomStringConvertible, Decodable, Equatable, Sendable {
     public let username: String
     public let accounts: [String: Account]
     public let primaryAccounts: [Capability.Key: String]
@@ -80,6 +80,11 @@ public struct Session: CustomStringConvertible, Decodable {
 
     private enum Key: CodingKey {
         case username, accounts, primaryAccounts, capabilities, eventSourceUrl, uploadUrl, downloadUrl, apiUrl
+    }
+
+    // MARK: Equatable
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.username == rhs.username
     }
 }
 

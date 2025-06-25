@@ -1,8 +1,8 @@
 import Foundation
 
 /// Mailboxes are the primary mechanism for organizing ``Email`` within an ``Account``, part of [JMAP mail.](https://jmap.io/spec-mail.html#mailboxes)
-public struct Mailbox: CustomStringConvertible, Decodable, Identifiable {
-    public enum Role: String, CaseIterable, CustomStringConvertible, Decodable, Identifiable {
+public struct Mailbox: CustomStringConvertible, Decodable, Identifiable, Sendable {
+    public enum Role: String, CaseIterable, CustomStringConvertible, Decodable, Identifiable, Sendable {
         case inbox, archive, drafts, sent, junk, trash
 
         // MARK: CustomStringConvertible
@@ -12,7 +12,7 @@ public struct Mailbox: CustomStringConvertible, Decodable, Identifiable {
         public var id: String { rawValue }
     }
 
-    public struct Rights: Decodable {
+    public struct Rights: Decodable, Sendable {
         public let mayReadItems: Bool
         public let mayAddItems: Bool
         public let mayRemoveItems: Bool

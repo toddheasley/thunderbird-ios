@@ -42,7 +42,7 @@ extension URLSession {
                 let data: Data = try JSONSerialization.data(withJSONObject: list)
                 return MethodGetResponse(name, data: data, notFound: notFound, id: id)
             case "query":
-                
+
                 // Map generic parts of [query response.](https://jmap.io/spec-core.html#query)
                 guard let ids: [String] = object["ids"] as? [String],
                     let position: Int = object["position"] as? Int,
@@ -72,6 +72,11 @@ extension URLSession {
                     notDestroyed: mapErrorValues(for: "notDestroyed"),
                     id: id
                 )
+            case "echo":
+                guard object["hello"] as? Bool != nil else {
+                    throw URLError(.cannotDecodeContentData)
+                }
+                return MethodEchoResponse(name, id: id)
             default:
                 throw URLError(.cannotDecodeContentData)
             }
@@ -83,8 +88,13 @@ extension URLSession {
     /// - Parameter token: OAuth bearer token to authenticate with service provider
     /// - Returns: ``Session`` object containing available account(s), capabilities and service URLs
     public func jmapSession(_ host: String, port: Int? = nil, token: String) async throws -> Session {
-        let data: Data = try await data(for: try .jmapSession(host, port: port, token: token)).0
-        let session: Session = try JSONDecoder().decode(Session.self, from: data)
-        return session
+        let response: (Data, URLResponse) = try await data(for: try .jmapSession(host, port: port, token: token))
+        switch (response.1 as? HTTPURLResponse)?.statusCode {
+        case 401:
+            throw URLError(.userAuthenticationRequired)
+        default:
+            let session: Session = try JSONDecoder().decode(Session.self, from: response.0)
+            return session
+        }
     }
 }

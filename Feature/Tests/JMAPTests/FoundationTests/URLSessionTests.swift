@@ -17,7 +17,7 @@ struct URLSessionTests {
         )
         try #require(responses.count == 1)
         guard let response: MethodGetResponse = responses[0] as? MethodGetResponse else {
-            throw MethodError.invalidResultReference
+            throw MethodError.invalidArguments
         }
         let mailboxes: [Mailbox] = try response.decode([Mailbox].self)
         #expect(mailboxes.count > 0)

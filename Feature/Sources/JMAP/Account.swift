@@ -1,7 +1,7 @@
 import Foundation
 
 /// Accounts are a component of the JMAP ``Session`` object, part of [JMAP core.](https://jmap.io/spec-core.html#the-jmap-session-resource)
-public struct Account: CustomStringConvertible, Decodable {
+public struct Account: CustomStringConvertible, Decodable, Sendable {
     public let name: String
     public let capabilities: [Capability.Key: Capability]
     public let isReadOnly: Bool

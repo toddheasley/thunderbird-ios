@@ -76,3 +76,14 @@ public struct MethodSetResponse: MethodResponse {
     public let name: String
     public let id: UUID
 }
+
+public struct MethodEchoResponse: MethodResponse {
+    init(_ name: String, id: UUID) {
+        self.name = name
+        self.id = id
+    }
+
+    // MARK: MethodResponse
+    public let name: String
+    public let id: UUID
+}
