@@ -3,6 +3,7 @@ import Account
 
 struct WelcomeScreen: View {
     @Environment(\.openURL) private var openURL
+    @State private var isPresented: Bool = false
 
     // MARK: View
     var body: some View {
@@ -19,13 +20,21 @@ struct WelcomeScreen: View {
                 .padding()
             Spacer()
             Spacer()
-            Button(action: {
-                openURL(.donate)
-            }) {
+            Button(action: {}) {
                 Text("onboarding_welcome_start_button")
                     .padding(5.5)
             }
             .buttonStyle(.borderedProminent)
+            .simultaneousGesture(
+                LongPressGesture().onEnded { result in
+                    isPresented.toggle()
+                }
+            )
+            .simultaneousGesture(
+                TapGesture().onEnded { _ in
+                    openURL(.donate)
+                }
+            )
             .padding()
             Spacer()
             Text("onboarding_welcome_developed_by")
@@ -36,6 +45,10 @@ struct WelcomeScreen: View {
         }
         .background {
             Background()
+        }
+        .sheet(isPresented: $isPresented) {
+            JMAPView()
+                .presentationDragIndicator(.visible)
         }
     }
 }
