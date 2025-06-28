@@ -12,7 +12,6 @@ public enum SetError: String, CaseIterable, CustomStringConvertible, Error, Iden
     case tooLarge
     case willDestroy
 
-    /// Decode from ``MethodResponse`` dictionary or string
     init?(_ value: Any) {
         if let value: [String: Any] = value as? [String: Any],
             let error: Self = Self(rawValue: value["type"] as? String ?? "")
