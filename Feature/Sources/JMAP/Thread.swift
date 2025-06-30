@@ -3,12 +3,12 @@ import Foundation
 /// Threads group replies to an ``Email`` message , part of [JMAP mail.](https://jmap.io/spec-mail.html#threads)
 public struct Thread: Decodable, Identifiable {
     public let emailIDs: [String]
-    
+
     // MARK: Decodable
     public init(from decoder: any Decoder) throws {
         let container: KeyedDecodingContainer<Key> = try decoder.container(keyedBy: Key.self)
         emailIDs = try container.decode([String].self, forKey: .emailIds)
-        id = try container.decode(String.self, forKey: Key.id)
+        id = try container.decode(String.self, forKey: .id)
     }
 
     private enum Key: CodingKey {

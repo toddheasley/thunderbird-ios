@@ -6,9 +6,9 @@ struct JSONDecoderTests {
     @Test func dateDecodingStrategy() throws {
         let dates: [Date] = try JSONDecoder(date: .iso8601).decode([Date].self, from: data)
         try #require(dates.count == 3)
-        #expect(dates[0].description == "2025-06-27 20:52:45 +0000")
-        #expect(dates[1].description == "2025-06-28 15:13:45 +0000")
-        #expect(dates[2].description == "2025-06-28 15:13:45 +0000")
+        #expect(dates[0].timeIntervalSince1970 == 1751057565.0)
+        #expect(dates[1].timeIntervalSince1970 == 1751123625.0)
+        #expect(dates[2].timeIntervalSince1970 == 1751123625.0)
     }
 }
 
