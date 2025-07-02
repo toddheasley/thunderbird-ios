@@ -110,7 +110,7 @@ extension Mailbox {
             ]
         }
     }
-    
+
     struct QueryMethod: Method {
         let filter: Filter?
         let sortAsTree: Bool
