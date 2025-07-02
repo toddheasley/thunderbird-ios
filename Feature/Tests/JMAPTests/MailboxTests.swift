@@ -54,6 +54,22 @@ struct MailboxTests {
                 ]
             ).actions.count == 1)
     }
+    
+    @Test func filterConditionObject() {
+        #expect(Mailbox.Condition.parentId("M56e3027f5b7cdfa3c2ce53ff").object["parentId"] as? String == "M56e3027f5b7cdfa3c2ce53ff")
+        #expect(Mailbox.Condition.name("Archived").object["name"] as? String == "Archived")
+        #expect(Mailbox.Condition.role(.sent).object["role"] as? String == "sent")
+        #expect(Mailbox.Condition.hasAnyRole(false).object["hasAnyRole"] as? Bool == false)
+        #expect(Mailbox.Condition.isSubscribed(true).object["isSubscribed"] as? Bool == true)
+    }
+    
+    @Test func filterConditionDescription() {
+        #expect(Mailbox.Condition.parentId("M56e3027f5b7cdfa3c2ce53ff").description == "parentId: M56e3027f5b7cdfa3c2ce53ff")
+        #expect(Mailbox.Condition.name("Archived").description == "name: Archived")
+        #expect(Mailbox.Condition.role(.sent).description == "role: sent")
+        #expect(Mailbox.Condition.hasAnyRole(false).description == "hasAnyRole: false")
+        #expect(Mailbox.Condition.isSubscribed(true).description == "isSubscribed: true")
+    }
 }
 
 // swift-format-ignore

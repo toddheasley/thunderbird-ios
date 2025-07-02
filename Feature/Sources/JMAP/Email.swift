@@ -290,3 +290,83 @@ extension Email {
 
     static let prefix: String = "Email/"
 }
+
+extension Email {
+    public enum Condition: Filter.Condition {
+        case inMailbox(String)
+        case inMailboxOtherThan([String])
+        case before(Date)
+        case after(Date)
+        case minSize(Int)
+        case maxSize(Int)
+        case allInThreadHaveKeyword(String)
+        case someInThreadHaveKeyword(String)
+        case noneInThreadHaveKeyword(String)
+        case hasKeyword(String)
+        case notKeyword(String)
+        case hasAttachment(Bool)
+        case text(String)
+        case from(String)
+        case to(String)
+        case cc(String)
+        case bcc(String)
+        case subject(String)
+        case body(String)
+        case header([String])
+
+        // MARK: Filter.Condition
+        public var key: String {
+            switch self {
+            case .inMailbox: "inMailbox"
+            case .inMailboxOtherThan: "inMailboxOtherThan"
+            case .before: "before"
+            case .after: "after"
+            case .minSize: "minSize"
+            case .maxSize: "maxSize"
+            case .allInThreadHaveKeyword: "allInThreadHaveKeyword"
+            case .someInThreadHaveKeyword: "someInThreadHaveKeyword"
+            case .noneInThreadHaveKeyword: "noneInThreadHaveKeyword"
+            case .hasKeyword: "hasKeyword"
+            case .notKeyword: "notKeyword"
+            case .hasAttachment: "hasAttachment"
+            case .text: "text"
+            case .from: "from"
+            case .to: "to"
+            case .cc: "cc"
+            case .bcc: "bcc"
+            case .subject: "subject"
+            case .body: "body"
+            case .header: "header"
+            }
+        }
+
+        public var value: Any {
+            switch self {
+            case .inMailbox(let string),
+                .allInThreadHaveKeyword(let string),
+                .someInThreadHaveKeyword(let string),
+                .noneInThreadHaveKeyword(let string),
+                .hasKeyword(let string),
+                .notKeyword(let string),
+                .text(let string),
+                .from(let string),
+                .to(let string),
+                .cc(let string),
+                .bcc(let string),
+                .subject(let string),
+                .body(let string):
+                string
+            case .inMailboxOtherThan(let strings),
+                .header(let strings):
+                strings
+            case .before(let date),
+                .after(let date):
+                ISO8601DateFormatter().string(from: date)
+            case .minSize(let bytes),
+                .maxSize(let bytes):
+                bytes
+            case .hasAttachment(let bool): bool
+            }
+        }
+    }
+}

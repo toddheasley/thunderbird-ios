@@ -129,6 +129,36 @@ struct EmailTests {
         #expect(emails[1].hasAttachment == false)
         #expect(emails[1].preview == "This is a test. On Fri, Jun 27, 2025, at 4:52 PM, Todd Heasley wrote:")
     }
+    
+    @Test func filterConditionObject() {
+        let date: Date = Date(timeIntervalSince1970: 0.0)
+        #expect(Email.Condition.inMailbox("M56e3027f5b7cdfa3c2ce53ff").object["inMailbox"] as? String == "M56e3027f5b7cdfa3c2ce53ff")
+        #expect(
+            Email.Condition.inMailboxOtherThan([
+                "M56e3027f5b7cdfa3c2ce53ff",
+                "Me542737e24136513aaee4d41"
+            ]).object["inMailboxOtherThan"] as? [String] == [
+                "M56e3027f5b7cdfa3c2ce53ff",
+                "Me542737e24136513aaee4d41"
+            ])
+        #expect(Email.Condition.before(date).object["before"] as? String == "1970-01-01T00:00:00Z")
+        #expect(Email.Condition.maxSize(5_242_880).object["maxSize"] as? Int == 5_242_880)
+        #expect(Email.Condition.allInThreadHaveKeyword("$important").object["allInThreadHaveKeyword"] as? String == "$important")
+        #expect(Email.Condition.hasAttachment(true).object["hasAttachment"] as? Bool == true)
+    }
+    
+    @Test func filterConditionDescription() {
+        #expect(Email.Condition.inMailbox("M56e3027f5b7cdfa3c2ce53ff").description == "inMailbox: M56e3027f5b7cdfa3c2ce53ff")
+        #expect(
+            Email.Condition.inMailboxOtherThan([
+                "M56e3027f5b7cdfa3c2ce53ff",
+                "Me542737e24136513aaee4d41"
+            ]).description == "inMailboxOtherThan: [\"M56e3027f5b7cdfa3c2ce53ff\", \"Me542737e24136513aaee4d41\"]")
+        #expect(Email.Condition.after(Date(timeIntervalSince1970: 0.0)).description == "after: 1970-01-01T00:00:00Z")
+        #expect(Email.Condition.minSize(1024).description == "minSize: 1024")
+        #expect(Email.Condition.noneInThreadHaveKeyword("$important").description == "noneInThreadHaveKeyword: $important")
+        #expect(Email.Condition.hasAttachment(true).description == "hasAttachment: true")
+    }
 }
 
 // swift-format-ignore
