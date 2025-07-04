@@ -3,13 +3,13 @@ import SwiftUI
 
 @main
 struct App: SwiftUI.App {
-    @State private var jmapDemo: JMAPDemo = JMAPDemo()
+    @State private var jmap: JMAPObject = JMAPObject()
 
     // MARK: App
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(jmapDemo)
+                .environment(jmap)
         }
     }
 }

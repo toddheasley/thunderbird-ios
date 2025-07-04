@@ -2,8 +2,8 @@ import Foundation
 import UniformTypeIdentifiers
 
 /// Email represents a single message, pre-decoded and modeled, no client-side MIME parsing required; part of [JMAP mail protocol.](https://jmap.io/spec-mail.html#emails)
-public struct Email: Decodable, Identifiable {
-    public struct Address: CustomStringConvertible, Decodable, Equatable {
+public struct Email: Decodable, Equatable, Hashable, Identifiable, Sendable {
+    public struct Address: CustomStringConvertible, Decodable, Equatable, Sendable {
         public let email: String
         public let name: String?
 
@@ -45,7 +45,7 @@ public struct Email: Decodable, Identifiable {
         public var description: String { rawValue }
     }
 
-    public struct BodyPart: Decodable, Equatable {
+    public struct BodyPart: Decodable, Equatable, Sendable {
         public let partID: String?
         public let blobID: String?
         public let size: Int
@@ -55,7 +55,7 @@ public struct Email: Decodable, Identifiable {
         public let charset: String?
         public let disposition: String?
         public let cid: String?
-        public let language: String?
+        public let language: [String]?
         public let location: String?
         public let subParts: [Self]?
 
@@ -69,7 +69,7 @@ public struct Email: Decodable, Identifiable {
             charset: String? = nil,
             disposition: String? = nil,
             cid: String? = nil,
-            language: String? = nil,
+            language: [String]? = nil,
             location: String? = nil,
             subParts: [Self]? = nil
         ) {
@@ -93,7 +93,7 @@ public struct Email: Decodable, Identifiable {
         }
     }
 
-    public struct Header: Decodable {
+    public struct Header: Decodable, Sendable {
 
     }
 
@@ -125,6 +125,7 @@ public struct Email: Decodable, Identifiable {
     // MARK: Decodable
     public init(from decoder: any Decoder) throws {
         let container: KeyedDecodingContainer<Key> = try decoder.container(keyedBy: Key.self)
+        id = try container.decode(String.self, forKey: .id)
         blobID = try container.decode(String.self, forKey: .blobId)
         threadID = try container.decode(String.self, forKey: .threadId)
         mailboxIDs = try container.decode([String: Bool].self, forKey: .mailboxIds)
@@ -148,11 +149,20 @@ public struct Email: Decodable, Identifiable {
         attachments = try container.decode([BodyPart].self, forKey: .attachments)
         hasAttachment = try container.decode(Bool.self, forKey: .hasAttachment)
         preview = try container.decode(String.self, forKey: .preview)
-        id = try container.decode(String.self, forKey: .id)
     }
 
     private enum Key: CodingKey {
         case blobId, threadId, mailboxIds, keywords, size, receivedAt, sentAt, messageId, inReplyTo, references, sender, from, replyTo, to, cc, bcc, subject, bodyStructure, textBody, htmlBody, attachments, hasAttachment, preview, id
+    }
+
+    // MARK: Equatable
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    // MARK: Hashable
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 
     // MARK: Identifiable

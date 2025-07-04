@@ -3,42 +3,76 @@
 import SwiftUI
 
 @MainActor
-@Observable final class JMAPDemo: Sendable {
-    private(set) var mailboxes: [Mailbox] = []
+@Observable final class JMAPObject: Sendable {
     private(set) var session: Session? = nil
-    private(set) var isRefreshing: Bool = false
     var error: Error? = nil
 
     var token: String = "" {
         didSet {
             URLCredentialStorage.shared.set(token, for: .user, space: .account)
-            refresh()
+            Task {
+                await session()
+            }
         }
     }
 
     init() {
         token = URLCredentialStorage.shared.password(for: .user, space: .account) ?? ""
-        refresh()
+        Task {
+            await session()
+        }
     }
 
-    func refresh() {
+    func thread(for email: Email) async -> [Email] {
+        do {
+            guard let url: URL = session?.apiURL,
+                let id: String = session?.accounts.first?.key
+            else {
+                throw URLError(.cannotConnectToHost)
+            }
+            return try await URLSession.shared.thread(token, url: url, for: email, account: id)
+        } catch {
+            self.error = error
+            return []
+        }
+    }
+
+    func emails(in mailbox: Mailbox) async -> [Email] {
+        do {
+            guard let url: URL = session?.apiURL,
+                let id: String = session?.accounts.first?.key
+            else {
+                throw URLError(.cannotConnectToHost)
+            }
+            return try await URLSession.shared.emails(token, url: url, in: mailbox, account: id)
+        } catch {
+            self.error = error
+            return []
+        }
+    }
+
+    func mailboxes() async -> [Mailbox] {
+        do {
+            guard let url: URL = session?.apiURL,
+                let id: String = session?.accounts.first?.key
+            else {
+                throw URLError(.cannotConnectToHost)
+            }
+            return try await URLSession.shared.mailboxes(token, url: url, account: id)
+        } catch {
+            self.error = error
+            return []
+        }
+    }
+
+    func session() async {
         session = nil
         error = nil
         guard !token.isEmpty else { return }
-        isRefreshing = true
-        Task {
-            do {
-                session = try await URLSession.shared.session(token)
-                guard let url: URL = session?.apiURL,
-                    let id: String = session?.accounts.first?.key
-                else {
-                    throw URLError(.cannotConnectToHost)
-                }
-                mailboxes = try await URLSession.shared.mailboxes(token, url: url, account: id)
-            } catch {
-                self.error = error
-            }
-            isRefreshing = false
+        do {
+            session = try await URLSession.shared.session(token)
+        } catch {
+            self.error = error
         }
     }
 }
@@ -66,11 +100,15 @@ extension Filter {
 }
 
 extension URLSession {
-    func threads(_ token: String, url: URL, ids: [String], account id: String) async throws -> [Email] {
+    func thread(_ token: String, url: URL, for email: Email, account id: String) async throws -> [Email] {
         guard
             let response: MethodGetResponse = try await jmapAPI(
                 [
-                    Thread.GetMethod(id, ids: ids)
+                    Thread.GetMethod(
+                        id,
+                        ids: [
+                            email.threadID
+                        ])
                 ], url: url, token: token
             ).first as? MethodGetResponse
         else {
@@ -85,11 +123,11 @@ extension URLSession {
         return try await emails(token, url: url, ids: ids, account: id)
     }
 
-    func emails(_ token: String, url: URL, in mailboxID: String, account id: String) async throws -> [Email] {
+    func emails(_ token: String, url: URL, in mailbox: Mailbox, account id: String) async throws -> [Email] {
         guard
             let response: MethodQueryResponse = try await jmapAPI(
                 [
-                    Email.QueryMethod(id, filter: .inMailbox(mailboxID))
+                    Email.QueryMethod(id, filter: .inMailbox(mailbox.id))
                 ], url: url, token: token
             ).first as? MethodQueryResponse
         else {
