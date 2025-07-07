@@ -13,33 +13,43 @@ struct JMAPSessionView: View {
 
     // MARK: View
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10.0) {
-                Text(session.username)
-                    .bold()
-                Divider()
-                ForEach(mailboxes) { mailbox in
-                    NavigationLink(value: mailbox) {
-                        HStack {
-                            Image(systemName: mailbox.systemName)
-                            Text(mailbox.name)
+        ZStack(alignment: .bottom) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 10.0) {
+                    Text(session.username)
+                        .bold()
+                    Divider()
+                    ForEach(mailboxes) { mailbox in
+                        NavigationLink(value: mailbox) {
+                            HStack {
+                                Image(systemName: mailbox.systemName)
+                                Text(mailbox.name)
+                            }
                         }
                     }
                 }
-            }
-            .navigationDestination(for: Mailbox.self) { mailbox in
-                JMAPMailboxView(mailbox)
-            }
-            .padding()
-            .containerRelativeFrame(.horizontal)
-            .onAppear {
-                Task {
-                    mailboxes = await jmap.mailboxes()
+                .navigationDestination(for: Mailbox.self) { mailbox in
+                    JMAPMailboxView(mailbox)
+                }
+                .padding(.vertical)
+                .padding()
+                .containerRelativeFrame(.horizontal)
+                .onAppear {
+                    Task {
+                        mailboxes = await jmap.mailboxes()
+                    }
                 }
             }
-        }
-        .refreshable {
-            mailboxes = await jmap.mailboxes()
+            .refreshable {
+                mailboxes = await jmap.mailboxes()
+            }
+            Button(action: {
+                jmap.token = ""
+            }) {
+                Label("Sign out", systemImage: "xmark.circle.fill")
+            }
+            .buttonStyle(.bordered)
+            .padding()
         }
     }
 }
