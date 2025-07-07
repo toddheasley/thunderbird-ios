@@ -21,6 +21,20 @@
     },
     {
       "target" : {
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "BoltUITests",
+        "name" : "BoltUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "EditorTests",
+        "name" : "EditorTests"
+      }
+    },
+    {
+      "target" : {
         "containerPath" : "container:..\/Feature",
         "identifier" : "MailTests",
         "name" : "MailTests"
@@ -34,24 +48,24 @@
       }
     },
     {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "URLSessionTests"
+          }
+        ]
+      },
+      "target" : {
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "JMAPTests",
+        "name" : "JMAPTests"
+      }
+    },
+    {
       "target" : {
         "containerPath" : "container:..\/Feature",
         "identifier" : "IMAPTests",
         "name" : "IMAPTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "BoltUITests",
-        "name" : "BoltUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "EditorTests",
-        "name" : "EditorTests"
       }
     },
     {
