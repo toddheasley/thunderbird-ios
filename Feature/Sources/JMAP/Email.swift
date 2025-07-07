@@ -177,7 +177,7 @@ extension Email {
                     bodyProperties: BodyProperty.allCases,
                     fetchTextBodyValues: true,
                     fetchHTMLBodyValues: true,
-                    fetchAllBodyValues: true,
+                    fetchAllBodyValues: true
                 )
             }
 
