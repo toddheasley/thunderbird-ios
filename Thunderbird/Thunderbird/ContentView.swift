@@ -18,7 +18,7 @@ struct ContentView: View {
             JMAPTokenView()
                 .presentationDragIndicator(.visible)
                 .presentationDetents([
-                    .medium
+                    .height(192.0)
                 ])
         }
         .onChange(of: jmap.session) {
