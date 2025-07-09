@@ -32,6 +32,7 @@ let package: Package = Package(
             ])
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-nio-imap", from: "0.1.0"),
         .package(name: "Core", path: "../Core")
     ],
     targets: [
@@ -63,7 +64,11 @@ let package: Package = Package(
             dependencies: [
                 "JMAP"
             ]),
-        .target(name: "IMAP"),
+        .target(
+            name: "IMAP",
+            dependencies: [
+                .product(name: "NIOIMAP", package: "swift-nio-imap")
+            ]),
         .testTarget(
             name: "IMAPTests",
             dependencies: [
