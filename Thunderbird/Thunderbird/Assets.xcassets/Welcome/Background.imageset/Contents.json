@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Background.png",
+      "filename" : "WelcomeBackground.png",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "BackgroundDark.png",
+      "filename" : "WelcomeBackgroundDark.png",
       "idiom" : "universal"
     }
   ],

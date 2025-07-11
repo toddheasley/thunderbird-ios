@@ -68,18 +68,10 @@ private struct WelcomeBackground: View {
 
     // MARK: View
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Rectangle()
-                    .fill(.clear)
-                    .frame(width: geometry.size.width * 2.0)
-                Image.background
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            }
-        }
-        .containerRelativeFrame(.horizontal)
-        .ignoresSafeArea()
+        Image.background
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .ignoresSafeArea()
     }
 }
 
