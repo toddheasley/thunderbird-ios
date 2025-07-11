@@ -13,10 +13,7 @@ struct WelcomeScreen: View {
     var body: some View {
         VStack {
             Spacer()
-            Image.logo
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .accessibilityLabel("app_name")
+            WelcomeLogo()
                 .frame(height: 172.0)
             Text("onboarding_welcome_text")
                 .multilineTextAlignment(.center)
@@ -40,7 +37,7 @@ struct WelcomeScreen: View {
                 .padding()
         }
         .background {
-            Background()
+            WelcomeBackground()
         }
     }
 }
@@ -49,25 +46,45 @@ struct WelcomeScreen: View {
     @Previewable @State var getStarted: Bool = false
 
     WelcomeScreen($getStarted)
-        .sheet(isPresented: $getStarted) {
-            EmptyView()
-                .presentationDragIndicator(.visible)
-        }
 }
 
-private struct Background: View {
+private struct WelcomeLogo: View {
 
     // MARK: View
     var body: some View {
-        GeometryReader { proxy in
-            Image.background
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: proxy.size.width, height: proxy.size.height)
-                .opacity(proxy.size.width > 444.0 ? 0.0 : 1.0)
+        Image.logo
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .accessibilityLabel("app_name")
+    }
+}
+
+#Preview("Welcome Logo") {
+    WelcomeLogo()
+        .padding()
+}
+
+private struct WelcomeBackground: View {
+
+    // MARK: View
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Rectangle()
+                    .fill(.clear)
+                    .frame(width: geometry.size.width * 2.0)
+                Image.background
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            }
         }
+        .containerRelativeFrame(.horizontal)
         .ignoresSafeArea()
     }
+}
+
+#Preview("Welcome Background") {
+    WelcomeBackground()
 }
 
 private extension Image {
