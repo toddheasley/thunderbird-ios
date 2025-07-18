@@ -1,7 +1,7 @@
 import Foundation
 
 /// Mailboxes are the primary mechanism for organizing ``Email`` within an ``Account``, part of [JMAP mail.](https://jmap.io/spec-mail.html#mailboxes)
-public struct Mailbox: CustomStringConvertible, Decodable, Identifiable, Sendable {
+public struct Mailbox: CustomStringConvertible, Decodable, Equatable, Hashable, Identifiable, Sendable {
     public enum Role: String, CaseIterable, CustomStringConvertible, Decodable, Identifiable, Sendable {
         case inbox, archive, drafts, sent, junk, trash
 
@@ -77,6 +77,16 @@ public struct Mailbox: CustomStringConvertible, Decodable, Identifiable, Sendabl
     // MARK: CustomStringConvertible
     public var description: String { name }
 
+    // MARK: Equatable
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    // MARK: Hashable
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
     // MARK:  Identifiable
     public let id: String
 }
@@ -106,6 +116,48 @@ extension Mailbox {
                     "accountId": accountID,
                     "ids": ids as Any
                 ],
+                id.uuidString
+            ]
+        }
+    }
+
+    struct QueryMethod: Method {
+        let filter: Filter?
+        let sortAsTree: Bool
+        let filterAsTree: Bool
+
+        init(_ accountID: String, filter: Filter? = nil, sortAsTree: Bool = false, filterAsTree: Bool = false, id: UUID = UUID()) throws {
+            guard !accountID.isEmpty else {
+                throw MethodError.accountNotFound
+            }
+            self.accountID = accountID
+            self.filter = filter
+            self.sortAsTree = sortAsTree
+            self.filterAsTree = filterAsTree
+            self.id = id
+        }
+
+        private var query: [String: Any] {
+            var query: [String: Any] = [
+                "accountId": accountID,
+                "sortAsTree": sortAsTree,
+                "filterAsTree": filterAsTree
+            ]
+            if let filter {
+                query["filter"] = filter.object
+            }
+            return query
+        }
+
+        // MARK: Method
+        static let name: String = "\(prefix)query"
+        let accountID: String
+        let id: UUID
+
+        var object: [Any] {
+            [
+                Self.name,
+                query,
                 id.uuidString
             ]
         }
@@ -149,4 +201,33 @@ extension Mailbox {
     }
 
     static let prefix: String = "Mailbox/"
+}
+
+extension Mailbox {
+    public enum Condition: Filter.Condition {
+        case parentId(String)
+        case name(String)
+        case role(Mailbox.Role)
+        case hasAnyRole(Bool)
+        case isSubscribed(Bool)
+
+        // MARK: Filter.Condition
+        public var key: String {
+            switch self {
+            case .parentId: "parentId"
+            case .name: "name"
+            case .role: "role"
+            case .hasAnyRole: "hasAnyRole"
+            case .isSubscribed: "isSubscribed"
+            }
+        }
+
+        public var value: Any {
+            switch self {
+            case .parentId(let string), .name(let string): string
+            case .role(let role): "\(role)"
+            case .hasAnyRole(let bool), .isSubscribed(let bool): bool
+            }
+        }
+    }
 }

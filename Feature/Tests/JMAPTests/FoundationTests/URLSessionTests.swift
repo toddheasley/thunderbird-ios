@@ -1,6 +1,6 @@
-import Testing
-@testable import JMAP
 import Foundation
+@testable import JMAP
+import Testing
 
 struct URLSessionTests {
     @Test(.disabled(if: token.isEmpty)) func jmapAPI() async throws {
@@ -10,17 +10,18 @@ struct URLSessionTests {
         }
         let responses: [any MethodResponse] = try await URLSession.shared.jmapAPI(
             [
-                Mailbox.GetMethod(accountID)
+                Mailbox.GetMethod(accountID)  // Test with ccount-agnostic method
             ],
             url: session.apiURL,
             token: token
         )
         try #require(responses.count == 1)
-        guard let response: MethodGetResponse = responses[0] as? MethodGetResponse else {
+        guard let response: MethodGetResponse = responses.first as? MethodGetResponse else {
             throw MethodError.invalidArguments
         }
         let mailboxes: [Mailbox] = try response.decode([Mailbox].self)
         #expect(mailboxes.count > 0)
+        #expect(mailboxes.compactMap { $0.role }.contains(.inbox) == true)
     }
 
     @Test(.disabled(if: token.isEmpty)) func jmapSession() async throws {

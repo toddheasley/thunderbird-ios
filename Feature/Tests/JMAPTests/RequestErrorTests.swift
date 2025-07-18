@@ -1,6 +1,6 @@
-import Testing
-@testable import JMAP
 import Foundation
+@testable import JMAP
+import Testing
 
 struct RequestErrorTests {
     @Test func decoderInit() throws {

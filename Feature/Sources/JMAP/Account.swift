@@ -30,6 +30,6 @@ public struct Account: CustomStringConvertible, Decodable, Sendable {
     }
 
     private enum Key: CodingKey {
-        case name, accountCapabilities, isReadOnly, isPersonal, id
+        case name, accountCapabilities, isReadOnly, isPersonal
     }
 }

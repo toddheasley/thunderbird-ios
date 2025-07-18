@@ -18,7 +18,7 @@ public struct MethodGetResponse: MethodResponse {
     }
 
     public func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
-        try JSONDecoder().decode(type, from: data)
+        try JSONDecoder(date: .iso8601).decode(type, from: data)
     }
 
     // MARK: MethodResponse
