@@ -1,15 +1,15 @@
+import JMAP
 import SwiftUI
-import Mail
 
 @main
 struct App: SwiftUI.App {
-    @State private var mail: Mail = Mail()
+    @State private var jmap: JMAPObject = JMAPObject()
 
     // MARK: App
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(mail)
+                .environment(jmap)
         }
     }
 }

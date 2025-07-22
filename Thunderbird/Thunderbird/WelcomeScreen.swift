@@ -2,7 +2,12 @@ import SwiftUI
 import Account
 
 struct WelcomeScreen: View {
+    init(_ getStarted: Binding<Bool> = .constant(false)) {
+        _getStarted = getStarted
+    }
+
     @Environment(\.openURL) private var openURL
+    @Binding private var getStarted: Bool
 
     // MARK: View
     var body: some View {
@@ -20,7 +25,7 @@ struct WelcomeScreen: View {
             Spacer()
             Spacer()
             Button(action: {
-                openURL(.donate)
+                getStarted = true
             }) {
                 Text("onboarding_welcome_start_button")
                     .padding(5.5)
@@ -41,7 +46,13 @@ struct WelcomeScreen: View {
 }
 
 #Preview("Welcome Screen") {
-    WelcomeScreen()
+    @Previewable @State var getStarted: Bool = false
+
+    WelcomeScreen($getStarted)
+        .sheet(isPresented: $getStarted) {
+            EmptyView()
+                .presentationDragIndicator(.visible)
+        }
 }
 
 private struct Background: View {
@@ -62,8 +73,4 @@ private struct Background: View {
 private extension Image {
     static var background: Self { Self("Welcome/Background") }
     static var logo: Self { Self("Welcome/Logo") }
-}
-
-private extension URL {
-    static let donate: Self = Self(string: "https://www.thunderbird.net/donate/mobile/?form=tfi")!
 }

@@ -21,16 +21,25 @@ let package: Package = Package(
                 "Account"
             ]),
         .library(
+            name: "JMAP",
+            targets: [
+                "JMAP"
+            ]),
+        .library(
             name: "IMAP",
             targets: [
                 "IMAP"
             ])
+    ],
+    dependencies: [
+        .package(name: "Core", path: "../Core")
     ],
     targets: [
         .target(
             name: "Mail",
             dependencies: [
                 "Account",
+                "JMAP",
                 "IMAP"
             ]),
         .testTarget(
@@ -43,6 +52,16 @@ let package: Package = Package(
             name: "AccountTests",
             dependencies: [
                 "Account"
+            ]),
+        .target(
+            name: "JMAP",
+            dependencies: [
+                "Core"
+            ]),
+        .testTarget(
+            name: "JMAPTests",
+            dependencies: [
+                "JMAP"
             ]),
         .target(name: "IMAP"),
         .testTarget(

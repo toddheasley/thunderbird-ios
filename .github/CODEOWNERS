@@ -1,7 +1,10 @@
 # General module owners
-* @kewisch @toddheasley @wmontwe @asoucar 
+* @thunderbird/mobile-ios-reviewers
 
 # Release Engineering
-/.github/ @coreycb @dandarnell
-/docs/ci/ @coreycb @dandarnell
-/CI/ @coreycb @dandarnell
+/.github/ @thunderbird/build-release
+/docs/ci/ @thunderbird/build-release
+/CI/ @thunderbird/build-release
+
+# CODEOWNERS protection
+/.github/CODEOWNERS @kewisch

@@ -14,30 +14,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
-        "identifier" : "AccountTests",
-        "name" : "AccountTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "EditorTests",
-        "name" : "EditorTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:Thunderbird.xcodeproj",
         "identifier" : "1521D8232D9C4D6300C4DFDF",
         "name" : "ThunderbirdTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Feature",
-        "identifier" : "MailTests",
-        "name" : "MailTests"
       }
     },
     {
@@ -49,9 +28,37 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "LogTests",
-        "name" : "LogTests"
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "EditorTests",
+        "name" : "EditorTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "MailTests",
+        "name" : "MailTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
+      }
+    },
+    {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "URLSessionTests"
+          }
+        ]
+      },
+      "target" : {
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "JMAPTests",
+        "name" : "JMAPTests"
       }
     },
     {
@@ -59,6 +66,27 @@
         "containerPath" : "container:..\/Feature",
         "identifier" : "IMAPTests",
         "name" : "IMAPTests"
+      }
+    },
+    {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "SRVTests"
+          }
+        ]
+      },
+      "target" : {
+        "containerPath" : "container:..\/Core",
+        "identifier" : "AutodiscoverTests",
+        "name" : "AutodiscoverTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Core",
+        "identifier" : "LogTests",
+        "name" : "LogTests"
       }
     }
   ],

@@ -20,8 +20,7 @@ At this stage, the project is still being built from the ground up. While it mig
 - **Report Issues:** Use the [GitHub issue tracker](https://github.com/thunderbird/thunderbird-ios/issues/new) to report ideas or potential problems, helping us refine the vision.
 - **Follow Development:** Stay updated on progress by following the repository and community discussions at Matrix: [#tb-mobile-dev:mozilla.org](https://matrix.to/#/#tb-mobile-dev:mozilla.org).
 - **Prepare to Contribute:** Familiarize yourself with the project and keep an eye on the [CONTRIBUTING](docs/CONTRIBUTING.md) guide for updates on contribution guidelines.
-- **Support Thunderbird:** Our mobile and desktop applications are funded through financial contributions by users like you. You can help us build a secure, private and free email client for iOS by [giving to Thunderbird today](https://www.thunderbird.net/en-US/donate/mobile/?form=tfi).
-
+- **Support Thunderbird:** Our mobile and desktop applications are funded through financial contributions by users like you. You can help us build a secure, private and free email client for iOS by [giving to Thunderbird today](https://www.thunderbird.net/donate/mobile/?form=tfi).
 ## Community
 
 Be part of the Thunderbird for iOS community and make sure to check out the [Mozilla Community Participation Guidelines](https://www.mozilla.org/about/governance/policies/participation/).
