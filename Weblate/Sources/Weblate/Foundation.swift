@@ -1,6 +1,5 @@
 import Foundation
 
-
 extension URLSession {
     public func languages(project slug: String, token: String? = nil) async throws -> [Language] {
         let data: Data = try await data(for: .languages(project: slug, token: token)).0
@@ -12,11 +11,11 @@ extension URLRequest {
     public static func translations(_ component: String, project slug: String, token: String? = nil) -> Self {
         .request(.translations(component, project: slug), token: token)
     }
-    
+
     public static func languages(project slug: String, token: String? = nil) -> Self {
         .request(.languages(project: slug), token: token)
     }
-    
+
     static func request(_ url: URL, token: String? = nil) -> Self {
         var request: Self = Self(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -31,7 +30,7 @@ extension URL {
     static func translations(_ component: String, project slug: String) -> Self {
         Self(string: "https://hosted.weblate.org/api/components/\(slug)/\(component)/translations/")!
     }
-    
+
     static func languages(project slug: String) -> Self {
         Self(string: "https://hosted.weblate.org/api/projects/\(slug)/languages/")!
     }
