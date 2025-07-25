@@ -1,8 +1,8 @@
 import Foundation
 
 extension URLRequest {
-    static func languages(project slug: String, token: String? = nil) -> Self {
-        .request(.languages(project: slug), token: token)
+    static func languages(project name: String, token: String? = nil) throws -> Self {
+        .request(try .languages(project: name), token: token)
     }
 
     static func request(_ url: URL, token: String? = nil) -> Self {
