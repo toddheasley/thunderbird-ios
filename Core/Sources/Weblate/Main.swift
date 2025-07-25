@@ -1,6 +1,5 @@
 import ArgumentParser
 import Foundation
-import Weblate
 
 @main
 struct Main: AsyncParsableCommand {

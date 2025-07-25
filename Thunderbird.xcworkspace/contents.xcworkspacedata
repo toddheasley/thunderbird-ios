@@ -20,9 +20,6 @@
       location = "group:Core">
    </FileRef>
    <FileRef
-      location = "group:Weblate">
-   </FileRef>
-   <FileRef
       location = "group:docs">
    </FileRef>
 </Workspace>
