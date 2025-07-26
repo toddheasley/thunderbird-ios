@@ -10,7 +10,7 @@ extension URL {
 
     static func strings(path: String? = nil) throws -> [Self] {
 
-        // List all strings files in project strings directory
+        // List all strings files in Xcode project strings directory
         var isDirectory: ObjCBool = false
         guard let path: String = path ?? stringsDirectory?.path(),  // Fall back to "magic" strings URL
             FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
@@ -30,9 +30,15 @@ extension URL {
 
     private static var stringsDirectory: Self? {
 
-        // Recursively search user's home directory for (first occurrence of) localization path
+        // Search from documents first, then search from entire home directory
+        stringsDirectory(from: .documentsDirectory) ?? stringsDirectory(from: .homeDirectory)
+    }
+
+    private static func stringsDirectory(from directory: URL) -> Self? {
+
+        // Recursively search from directory for (first occurrence of) localization path
         let enumerator: FileManager.DirectoryEnumerator = FileManager.default.enumerator(
-            at: .homeDirectory,
+            at: directory,
             includingPropertiesForKeys: [.isDirectoryKey],
             options: .skipsHiddenFiles
         )!
