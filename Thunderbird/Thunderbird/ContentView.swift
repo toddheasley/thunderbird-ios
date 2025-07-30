@@ -10,7 +10,7 @@ struct ContentView: View {
         NavigationStack {
             if let session = jmap.session {
                 JMAPSessionView(session)
-            } else if (!isPresented){
+            } else if !isPresented {
                 WelcomeScreen($isPresented)
             } else {
                 ManualAccount()

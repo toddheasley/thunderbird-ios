@@ -12,7 +12,7 @@ struct ManualAccount: View {
     init(_ getStarted: Binding<Bool> = .constant(false)) {
         _getStarted = getStarted
     }
-    
+
     @Environment(JMAPObject.self) private var jmap: JMAPObject
     @Environment(\.openURL) private var openURL
     @Binding private var getStarted: Bool
@@ -24,14 +24,14 @@ struct ManualAccount: View {
     @State private var selectedAuthentication = "Password"
     @State private var selectedCert = ""
     @State private var text: String = ""
-    var protocols = ["IMAP","JMAP"]
-    var securityOptions = ["None","SSL/TLS", "StartTLS"]
+    var protocols = ["IMAP", "JMAP"]
+    var securityOptions = ["None", "SSL/TLS", "StartTLS"]
     var authOptions = ["Password", "Encrypted Password", "Client Certificate", "OAuth 2.0"]
-    
+
     // MARK: View
     var body: some View {
         Form {
-            Picker("account_server_settings_protocol_type_label", selection: $selectedProtocol){
+            Picker("account_server_settings_protocol_type_label", selection: $selectedProtocol) {
                 ForEach(protocols, id: \.self) { prot in
                     Text(prot)
                 }
@@ -39,7 +39,7 @@ struct ManualAccount: View {
             .pickerStyle(.menu)
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
-            Picker("account_server_settings_security_label", selection: $selectedSecurity){
+            Picker("account_server_settings_security_label", selection: $selectedSecurity) {
                 ForEach(securityOptions, id: \.self) { sec in
                     Text(sec)
                 }
@@ -47,7 +47,7 @@ struct ManualAccount: View {
             .pickerStyle(.menu)
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
-            Picker("account_server_settings_authentication_label", selection: $selectedAuthentication){
+            Picker("account_server_settings_authentication_label", selection: $selectedAuthentication) {
                 ForEach(authOptions, id: \.self) { auth in
                     Text(auth)
                 }
@@ -93,7 +93,7 @@ struct ManualAccount: View {
             }
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
-            
+
             if selectedProtocol == "IMAP" {
                 Text("configuration_IMAP_not_supported")
                     .multilineTextAlignment(.center)
@@ -124,7 +124,7 @@ struct ManualAccount: View {
 #Preview("Manual Account Setup") {
     @Previewable @State var getStarted: Bool = false
     @Previewable @State var jmap: JMAPObject = JMAPObject()
-    
+
     ManualAccount($getStarted)
         .environment(jmap)
         .sheet(isPresented: $getStarted) {
@@ -134,7 +134,7 @@ struct ManualAccount: View {
 }
 
 private struct Background: View {
-    
+
     // MARK: View
     var body: some View {
         GeometryReader { proxy in

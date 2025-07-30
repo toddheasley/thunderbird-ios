@@ -45,7 +45,7 @@ struct JMAPSessionView: View {
             .refreshable {
                 mailboxes = await jmap.mailboxes()
             }
-            HStack{
+            HStack {
                 Button(action: {
                     jmap.token = ""
                 }) {
@@ -62,7 +62,7 @@ struct JMAPSessionView: View {
                 .buttonStyle(.borderedProminent)
                 .padding()
             }
-            
+
         }
     }
 }
