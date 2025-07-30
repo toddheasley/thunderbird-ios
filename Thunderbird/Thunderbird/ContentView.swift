@@ -10,16 +10,11 @@ struct ContentView: View {
         NavigationStack {
             if let session = jmap.session {
                 JMAPSessionView(session)
-            } else {
+            } else if (!isPresented){
                 WelcomeScreen($isPresented)
+            } else {
+                ManualAccount()
             }
-        }
-        .sheet(isPresented: $isPresented) {
-            JMAPTokenView()
-                .presentationDragIndicator(.visible)
-                .presentationDetents([
-                    .height(192.0)
-                ])
         }
         .onChange(of: jmap.session) {
             isPresented = false
