@@ -9,6 +9,8 @@ struct JMAPSessionView: View {
     }
 
     @Environment(JMAPObject.self) private var jmap: JMAPObject
+    @Environment(\.openURL) private var openURL
+
     @State private var mailboxes: [Mailbox] = []
 
     // MARK: View
@@ -43,13 +45,24 @@ struct JMAPSessionView: View {
             .refreshable {
                 mailboxes = await jmap.mailboxes()
             }
-            Button(action: {
-                jmap.token = ""
-            }) {
-                Label("Sign out", systemImage: "xmark.circle.fill")
+            HStack {
+                Button(action: {
+                    jmap.token = ""
+                }) {
+                    Label("Sign out", systemImage: "xmark.circle.fill")
+                }
+                .buttonStyle(.bordered)
+                .padding()
+                Button(action: {
+                    guard let url = URL(string: "https://www.thunderbird.net/en-US/donate/") else { return }
+                    openURL(url)
+                }) {
+                    Text("donation_support")
+                }
+                .buttonStyle(.borderedProminent)
+                .padding()
             }
-            .buttonStyle(.bordered)
-            .padding()
+
         }
     }
 }
