@@ -15,6 +15,11 @@ let package: Package = Package(
             targets: [
                 "Core"
             ]),
+        .executable(
+            name: "weblate",
+            targets: [
+                "Weblate"
+            ]),
         .library(
             name: "Autodiscover",
             targets: [
@@ -26,12 +31,20 @@ let package: Package = Package(
                 "Log"
             ])
     ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser", branch: "main")
+    ],
     targets: [
         .target(
             name: "Core",
             dependencies: [
                 "Autodiscover",
                 "Log"
+            ]),
+        .executableTarget(
+            name: "Weblate",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
             ]),
         .target(name: "Autodiscover"),
         .testTarget(
