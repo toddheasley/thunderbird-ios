@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1560FEE22DDF60C100F6295C /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE12DDF60C100F6295C /* Core */; };
-		1560FEE52DDF60FA00F6295C /* Mail in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE42DDF60FA00F6295C /* Mail */; };
 		1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE72DDF611F00F6295C /* BoltUI */; };
+		15EC94B52E423BBB00E614F0 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 15EC94B42E423BBB00E614F0 /* Account */; };
+		15EC94B72E423BBB00E614F0 /* IMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 15EC94B62E423BBB00E614F0 /* IMAP */; };
+		15EC94B92E423BBB00E614F0 /* JMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 15EC94B82E423BBB00E614F0 /* JMAP */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,9 +47,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15EC94B92E423BBB00E614F0 /* JMAP in Frameworks */,
+				15EC94B52E423BBB00E614F0 /* Account in Frameworks */,
 				1560FEE22DDF60C100F6295C /* Core in Frameworks */,
 				1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */,
-				1560FEE52DDF60FA00F6295C /* Mail in Frameworks */,
+				15EC94B72E423BBB00E614F0 /* IMAP in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,8 +112,10 @@
 			name = Thunderbird;
 			packageProductDependencies = (
 				1560FEE12DDF60C100F6295C /* Core */,
-				1560FEE42DDF60FA00F6295C /* Mail */,
 				1560FEE72DDF611F00F6295C /* BoltUI */,
+				15EC94B42E423BBB00E614F0 /* Account */,
+				15EC94B62E423BBB00E614F0 /* IMAP */,
+				15EC94B82E423BBB00E614F0 /* JMAP */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -165,13 +171,78 @@
 				Base,
 				de,
 				"zh-Hans",
+				he,
+				ar,
+				el,
+				ja,
+				fa,
+				sq,
+				eu,
+				co,
+				uk,
+				kab,
+				gu,
+				"nb-NO",
+				"en-GB",
+				am,
+				es,
+				is,
+				sl,
+				da,
+				gl,
+				eo,
+				et,
+				it,
+				fy,
+				bg,
+				sk,
+				kk,
+				sr,
+				be,
+				ta,
+				ml,
+				sv,
+				cs,
+				ko,
+				hy,
+				"zh-Hant",
+				hu,
+				ka,
+				ga,
+				tr,
+				ast,
+				pl,
+				br,
+				"pt-BR",
+				vi,
+				lv,
+				lt,
+				ru,
+				cy,
+				enm,
+				fr,
+				fi,
+				id,
+				nl,
+				th,
+				az,
+				nn,
+				pt,
+				bn,
+				"pt-PT",
+				ro,
+				bs,
+				hr,
+				hi,
+				ca,
+				gd,
 			);
 			mainGroup = 1521D80D2D9C4D6200C4DFDF;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				1560FEE02DDF60C100F6295C /* XCLocalSwiftPackageReference "../Core" */,
-				1560FEE32DDF60FA00F6295C /* XCLocalSwiftPackageReference "../Feature" */,
 				1560FEE62DDF611F00F6295C /* XCLocalSwiftPackageReference "../Bolt" */,
+				15EC94B32E423BBB00E614F0 /* XCLocalSwiftPackageReference "../Feature" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1521D8172D9C4D6200C4DFDF /* Products */;
@@ -514,13 +585,13 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Core;
 		};
-		1560FEE32DDF60FA00F6295C /* XCLocalSwiftPackageReference "../Feature" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Feature;
-		};
 		1560FEE62DDF611F00F6295C /* XCLocalSwiftPackageReference "../Bolt" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Bolt;
+		};
+		15EC94B32E423BBB00E614F0 /* XCLocalSwiftPackageReference "../Feature" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Feature;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -529,13 +600,21 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Core;
 		};
-		1560FEE42DDF60FA00F6295C /* Mail */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Mail;
-		};
 		1560FEE72DDF611F00F6295C /* BoltUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BoltUI;
+		};
+		15EC94B42E423BBB00E614F0 /* Account */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Account;
+		};
+		15EC94B62E423BBB00E614F0 /* IMAP */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IMAP;
+		};
+		15EC94B82E423BBB00E614F0 /* JMAP */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = JMAP;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

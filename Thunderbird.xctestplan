@@ -36,13 +36,6 @@
     {
       "target" : {
         "containerPath" : "container:..\/Feature",
-        "identifier" : "MailTests",
-        "name" : "MailTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Feature",
         "identifier" : "AccountTests",
         "name" : "AccountTests"
       }
