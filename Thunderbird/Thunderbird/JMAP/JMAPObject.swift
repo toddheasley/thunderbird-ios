@@ -9,7 +9,7 @@ import SwiftUI
 
     var token: String = "" {
         didSet {
-            URLCredentialStorage.shared.set(token, for: .user, space: .account)
+            URLCredentialStorage.shared.set(authorization: .oauth(user: .user, token: token))
             Task {
                 await session()
             }
@@ -17,7 +17,7 @@ import SwiftUI
     }
 
     init() {
-        token = URLCredentialStorage.shared.password(for: .user, space: .account) ?? ""
+        token = URLCredentialStorage.shared.authorization(for: .user)?.password ?? ""
         Task {
             await session()
         }
