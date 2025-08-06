@@ -7,7 +7,7 @@ extension URLRequest {
     /// - Parameter url: API endpoint URL from ``Session``
     /// - Parameter token: OAuth bearer token to authenticate with service provider
     /// - Returns: `URLRequest` configured to  POST to JMAP service provider
-    public static func jmapAPI(_ methods: [any Method], url: URL, token: String) throws -> Self {
+    public static func jmapAPI(_ methods: [any Method], url: URL, authorization: String) throws -> Self {
         guard !methods.isEmpty else {
             throw MethodError.unknownMethod
         }
@@ -16,7 +16,7 @@ extension URLRequest {
             "methodCalls": methods.map { $0.object }
         ]
         var request: Self = Self(url: url)
-        try request.setJMAPHeaders(token)
+        try request.setJMAPHeaders(authorization: authorization)
         request.httpMethod = "POST"
         request.httpBody = try JSONSerialization.data(withJSONObject: object)
         return request
@@ -26,25 +26,25 @@ extension URLRequest {
     /// - Parameter host: Host name of the JMAP service provider; e.g., `api.fastmail.com`
     /// - Parameter token: OAuth bearer token to authenticate with service provider
     /// - Returns: `URLRequest` configured to GET an authenticated session with a JMAP service provider
-    public static func jmapSession(_ host: String, port: Int? = nil, token: String) throws -> Self {
+    public static func jmapSession(_ host: String, port: Int? = nil, authorization: String) throws -> Self {
         var request: Self = Self(url: try .jmapSession(host, port: port))
-        try request.setJMAPHeaders(token)
+        try request.setJMAPHeaders(authorization: authorization)
         return request
     }
 
-    mutating func setJMAPHeaders(_ token: String) throws {
-        try setAuthorization(token)
+    mutating func setJMAPHeaders(authorization value: String) throws {
+        try setAuthorization(value)
         setAcceptLanguage()
         setContentType()
         setAccept()
     }
 
     /// Authorize HTTP request with session OAuth token.
-    mutating func setAuthorization(_ token: String) throws {
-        guard !token.isEmpty else {
+    mutating func setAuthorization(_ value: String) throws {
+        guard !value.isEmpty else {
             throw URLError(.userAuthenticationRequired)
         }
-        setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        setValue(value, forHTTPHeaderField: "Authorization")
     }
 
     /// Ask JMAP server to  [localize user-visible strings](https://jmap.io/spec-core.html#localisation-of-user-visible-strings) according to device configured locales.
