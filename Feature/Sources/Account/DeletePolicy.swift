@@ -24,9 +24,11 @@ public enum DeletePolicy: CustomStringConvertible, Equatable, RawRepresentable {
         default:
             let components: [String] = rawValue.components(separatedBy: " ")
             guard components.count == 3,
-                  components.first == "after",
-                  components.last == "days",
-                  let days: Int = Int(components[1]), days >= 0 else {
+                components.first == "after",
+                components.last == "days",
+                let days: Int = Int(components[1]),
+                days >= 0
+            else {
                 return nil
             }
             self = .after(days: days)

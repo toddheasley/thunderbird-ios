@@ -6,17 +6,17 @@ struct URLCredentialStorageTests {
     @Test(.enabled(if: isKeychainAvailable)) func authorization() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "com.example")
         let authorization: Authorization = .basic(user: "user@netscape.net", password: "essmI1-vudwic-wwanar")
-        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        URLCredentialStorage.shared.deleteAuthorizations(space: space)
         #expect(URLCredentialStorage.shared.authorization(for: authorization.user, space: space) == nil)
         URLCredentialStorage.shared.set(authorization: authorization, space: space)
         #expect(URLCredentialStorage.shared.authorization(for: authorization.user, space: space) == authorization)
-        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        URLCredentialStorage.shared.deleteAuthorizations(space: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
     }
 
     @Test(.enabled(if: isKeychainAvailable)) func setAuthorization() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "org.example")
-        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        URLCredentialStorage.shared.deleteAuthorizations(space: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
         URLCredentialStorage.shared.set(authorization: .basic(user: "user.name@gmail.com", password: "12345678"), space: space)
         URLCredentialStorage.shared.set(authorization: .oauth(user: "user.name@gmail.com", token: "zemhu8-omdRiz-zisbov"), space: space)  // Duplicate user
@@ -26,9 +26,9 @@ struct URLCredentialStorageTests {
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
     }
 
-    @Test(.enabled(if: isKeychainAvailable)) func removeAuthorization() {
+    @Test(.enabled(if: isKeychainAvailable)) func deleteAuthorizations() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "net.example")
-        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        URLCredentialStorage.shared.deleteAuthorizations(space: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
         URLCredentialStorage.shared
             .set(
@@ -55,7 +55,7 @@ struct URLCredentialStorageTests {
                 space: space
             )
         #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3)  // Credentials are equatable and de-duplicated by by `username`
-        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        URLCredentialStorage.shared.deleteAuthorizations(space: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
     }
 }
