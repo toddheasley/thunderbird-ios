@@ -1,42 +1,68 @@
+@testable import Account
 import Testing
 import Foundation
-@testable import Account
 
 struct URLCredentialStorageTests {
-    @Test(.enabled(if: isKeychainAvailable)) func password() {
+    @Test(.enabled(if: isKeychainAvailable)) func authorization() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "com.example")
-        let credential: URLCredential = URLCredential(user: "user@netscape.net", password: "essmI1-vudwic-wwanar", persistence: .forSession)
-        URLCredentialStorage.shared.set(credential, for: space)
-        #expect(URLCredentialStorage.shared.password(for: credential.user!, space: space) == "essmI1-vudwic-wwanar")
-        URLCredentialStorage.shared.removeCredentials(for: space)
-        #expect(URLCredentialStorage.shared.password(for: credential.user!, space: space) == nil)
+        let authorization: Authorization = .basic(user: "user@netscape.net", password: "essmI1-vudwic-wwanar")
+        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        #expect(URLCredentialStorage.shared.authorization(for: authorization.user, space: space) == nil)
+        URLCredentialStorage.shared.set(authorization: authorization, space: space)
+        #expect(URLCredentialStorage.shared.authorization(for: authorization.user, space: space) == authorization)
+        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
     }
 
-    @Test(.enabled(if: isKeychainAvailable)) func setPassword() {
+    @Test(.enabled(if: isKeychainAvailable)) func setAuthorization() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "org.example")
-        URLCredentialStorage.shared.set("zemhu8-omdRiz-zisbov", for: "user.name@icloud.com", space: space)
-        #expect(URLCredentialStorage.shared.password(for: "user.name@icloud.com", space: space) == "zemhu8-omdRiz-zisbov")
-        URLCredentialStorage.shared.set(nil, for: "user.name@icloud.com", space: space)
-        #expect(URLCredentialStorage.shared.password(for: "user.name@icloud.com", space: space) == nil)
+        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
+        URLCredentialStorage.shared.set(authorization: .basic(user: "user.name@gmail.com", password: "12345678"), space: space)
+        URLCredentialStorage.shared.set(authorization: .oauth(user: "user.name@gmail.com", token: "zemhu8-omdRiz-zisbov"), space: space)  // Duplicate user
+        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 1)  // One credential stored per user
+        #expect(URLCredentialStorage.shared.authorization(for: "user.name@gmail.com", space: space)?.password == "zemhu8-omdRiz-zisbov")
+        URLCredentialStorage.shared.set(authorization: .oauth(user: "user.name@gmail.com", token: ""), space: space)
+        #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
     }
 
-    @Test(.enabled(if: isKeychainAvailable)) func removeCredentials() {
+    @Test(.enabled(if: isKeychainAvailable)) func removeAuthorization() {
         let space: URLProtectionSpace = URLProtectionSpace(host: "net.example")
-        URLCredentialStorage.shared.removeCredentials(for: space)
-        URLCredentialStorage.shared.set(URLCredential(user: "user@netscape.net", password: "correct horse battery staple", persistence: .permanent), for: space)
-        URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "abcd1234", persistence: .forSession), for: space)
-        URLCredentialStorage.shared.set(URLCredential(user: "username@icloud.com", password: "abcd1234", persistence: .permanent), for: space)  // Duplicate credential
-        URLCredentialStorage.shared.set(URLCredential(user: "admin@example.com", password: "gAAAAUTHtoKENb3arerJWe", persistence: .forSession), for: space)
+        URLCredentialStorage.shared.removeAuthorizations(space: space)
+        #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
+        URLCredentialStorage.shared
+            .set(
+                authorization: .basic(user: "user@netscape.net", password: "correct horse battery staple"),
+                persistence: .permanent,
+                space: space
+            )
+        URLCredentialStorage.shared
+            .set(
+                authorization: .basic(user: "username@icloud.com", password: "abcd1234"),
+                persistence: .forSession,
+                space: space
+            )
+        URLCredentialStorage.shared
+            .set(
+                authorization: .basic(user: "username@icloud.com", password: "abcd1234"),
+                persistence: .permanent,
+                space: space
+            )  // Duplicate credential
+        URLCredentialStorage.shared
+            .set(
+                authorization: .oauth(user: "admin@example.com", token: "gAAAAUTHtoKENb3arerJWe"),
+                persistence: .forSession,
+                space: space
+            )
         #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3)  // Credentials are equatable and de-duplicated by by `username`
-        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3)
-        URLCredentialStorage.shared.removeCredentials(for: space)
+        URLCredentialStorage.shared.removeAuthorizations(space: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
     }
 }
 
 var isKeychainAvailable: Bool {
     #if os(macOS)
-    true  // Keychain only accessible (to non-hosted tests) on macOS
+    true  // Keychain only available (to non-hosted tests) on macOS
     #else
     false
     #endif

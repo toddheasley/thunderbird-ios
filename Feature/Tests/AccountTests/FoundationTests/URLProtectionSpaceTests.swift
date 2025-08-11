@@ -1,6 +1,6 @@
+@testable import Account
 import Testing
 import Foundation
-@testable import Account
 
 struct URLProtectionSpaceTests {
     @Test func account() {

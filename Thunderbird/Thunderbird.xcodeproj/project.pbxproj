@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		1560FEE22DDF60C100F6295C /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE12DDF60C100F6295C /* Core */; };
-		1560FEE52DDF60FA00F6295C /* Mail in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE42DDF60FA00F6295C /* Mail */; };
 		1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE72DDF611F00F6295C /* BoltUI */; };
+		158C47212E4376FA0035F732 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 158C47202E4376FA0035F732 /* Account */; };
+		158C47252E4376FA0035F732 /* JMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 158C47242E4376FA0035F732 /* JMAP */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,9 +46,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				158C47252E4376FA0035F732 /* JMAP in Frameworks */,
+				158C47212E4376FA0035F732 /* Account in Frameworks */,
 				1560FEE22DDF60C100F6295C /* Core in Frameworks */,
 				1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */,
-				1560FEE52DDF60FA00F6295C /* Mail in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,8 +110,9 @@
 			name = Thunderbird;
 			packageProductDependencies = (
 				1560FEE12DDF60C100F6295C /* Core */,
-				1560FEE42DDF60FA00F6295C /* Mail */,
 				1560FEE72DDF611F00F6295C /* BoltUI */,
+				158C47202E4376FA0035F732 /* Account */,
+				158C47242E4376FA0035F732 /* JMAP */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -529,13 +532,17 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Core;
 		};
-		1560FEE42DDF60FA00F6295C /* Mail */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Mail;
-		};
 		1560FEE72DDF611F00F6295C /* BoltUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BoltUI;
+		};
+		158C47202E4376FA0035F732 /* Account */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Account;
+		};
+		158C47242E4376FA0035F732 /* JMAP */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = JMAP;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

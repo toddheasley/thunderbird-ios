@@ -4,7 +4,7 @@ import Testing
 
 struct URLSessionTests {
     @Test(.disabled(if: token.isEmpty)) func jmapAPI() async throws {
-        let session: Session = try await URLSession.shared.jmapSession("api.fastmail.com", port: 443, token: token)
+        let session: Session = try await URLSession.shared.jmapSession("api.fastmail.com", port: 443, authorization: "Bearer \(token)")
         guard let accountID: String = session.accounts.keys.first else {
             throw MethodError.accountNotFound
         }
@@ -13,7 +13,7 @@ struct URLSessionTests {
                 Mailbox.GetMethod(accountID)  // Test with ccount-agnostic method
             ],
             url: session.apiURL,
-            token: token
+            authorization: "Bearer \(token)"
         )
         try #require(responses.count == 1)
         guard let response: MethodGetResponse = responses.first as? MethodGetResponse else {
@@ -25,7 +25,7 @@ struct URLSessionTests {
     }
 
     @Test(.disabled(if: token.isEmpty)) func jmapSession() async throws {
-        let session: Session = try await URLSession.shared.jmapSession("api.fastmail.com", port: 443, token: token)
+        let session: Session = try await URLSession.shared.jmapSession("api.fastmail.com", port: 443, authorization: "Bearer \(token)")
         #expect(session.username.hasSuffix("@fastmail.com") == true)
     }
 }
