@@ -11,11 +11,6 @@ let package: Package = Package(
     ],
     products: [
         .library(
-            name: "Mail",
-            targets: [
-                "Mail"
-            ]),
-        .library(
             name: "Account",
             targets: [
                 "Account"
@@ -35,18 +30,6 @@ let package: Package = Package(
         .package(name: "Core", path: "../Core")
     ],
     targets: [
-        .target(
-            name: "Mail",
-            dependencies: [
-                "Account",
-                "JMAP",
-                "IMAP"
-            ]),
-        .testTarget(
-            name: "MailTests",
-            dependencies: [
-                "Mail"
-            ]),
         .target(name: "Account"),
         .testTarget(
             name: "AccountTests",

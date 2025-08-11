@@ -7,8 +7,8 @@ extension URLSession {
     /// - Parameter url: API endpoint URL from ``Session``
     /// - Parameter token: OAuth bearer token to authenticate with service provider
     /// - Returns: ``MethodResponse``
-    public func jmapAPI(_ methods: [any Method], url: URL, token: String) async throws -> [any MethodResponse] {
-        let data: Data = try await data(for: try .jmapAPI(methods, url: url, token: token)).0
+    public func jmapAPI(_ methods: [any Method], url: URL, authorization: String) async throws -> [any MethodResponse] {
+        let data: Data = try await data(for: try .jmapAPI(methods, url: url, authorization: authorization)).0
         let object: Any = try JSONSerialization.jsonObject(with: data)
 
         // Unwrap and map responses from "envelope" array
@@ -86,8 +86,8 @@ extension URLSession {
     /// - Parameter host: Host name of the JMAP service provider; e.g., `api.fastmail.com`
     /// - Parameter token: OAuth bearer token to authenticate with service provider
     /// - Returns: ``Session`` object containing available account(s), capabilities and service URLs
-    public func jmapSession(_ host: String, port: Int? = nil, token: String) async throws -> Session {
-        let response: (Data, URLResponse) = try await data(for: try .jmapSession(host, port: port, token: token))
+    public func jmapSession(_ host: String, port: Int? = nil, authorization: String) async throws -> Session {
+        let response: (Data, URLResponse) = try await data(for: try .jmapSession(host, port: port, authorization: authorization))
         switch (response.1 as? HTTPURLResponse)?.statusCode {
         case 401:
             throw URLError(.userAuthenticationRequired)

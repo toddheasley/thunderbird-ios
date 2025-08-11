@@ -1,6 +1,6 @@
+@testable import Account
 import Testing
 import Foundation
-@testable import Account
 
 struct IncomingServerTests {
     @Test(.enabled(if: isKeychainAvailable)) func password() {
