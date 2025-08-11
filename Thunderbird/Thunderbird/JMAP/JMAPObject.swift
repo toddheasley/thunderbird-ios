@@ -9,7 +9,7 @@ import SwiftUI
 
     var token: String = "" {
         didSet {
-            URLCredentialStorage.shared.set(token, for: .user, space: .account)
+            URLCredentialStorage.shared.set(authorization: .oauth(user: .user, token: token))
             Task {
                 await session()
             }
@@ -17,7 +17,7 @@ import SwiftUI
     }
 
     init() {
-        token = URLCredentialStorage.shared.password(for: .user, space: .account) ?? ""
+        token = URLCredentialStorage.shared.authorization(for: .user)?.password ?? ""
         Task {
             await session()
         }
@@ -109,7 +109,7 @@ extension URLSession {
                         ids: [
                             email.threadID
                         ])
-                ], url: url, token: token
+                ], url: url, authorization: "Bearer \(token)"
             ).first as? MethodGetResponse
         else {
             throw URLError(.cannotDecodeContentData)
@@ -128,7 +128,7 @@ extension URLSession {
             let response: MethodQueryResponse = try await jmapAPI(
                 [
                     Email.QueryMethod(id, filter: .inMailbox(mailbox.id))
-                ], url: url, token: token
+                ], url: url, authorization: "Bearer \(token)"
             ).first as? MethodQueryResponse
         else {
             throw URLError(.cannotDecodeContentData)
@@ -141,7 +141,7 @@ extension URLSession {
             let response: MethodGetResponse = try await jmapAPI(
                 [
                     Email.GetMethod(id, ids: ids)
-                ], url: url, token: token
+                ], url: url, authorization: "Bearer \(token)"
             ).first as? MethodGetResponse
         else {
             throw URLError(.cannotDecodeContentData)
@@ -154,7 +154,7 @@ extension URLSession {
             let response: MethodGetResponse = try await jmapAPI(
                 [
                     Mailbox.GetMethod(id)
-                ], url: url, token: token
+                ], url: url, authorization: "Bearer \(token)"
             ).first as? MethodGetResponse
         else {
             throw URLError(.cannotDecodeContentData)
@@ -163,7 +163,7 @@ extension URLSession {
     }
 
     func session(_ token: String) async throws -> Session {
-        try await jmapSession("api.fastmail.com", port: 443, token: token)
+        try await jmapSession("api.fastmail.com", port: 443, authorization: "Bearer \(token)")
     }
 }
 

@@ -16,7 +16,7 @@ public struct OutgoingServer: Codable, Identifiable {
     public let port: Int
 
     public var password: String? {
-        URLCredentialStorage.shared.password(for: user)
+        URLCredentialStorage.shared.authorization(for: user)?.password
     }
 
     public init(
@@ -38,7 +38,7 @@ public struct OutgoingServer: Codable, Identifiable {
         self.id = id
 
         // Save password in keychain
-        URLCredentialStorage.shared.set(password, for: user)
+        URLCredentialStorage.shared.set(authorization: Authorization(user: user, password: password))
     }
 
     var user: String {  // Generate unique keychain user label: "user@example.com SMTP:E621E1F8"
