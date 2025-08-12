@@ -2,9 +2,15 @@ import Foundation
 
 public struct Account: Codable, Equatable, Identifiable {
     public let name: String
+    public let deletePolicy: DeletePolicy
 
-    public init(name: String, id: UUID = UUID()) {
+    public init(
+        name: String,
+        deletePolicy: DeletePolicy = .never,
+        id: UUID = UUID()
+    ) {
         self.name = name
+        self.deletePolicy = deletePolicy
         self.id = id
     }
 
