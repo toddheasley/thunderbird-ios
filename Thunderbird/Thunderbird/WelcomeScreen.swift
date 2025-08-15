@@ -1,12 +1,10 @@
 import SwiftUI
-import Account
 
 struct WelcomeScreen: View {
     init(_ getStarted: Binding<Bool> = .constant(false)) {
         _getStarted = getStarted
     }
 
-    @Environment(\.openURL) private var openURL
     @Binding private var getStarted: Bool
 
     // MARK: View

@@ -1,30 +1,42 @@
-import JMAP
+import Account
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(JMAPObject.self) private var jmap: JMAPObject
-    @State private var isPresented: Bool = false
+    @Environment(Accounts.self) private var accounts: Accounts
+    @State private var showSettings: Bool = false
+    @State private var getStarted: Bool = false
 
     // MARK: View
     var body: some View {
-        NavigationStack {
-            if let session = jmap.session {
-                JMAPSessionView(session)
-            } else if !isPresented {
-                WelcomeScreen($isPresented)
-            } else {
-                ManualAccount()
+        if accounts.allAccounts.isEmpty {
+            WelcomeScreen($getStarted)
+                .sheet(isPresented: $getStarted) {
+                    AddAccountView()
+                        .presentationDragIndicator(.visible)
+                }
+        } else {
+            NavigationSplitView(
+                sidebar: {
+                    AccountsView($showSettings)
+                },
+                content: {
+                    MailboxView()
+                },
+                detail: {
+                    EmailView()
+                }
+            )
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+                    .presentationDragIndicator(.visible)
             }
-        }
-        .onChange(of: jmap.session) {
-            isPresented = false
         }
     }
 }
 
 #Preview("Content View") {
-    @Previewable @State var jmap: JMAPObject = JMAPObject()
+    @Previewable @State var accounts: Accounts = Accounts()
 
     ContentView()
-        .environment(jmap)
+        .environment(accounts)
 }
