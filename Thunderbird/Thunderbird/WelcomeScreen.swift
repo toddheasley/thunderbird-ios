@@ -35,12 +35,9 @@ struct WelcomeScreen: View {
             Spacer()
             Text("onboarding_welcome_developed_by")
                 .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
                 .font(.caption)
-                .opacity(0.75)
                 .padding()
-        }
-        .background {
-            Background()
         }
     }
 }
@@ -49,28 +46,18 @@ struct WelcomeScreen: View {
     @Previewable @State var getStarted: Bool = false
 
     WelcomeScreen($getStarted)
-        .sheet(isPresented: $getStarted) {
-            EmptyView()
-                .presentationDragIndicator(.visible)
-        }
-}
+        .alert("Get started", isPresented: $getStarted) {
 
-private struct Background: View {
-
-    // MARK: View
-    var body: some View {
-        GeometryReader { proxy in
-            Image.background
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: proxy.size.width, height: proxy.size.height)
-                .opacity(proxy.size.width > 444.0 ? 0.0 : 1.0)
         }
-        .ignoresSafeArea()
-    }
 }
 
 private extension Image {
-    static var background: Self { Self("Welcome/Background") }
     static var logo: Self { Self("Welcome/Logo") }
+}
+
+#Preview("Welcome Logo Image") {
+    Image.logo
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+        .padding()
 }
