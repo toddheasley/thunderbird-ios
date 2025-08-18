@@ -1,6 +1,8 @@
 import Foundation
 
 extension URL {
+
+    /// Generate autocnfig `URL` for any ``Source``.
     public static func autoconfig(_ emailAddress: EmailAddress, source: Source = .default) throws -> Self {
         switch source {
         case .provider: try provider(emailAddress)
@@ -14,9 +16,10 @@ extension URL {
         guard let url: URL = URL(string: "https://autoconfig.\(host)/mail/config-v1.1.xml") else {
             throw URLError(.unsupportedURL)
         }
-        return emailAddress != host ? url.appending(queryItems: [
-            URLQueryItem(name: "emailaddress", value: emailAddress)
-        ]) : url
+        return emailAddress != host
+            ? url.appending(queryItems: [
+                URLQueryItem(name: "emailaddress", value: emailAddress)
+            ]) : url
     }
 
     static func wellKnown(_ emailAddress: EmailAddress) throws -> Self {

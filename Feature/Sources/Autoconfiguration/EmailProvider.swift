@@ -1,8 +1,9 @@
-public struct EmailProvider {
-    public internal(set) var domain: String = ""
-    public internal(set) var displayName: String = ""
-    public internal(set) var displayShortName: String = ""
-    public internal(set) var incomingServers: [Any] = []
-    public internal(set) var outgoingServers: [Any] = []
-    public internal(set) var documentation: [Any] = []
+import Foundation
+
+public struct EmailProvider: Decodable {
+    public let displayName: String
+    public let displayShortName: String
+    public let documentation: [URL]
+    public let domain: String
+    public let servers: [Server]
 }

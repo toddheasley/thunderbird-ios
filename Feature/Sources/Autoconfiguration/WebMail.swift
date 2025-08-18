@@ -1,5 +1,5 @@
 import Foundation
 
-public struct WebMail {
-    public internal(set) var loginPage: URL?
+public struct WebMail: Decodable {
+    public let loginPage: URL
 }
