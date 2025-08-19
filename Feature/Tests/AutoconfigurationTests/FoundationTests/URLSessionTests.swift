@@ -7,15 +7,21 @@ struct URLSessionTests {
         await #expect(throws: URLError.self) {
             try await URLSession.shared.autoconfig("user.name@gmail.com", sources: [.provider, .wellKnown])
         }
-        #expect(try await URLSession.shared.autoconfig("user.name@gmail.com").emailProvider?.servers.count == 3)
+        let gmail: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user.name@gmail.com")
+        #expect(gmail.config.emailProvider?.servers.count == 3)
+        #expect(gmail.source == .ispDB)
         await #expect(throws: URLError.self) {
             try await URLSession.shared.autoconfig("user@fastmail.com", sources: [.wellKnown, .ispDB])
         }
-        #expect(try await URLSession.shared.autoconfig("user@fastmail.com").emailProvider?.servers.count == 3)
+        let fastmail: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user@fastmail.com")
+        #expect(fastmail.config.emailProvider?.servers.count == 3)
+        #expect(fastmail.source == .provider)
         await #expect(throws: URLError.self) {
             try await URLSession.shared.autoconfig("user123@aol.com", sources: [.provider, .wellKnown])
         }
-        #expect(try await URLSession.shared.autoconfig("user123@aol.com").emailProvider?.servers.count == 3)
+        let aol: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user123@aol.com")
+        #expect(aol.config.emailProvider?.servers.count == 3)
+        #expect(aol.source == .ispDB)
     }
 
     @Test func sourceAutoconfig() async throws {

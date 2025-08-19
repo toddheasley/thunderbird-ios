@@ -3,10 +3,10 @@ import Foundation
 extension URLSession {
 
     /// Query multiple sources in descending order of precendence for a ``ClientConfig`` for a given email address.
-    public func autoconfig(_ emailAddress: EmailAddress, sources: [Source] = Source.allCases) async throws -> ClientConfig {
+    public func autoconfig(_ emailAddress: EmailAddress, sources: [Source] = Source.allCases) async throws -> (config: ClientConfig, source: Source) {
         for source in sources {
             guard let config: ClientConfig = try? await autoconfig(emailAddress, source: source) else { continue }
-            return config
+            return (config, source)
         }
         throw URLError(.fileDoesNotExist)
     }
