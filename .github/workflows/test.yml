@@ -20,4 +20,4 @@ jobs:
         - name: Build and analyze
           run: xcodebuild clean build analyze -workspace Thunderbird.xcworkspace -scheme Thunderbird -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16'
         - name: Run tests in iPhone 16 Simulator
-          run: xcodebuild test -workspace Thunderbird.xcworkspace -scheme ThunderbirdTests -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16'
+          run: xcodebuild test -workspace Thunderbird.xcworkspace -scheme ThunderbirdTests -sdk iphonesimulator -destination 'platform=macOS,name=Any Mac'
