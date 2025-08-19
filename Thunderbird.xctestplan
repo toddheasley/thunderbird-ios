@@ -21,23 +21,30 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "BoltUITests",
-        "name" : "BoltUITests"
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
       }
     },
     {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "URLSessionTests"
+          }
+        ]
+      },
       "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "EditorTests",
-        "name" : "EditorTests"
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "AutoconfigurationTests",
+        "name" : "AutoconfigurationTests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:..\/Feature",
-        "identifier" : "AccountTests",
-        "name" : "AccountTests"
+        "identifier" : "IMAPTests",
+        "name" : "IMAPTests"
       }
     },
     {
@@ -56,9 +63,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
-        "identifier" : "IMAPTests",
-        "name" : "IMAPTests"
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "BoltUITests",
+        "name" : "BoltUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "EditorTests",
+        "name" : "EditorTests"
       }
     },
     {
