@@ -16,14 +16,19 @@ let package: Package = Package(
                 "Account"
             ]),
         .library(
-            name: "JMAP",
+            name: "Autoconfiguration",
             targets: [
-                "JMAP"
+                "Autoconfiguration"
             ]),
         .library(
             name: "IMAP",
             targets: [
                 "IMAP"
+            ]),
+        .library(
+            name: "JMAP",
+            targets: [
+                "JMAP"
             ])
     ],
     dependencies: [
@@ -36,6 +41,18 @@ let package: Package = Package(
             dependencies: [
                 "Account"
             ]),
+        .target(name: "Autoconfiguration"),
+        .testTarget(
+            name: "AutoconfigurationTests",
+            dependencies: [
+                "Autoconfiguration"
+            ]),
+        .target(name: "IMAP"),
+        .testTarget(
+            name: "IMAPTests",
+            dependencies: [
+                "IMAP"
+            ]),
         .target(
             name: "JMAP",
             dependencies: [
@@ -45,11 +62,5 @@ let package: Package = Package(
             name: "JMAPTests",
             dependencies: [
                 "JMAP"
-            ]),
-        .target(name: "IMAP"),
-        .testTarget(
-            name: "IMAPTests",
-            dependencies: [
-                "IMAP"
             ])
     ])
