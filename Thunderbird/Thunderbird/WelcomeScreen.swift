@@ -65,8 +65,10 @@ struct WelcomeWallpaperViewModifier: ViewModifier {
                 Image.wallpaper
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .containerRelativeFrame(.horizontal)
+                    .opacity(0.97)
                     .ignoresSafeArea()
+                    .containerRelativeFrame(.horizontal)
+                    .background(Color.background)
             }
     }
 }
@@ -94,4 +96,13 @@ private extension Image {
         .resizable()
         .aspectRatio(contentMode: .fit)
         .padding()
+}
+
+private extension Color {
+    static var background: Self { Self("Welcome/Background") }
+}
+
+#Preview("Welcome Background Color") {
+    Color.background
+        .ignoresSafeArea()
 }
