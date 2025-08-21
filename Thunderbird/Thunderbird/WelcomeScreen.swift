@@ -37,6 +37,7 @@ struct WelcomeScreen: View {
                 .font(.caption)
                 .padding()
         }
+        .wallpaper()
     }
 }
 
@@ -49,8 +50,43 @@ struct WelcomeScreen: View {
         }
 }
 
+private extension View {
+    func wallpaper() -> some View {
+        modifier(WelcomeWallpaperViewModifier())
+    }
+}
+
+struct WelcomeWallpaperViewModifier: ViewModifier {
+
+    // MARK: ViewModifier
+    func body(content: Content) -> some View {
+        content
+            .background {
+                Image.wallpaper
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .containerRelativeFrame(.horizontal)
+                    .ignoresSafeArea()
+            }
+    }
+}
+
+#Preview("Welcome Wallpaper View Modifier") {
+    Rectangle()
+        .fill(.clear)
+        .modifier(WelcomeWallpaperViewModifier())
+}
+
 private extension Image {
+    static var wallpaper: Self { Self("Welcome/Wallpaper") }
     static var logo: Self { Self("Welcome/Logo") }
+}
+
+#Preview("Welcome Wallpaper Image") {
+    Image.wallpaper
+        .resizable()
+        .aspectRatio(contentMode: .fill)
+        .ignoresSafeArea()
 }
 
 #Preview("Welcome Logo Image") {
