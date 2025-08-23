@@ -17,7 +17,7 @@ extension URLSession {
         let data: (Data, URLResponse) = try await data(from: url)
         switch (data.1 as? HTTPURLResponse)?.statusCode {
         case 200:
-            let json: Data = try Parser(emailAddress, data: data.0).data
+            let json: Data = try XMLToJSONParser(emailAddress, data: data.0).data
             let container: Container = try JSONDecoder().decode(Container.self, from: json)
             return (container.clientConfig, (json, data.0))
         case 404:
