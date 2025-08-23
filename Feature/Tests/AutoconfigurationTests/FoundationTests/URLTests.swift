@@ -4,9 +4,9 @@ import Foundation
 
 struct URLTests {
     @Test func autoconfig() throws {
-        #expect(try URL.autoconfig("user@example.com").absoluteString == "https://autoconfig.example.com/mail/config-v1.1.xml?emailaddress=user@example.com")
+        #expect(try URL.autoconfig("user@example.com", source: .provider).absoluteString == "https://autoconfig.example.com/mail/config-v1.1.xml?emailaddress=user@example.com")
         #expect(try URL.autoconfig("user@example.com", source: .wellKnown).absoluteString == "https://example.com/.well-known/autoconfig/mail/config-v1.1.xml")
-        #expect(try URL.autoconfig("user@example.com", source: .ispDB).absoluteString == "https://autoconfig.thunderbird.net/v1.1/example.com")
+        #expect(try URL.autoconfig("user@example.com").absoluteString == "https://autoconfig.thunderbird.net/v1.1/example.com")
     }
 
     @Test func provider() throws {

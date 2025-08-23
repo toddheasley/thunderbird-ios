@@ -1,5 +1,3 @@
-import Foundation
-
 public struct Server: Decodable {
     public enum Authentication: String, CaseIterable, CustomStringConvertible, Decodable {
         case clientIPAddress = "client-IP-address"
@@ -33,7 +31,7 @@ public struct Server: Decodable {
         public var description: String { rawValue }
     }
 
-    public let authentication: Authentication
+    public let authentication: [Authentication]
     public let hostname: String
     public let port: Int
     public let serverType: ServerType

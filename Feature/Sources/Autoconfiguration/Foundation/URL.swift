@@ -1,8 +1,7 @@
 import Foundation
 
 extension URL {
-
-    /// Generate autocnfig `URL` for any ``Source``.
+    /// Generate the appropriate autoconfig URL for a given source and email address.
     public static func autoconfig(_ emailAddress: EmailAddress, source: Source = .default) throws -> Self {
         switch source {
         case .provider: try provider(emailAddress)

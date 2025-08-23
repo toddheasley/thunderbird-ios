@@ -1,5 +1,14 @@
-public enum Source: CaseIterable {
-    case provider, wellKnown, ispDB  // Preferred order of precedence
+public enum Source: CaseIterable, CustomStringConvertible {
+    case ispDB, provider, wellKnown
 
-    public static var `default`: Self { provider }
+    public static var `default`: Self { ispDB }
+
+    // MARK: CustomStringConvertible
+    public var description: String {
+        switch self {
+        case .ispDB: "ISPDB"
+        case .provider: "provider"
+        case .wellKnown: "provider (alternate)"
+        }
+    }
 }

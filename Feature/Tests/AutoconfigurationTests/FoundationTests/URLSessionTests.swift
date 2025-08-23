@@ -25,13 +25,17 @@ struct URLSessionTests {
     }
 
     @Test func sourceAutoconfig() async throws {
-        let gmail: ClientConfig = try await URLSession.shared.autoconfig("user.name@gmail.com", source: .ispDB)
+        let gmail: ClientConfig = try await URLSession.shared.autoconfig("user.name@gmail.com", source: .ispDB).config
         #expect(gmail.emailProvider?.displayName == "Google Mail")
         #expect(gmail.emailProvider?.displayShortName == "GMail")
         #expect(gmail.emailProvider?.documentation.count == 4)
         #expect(gmail.emailProvider?.domain == "gmail.com")
         #expect(gmail.emailProvider?.servers.count == 3)
-        #expect(gmail.emailProvider?.servers.first?.authentication == .passwordCleartext)
+        #expect(
+            gmail.emailProvider?.servers.first?.authentication == [
+                .oAuth2,
+                .passwordCleartext
+            ])
         #expect(gmail.emailProvider?.servers.first?.hostname == "imap.gmail.com")
         #expect(gmail.emailProvider?.servers.first?.port == 993)
         #expect(gmail.emailProvider?.servers.first?.serverType == .imap)
@@ -45,13 +49,16 @@ struct URLSessionTests {
             try await URLSession.shared.autoconfig("user.name@gmail.com", source: .wellKnown)
         }
 
-        let fastmail: ClientConfig = try await URLSession.shared.autoconfig("user@fastmail.com", source: .provider)
+        let fastmail: ClientConfig = try await URLSession.shared.autoconfig("user@fastmail.com", source: .provider).config
         #expect(fastmail.emailProvider?.displayName == "Fastmail")
         #expect(fastmail.emailProvider?.displayShortName == "Fastmail")
         #expect(fastmail.emailProvider?.documentation.count == 2)
         #expect(fastmail.emailProvider?.domain == "fastmail.com")
         #expect(fastmail.emailProvider?.servers.count == 3)
-        #expect(fastmail.emailProvider?.servers.first?.authentication == .oAuth2)
+        #expect(
+            fastmail.emailProvider?.servers.first?.authentication == [
+                .oAuth2
+            ])
         #expect(fastmail.emailProvider?.servers.first?.hostname == "imap.fastmail.com")
         #expect(fastmail.emailProvider?.servers.first?.port == 993)
         #expect(fastmail.emailProvider?.servers.first?.serverType == .imap)
@@ -65,13 +72,17 @@ struct URLSessionTests {
             try await URLSession.shared.autoconfig("user@fastmail.com", source: .ispDB)
         }
 
-        let aol: ClientConfig = try await URLSession.shared.autoconfig("user123@aol.com", source: .ispDB)
+        let aol: ClientConfig = try await URLSession.shared.autoconfig("user123@aol.com", source: .ispDB).config
         #expect(aol.emailProvider?.displayName == "AOL Mail")
         #expect(aol.emailProvider?.displayShortName == "AOL")
         #expect(aol.emailProvider?.documentation.count == 1)
         #expect(aol.emailProvider?.domain == "aol.com")
         #expect(aol.emailProvider?.servers.count == 3)
-        #expect(aol.emailProvider?.servers.first?.authentication == .passwordCleartext)
+        #expect(
+            aol.emailProvider?.servers.first?.authentication == [
+                .oAuth2,
+                .passwordCleartext
+            ])
         #expect(aol.emailProvider?.servers.first?.hostname == "imap.aol.com")
         #expect(aol.emailProvider?.servers.first?.port == 993)
         #expect(aol.emailProvider?.servers.first?.serverType == .imap)

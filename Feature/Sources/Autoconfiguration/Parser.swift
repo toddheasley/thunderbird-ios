@@ -1,13 +1,19 @@
 import Foundation
 
-/// Parse XML client configuration into JSON representation.
+/// Translate client config XML into JSON.
 class Parser: NSObject, XMLParserDelegate {
     private(set) var emailAddress: EmailAddress!
     private(set) var dictionary: [String: Any] = [:]
 
     var data: Data {
         get throws {
-            try JSONSerialization.data(withJSONObject: dictionary)
+            try JSONSerialization.data(
+                dictionary,
+                options: [
+                    .withoutEscapingSlashes,
+                    .prettyPrinted,
+                    .sortedKeys
+                ])
         }
     }
 
@@ -20,9 +26,9 @@ class Parser: NSObject, XMLParserDelegate {
     }
 
     private let parser: XMLParser
-
     private var element: (name: String, value: String?)?
     private var emailProvider: [String: Any]?
+    private var oAuth2: [String: Any]?
     private var webMail: [String: Any]?
     private var server: [String: Any]?
 
@@ -33,8 +39,8 @@ class Parser: NSObject, XMLParserDelegate {
         case servers, incomingServer, outgoingServer
         case authentication, hostname, port, serverType, socketType, type, username
         case documentation, instruction, url
-        case webMail
-        case loginPage
+        case oAuth2, authURL, issuer, scope, tokenURL
+        case webMail, loginPage
     }
 
     // MARK: XMLParserDelegate
@@ -59,6 +65,7 @@ class Parser: NSObject, XMLParserDelegate {
             element = (elementName, nil)
         case .incomingServer, .outgoingServer:
             server = [
+                Key.authentication.stringValue: [],
                 Key.serverType.stringValue: (attributeDict[Key.type.stringValue] ?? "")  // Convert server `type` attribute to dictionary key/value
             ]
         case .authentication, .hostname, .port, .socketType, .username:
@@ -70,6 +77,10 @@ class Parser: NSObject, XMLParserDelegate {
                 documentation.append(url)
                 emailProvider?[Key.documentation.stringValue] = documentation
             }
+        case .oAuth2:
+            oAuth2 = [:]
+        case .authURL, .issuer, .scope, .tokenURL:
+            element = (elementName, nil)
         case .loginPage:
             if let loginPage: String = attributeDict[Key.url.stringValue] {
                 webMail = [
@@ -118,9 +129,30 @@ class Parser: NSObject, XMLParserDelegate {
                 emailProvider?[Key.servers.stringValue] = servers
             }
             server = nil
-        case .authentication, .hostname, .port, .socketType, .username:
+        case .authentication:
+            if let name: String = element?.name, let value: String = element?.value,
+                var authentication = server?[name] as? [Any]
+            {
+                authentication.append(value)
+                server?[name] = authentication
+            }
+            element = nil
+        case .hostname, .port, .socketType, .username:
             if let name: String = element?.name, let value: String = element?.value {
                 server?[name] = elementName == Key.port.stringValue ? Int(value) : value
+            }
+            element = nil
+        case .oAuth2:
+            if var clientConfig: [String: Any] = dictionary[Key.clientConfig.stringValue] as? [String: Any],
+                let oAuth2
+            {
+                clientConfig[Key.oAuth2.stringValue] = oAuth2
+                dictionary[Key.clientConfig.stringValue] = clientConfig
+            }
+            oAuth2 = nil
+        case .authURL, .issuer, .scope, .tokenURL:
+            if let name: String = element?.name, let value: String = element?.value {
+                oAuth2?[name] = value
             }
             element = nil
         case .webMail:
@@ -142,12 +174,8 @@ class Parser: NSObject, XMLParserDelegate {
 private extension String {
     func applying(_ emailAddress: EmailAddress) -> Self {
         var string: Self = replacingOccurrences(of: "%EMAILADDRESS%", with: emailAddress)
-        if let local: Self = try? emailAddress.local {
-            string = string.replacingOccurrences(of: "%EMAILLOCALPART%", with: local)
-        }
-        if let host: Self = try? emailAddress.host {
-            string = string.replacingOccurrences(of: "%EMAILDOMAIN%", with: host)
-        }
+        string = string.replacingOccurrences(of: "%EMAILLOCALPART%", with: (try? emailAddress.local) ?? "")
+        string = string.replacingOccurrences(of: "%EMAILDOMAIN%", with: (try? emailAddress.host) ?? "")
         return string
     }
 }
