@@ -2,16 +2,35 @@
 
 ## `Autoconfiguration`
 
-[Thunderbird Autoconfiguration](https://www.bucksch.org/1/projects/thunderbird/autoconfiguration), often just "autoconfig," is an XML syndication format by which email service providers advertise their public mail server settings. Mail clients, when configuring a new email account, query the account domain for an autoconfig file. The user only needs to know the account email address and password or token to set up a new mail client.
+[Thunderbird Autoconfiguration](https://www.bucksch.org/1/projects/thunderbird/autoconfiguration), often just "autoconfig," is an XML syndication format where email service providers advertise public mail server settings.
 
-`Autoconfigruation` feature library attempts to return a configuration for a provided email address, first by querying the address domain directly, then checking the [Thunderbird autoconfig database](https://github.com/thunderbird/autoconfig), or "ISP DB."
+### Library
+
+`Autoconfigruation` library attempts to return a configuration from the [Thunderbird autoconfig database.](https://github.com/thunderbird/autoconfig). For addresses not listed in the ISPDB, `Autoconfiguration` queries the email provider directly.
 
 ```swift
 import Autoconfiguration
 import Foundation
 
-let example: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user@example.com")
+let example: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("toddheasley@aol.com")
 ```
+
+Local configurations for custom domains and [MDM](https://support.apple.com/guide/deployment/welcome/web) are not supported yet.
+
+### Command-line interface
+
+`autoconfig` is a bundled CLI demo of `Autoconfiguration` library:
+
+```zsh
+./autoconfig toddheasley@aol.com -so
+```
+
+Email address is a required argument, plus two optional flags:
+
+* `--save`: Save original config XML and JSON files to app working directory.
+* `--open`: Open all config URLs in a browser; if saving, show files in Finder.
+
+![](docs/autoconfig.png)
 
 ## `JMAP`
 

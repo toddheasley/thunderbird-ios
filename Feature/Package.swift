@@ -15,6 +15,11 @@ let package: Package = Package(
             targets: [
                 "Account"
             ]),
+        .executable(
+            name: "autoconfig",
+            targets: [
+                "AutoconfigurationCLI"
+            ]),
         .library(
             name: "Autoconfiguration",
             targets: [
@@ -32,6 +37,7 @@ let package: Package = Package(
             ])
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
         .package(name: "Core", path: "../Core")
     ],
     targets: [
@@ -42,6 +48,12 @@ let package: Package = Package(
                 "Account"
             ]),
         .target(name: "Autoconfiguration"),
+        .executableTarget(
+            name: "AutoconfigurationCLI",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "Autoconfiguration"
+            ]),
         .testTarget(
             name: "AutoconfigurationTests",
             dependencies: [
