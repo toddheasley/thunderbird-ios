@@ -5,6 +5,7 @@ public typealias EmailAddress = String
 extension EmailAddress {
     public var host: Self {
         get throws {
+            // Ensure valid host/domain with `URL` initializer, then discard the `URL`.
             guard let url: URL = URL(string: "http://\(components(separatedBy: "@").last!)"),
                 let host: String = url.host()
             else {

@@ -8,6 +8,9 @@ struct EmailAddressTests {
         #expect(try "h@x0r@192.168.1.1".host == "192.168.1.1")
         #expect(try "example.com".host == "example.com")
         #expect(throws: URLError.self) {
+            try "abc@".host
+        }
+        #expect(throws: URLError.self) {
             try " ".host
         }
     }

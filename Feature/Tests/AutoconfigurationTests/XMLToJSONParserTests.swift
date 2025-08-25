@@ -4,7 +4,7 @@ import Foundation
 
 struct ParserTests {
     @Test func dictionary() {
-        let fastmail: [String: Any] = XMLToJSONParser("user@example.com", data: fastmail).dictionary
+        let fastmail: [String: Any] = XMLToJSONParser("user@fastmail.com", data: fastmail).dictionary
         #expect((fastmail["clientConfig"] as? [String: Any])?.keys.count == 2)
         let freenet: [String: Any] = XMLToJSONParser("user@freenet.de", data: freenet).dictionary
         #expect((freenet["clientConfig"] as? [String: Any])?.keys.count == 1)
@@ -13,7 +13,7 @@ struct ParserTests {
     }
 
     @Test func data() throws {
-        #expect(try XMLToJSONParser("user@example.com", data: fastmail).data.count == 1215)
+        #expect(try XMLToJSONParser("user@fastmail.com", data: fastmail).data.count == 1219)
         #expect(try XMLToJSONParser("user@freenet.de", data: freenet).data.count == 2016)
         #expect(try XMLToJSONParser("user.name@gmail.com", data: gmail).data.count == 1842)
     }
