@@ -26,6 +26,11 @@ let package: Package = Package(
                 "Autoconfiguration"
             ]),
         .library(
+            name: "Autodiscover",
+            targets: [
+                "Autodiscover"
+            ]),
+        .library(
             name: "IMAP",
             targets: [
                 "IMAP"
@@ -58,6 +63,12 @@ let package: Package = Package(
             name: "AutoconfigurationTests",
             dependencies: [
                 "Autoconfiguration"
+            ]),
+        .target(name: "Autodiscover"),
+        .testTarget(
+            name: "AutodiscoverTests",
+            dependencies: [
+                "Autodiscover"
             ]),
         .target(name: "IMAP"),
         .testTarget(

@@ -41,6 +41,20 @@
       }
     },
     {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "SRVTests"
+          }
+        ]
+      },
+      "target" : {
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "AutodiscoverTests",
+        "name" : "AutodiscoverTests"
+      }
+    },
+    {
       "target" : {
         "containerPath" : "container:..\/Feature",
         "identifier" : "IMAPTests",
@@ -73,20 +87,6 @@
         "containerPath" : "container:..\/Bolt",
         "identifier" : "EditorTests",
         "name" : "EditorTests"
-      }
-    },
-    {
-      "skippedTests" : {
-        "suites" : [
-          {
-            "name" : "SRVTests"
-          }
-        ]
-      },
-      "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "AutodiscoverTests",
-        "name" : "AutodiscoverTests"
       }
     },
     {
