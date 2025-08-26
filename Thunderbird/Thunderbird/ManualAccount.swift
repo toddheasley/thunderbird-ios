@@ -5,6 +5,7 @@
 //  Created by Ashley Soucar on 7/22/25.
 //
 
+/*
 import SwiftUI
 import Account
 
@@ -151,4 +152,4 @@ private struct Background: View {
 private extension Image {
     static var background: Self { Self("Welcome/Background") }
     static var logo: Self { Self("Welcome/Logo") }
-}
+} */

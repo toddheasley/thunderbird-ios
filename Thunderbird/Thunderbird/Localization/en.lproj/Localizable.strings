@@ -17,6 +17,7 @@
 "account_server_settings_authentication_none" = "None";
 "donation_support" = "Donate";
 "accounts_title" = "Accounts";
+"add_account_action" = "Add Account";
 "email_title" = "Email";
 "mailbox_title" = "Mailbox";
 "prefs_title" = "Settings";
