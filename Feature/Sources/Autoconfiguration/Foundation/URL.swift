@@ -2,7 +2,7 @@ import Foundation
 
 extension URL {
     /// Generate the appropriate autoconfig URL for a given source and email address.
-    public static func autoconfig(_ emailAddress: EmailAddress, source: Source = .default) throws -> Self {
+    public static func autoconfig(_ emailAddress: EmailAddress, source: Source = .ispDB) throws -> Self {
         switch source {
         case .provider: try provider(emailAddress)
         case .wellKnown: try wellKnown(emailAddress)
