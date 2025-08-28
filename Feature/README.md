@@ -8,8 +8,6 @@
 
 `Autoconfigruation` library attempts to return a mail server configuration for any email address, preferring configurations from the provider domain, then falling back on our own [Thunderbird autoconfig database.](https://github.com/thunderbird/autoconfig)
 
-The complete autoconfig schema is implemented, including OAuth and web mail extensions. All sources are queried. Support for email addresses using custom domains is planned, but not yet implemented.
-
 For addresses not listed in the ISPDB, `Autoconfiguration` queries the email provider directly.
 
 ```swift
@@ -19,7 +17,18 @@ import Foundation
 let example: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("toddheasley@aol.com")
 ```
 
-Local configurations for custom domains and [MDM](https://support.apple.com/guide/deployment/welcome/web) are not supported yet.
+Local and [MDM](https://support.apple.com/guide/deployment/welcome/web) configurations are not supported yet.
+
+#### Autodiscover
+
+```swift
+import Autoconfiguration
+
+let records: [SRV.Record] = try await SRV().query("_jmap._tcp.thundermail.com")
+print(records.first)  // "0 1 993 mail.thundermail.com"
+```
+
+`SRV` depends on [`dnssd`.](https://developer.apple.com/documentation/dnssd)
 
 ### Command-line interface
 

@@ -30,6 +30,9 @@
       "skippedTests" : {
         "suites" : [
           {
+            "name" : "SRVTests"
+          },
+          {
             "name" : "URLSessionTests"
           }
         ]
@@ -73,20 +76,6 @@
         "containerPath" : "container:..\/Bolt",
         "identifier" : "EditorTests",
         "name" : "EditorTests"
-      }
-    },
-    {
-      "skippedTests" : {
-        "suites" : [
-          {
-            "name" : "SRVTests"
-          }
-        ]
-      },
-      "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "AutodiscoverTests",
-        "name" : "AutodiscoverTests"
       }
     },
     {
