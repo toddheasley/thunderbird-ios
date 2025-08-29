@@ -30,7 +30,10 @@
       "skippedTests" : {
         "suites" : [
           {
-            "name" : "SRVTests"
+            "name" : "DNSResolverTests"
+          },
+          {
+            "name" : "SRVResolverTests"
           },
           {
             "name" : "URLSessionTests"

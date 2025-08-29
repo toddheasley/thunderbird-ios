@@ -1,6 +1,6 @@
 @testable import Autoconfiguration
-import Testing
 import Foundation
+import Testing
 
 struct URLTests {
     @Test func autoconfig() throws {

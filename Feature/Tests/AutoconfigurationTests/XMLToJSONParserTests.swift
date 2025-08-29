@@ -1,6 +1,6 @@
 @testable import Autoconfiguration
-import Testing
 import Foundation
+import Testing
 
 struct ParserTests {
     @Test func dictionary() {

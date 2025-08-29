@@ -1,6 +1,6 @@
 @testable import Autoconfiguration
-import Testing
 import Foundation
+import Testing
 
 struct URLSessionTests {
     @Test func sourcesAutoconfig() async throws {

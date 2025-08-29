@@ -17,25 +17,30 @@ import Foundation
 let example: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("toddheasley@aol.com")
 ```
 
-Local and [MDM](https://support.apple.com/guide/deployment/welcome/web) configurations are not supported yet.
-
 #### Autodiscover
+
+`Autoconfiguration` library uses DNS [SRV](https://en.wikipedia.org/wiki/SRV_record) and [MX](https://en.wikipedia.org/wiki/MX_record) records to support [Autodiscover](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/autodiscover-for-exchange) for Exchange servers, as well as autoconfig for email with custom domains.
 
 ```swift
 import Autoconfiguration
 
-let records: [SRV.Record] = try await SRV().query("_jmap._tcp.thundermail.com")
-print(records.first)  // "0 1 993 mail.thundermail.com"
+let records: [SRVRecord] = try await DNSResolver.querySRV("username@thundermail.com")
 ```
 
-`SRV` depends on [`dnssd`.](https://developer.apple.com/documentation/dnssd)
+```swift
+import Autoconfiguration
+
+let records: [MXRecord] = try await DNSResolver.queryMX("username@thundermail.com")
+```
+
+`Autoconfiguration` library depends on the [Swift Asynchronous DNS Resolver.](https://github.com/apple/swift-async-dns-resolver) Local and [MDM](https://support.apple.com/guide/deployment/welcome/web) configurations are not supported yet.
 
 ### Command-line interface
 
 `autoconfig` is a bundled CLI demo of `Autoconfiguration` library:
 
 ```zsh
-./autoconfig toddheasley@aol.com -so
+./autoconfig user123@aol.com -so
 ```
 
 Email address is a required argument, plus two flags:

@@ -23,4 +23,8 @@ extension EmailAddress {
             return components(separatedBy: "@").dropLast().joined(separator: "@")
         }
     }
+
+    public func name(_ service: Service) throws -> String {
+        "_\(service.rawValue)._tcp.\(try host)"
+    }
 }
