@@ -111,7 +111,7 @@ extension URLSessionTests {
             try await URLSession.shared.domain(host: "host.example")
         }
     }
-    
+
     @Test func suffixList() async throws {
         let suffixList: [String] = try await URLSession.shared.suffixList()
         print(suffixList)

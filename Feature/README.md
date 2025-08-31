@@ -6,41 +6,60 @@
 
 ### Library
 
-`Autoconfigruation` library attempts to return a mail server configuration for any email address, preferring configurations from the provider domain, then falling back on our own [Thunderbird autoconfig database.](https://github.com/thunderbird/autoconfig)
-
-For addresses not listed in the ISPDB, `Autoconfiguration` queries the email provider directly.
+`Autoconfigruation` library is designed to support email account setup in its parent project, [Thunderbird for iOS](https://github.com/thunderbird/thunderbird-ios), via `URLSession` data task:
 
 ```swift
 import Autoconfiguration
 import Foundation
 
-let example: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("toddheasley@aol.com")
+let example: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user123@aol.com")
 ```
 
-#### Autodiscover
+Taking the default arguments, the above returns mail server settings for almost every email address in existence. Here's how it works:
 
-`Autoconfiguration` library uses DNS [SRV](https://en.wikipedia.org/wiki/SRV_record) and [MX](https://en.wikipedia.org/wiki/MX_record) records to support [Autodiscover](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/autodiscover-for-exchange) for Exchange servers, as well as autoconfig for email with custom domains.
+1. Query all sources using the domain name from the given email address. If more than one client configuration is found, prefer the provider-provided configuration over the [Thunderbird "ISPDB" autoconfig database.](https://github.com/thunderbird/autoconfig)
+2. If no configuration is found, the given email address is probably using a custom domain. Query [MX records](https://en.wikipedia.org/wiki/MX_record) for an underlying domain name, then re-query all sources using the underlying domain name.
+
+MX records can be queried directly:
 
 ```swift
 import Autoconfiguration
 
-let records: [SRVRecord] = try await DNSResolver.querySRV("username@thundermail.com")
+let records: [MXRecord] = try await DNSResolver.queryMX("thunderbird.net")
 ```
+
+#### Domain Parsing
+
+`Autoconfiguration` library uses the [Public Suffix List](https://publicsuffix.org) to parse domains from DNS host names:
+
+```swift
+import Autoconfiguration
+import Foundation
+
+let domain: String = try await URLSession.shared.domain(host: "smtp01.mail.example.com")
+print(domain)  // "example.com"
+```
+
+#### Autodiscover(y)
+
+`Autoconfiguration` supports [DNS service autodiscovery]((https://en.wikipedia.org/wiki/SRV_record)) for protocols like [JMAP](https://jmap.io) that don't use autoconfig:
 
 ```swift
 import Autoconfiguration
 
-let records: [MXRecord] = try await DNSResolver.queryMX("username@thundermail.com")
+let records: [SRVRecord] = try await DNSResolver.querySRV("example@thundermail.com")
 ```
 
-`Autoconfiguration` library depends on the [Swift Asynchronous DNS Resolver.](https://github.com/apple/swift-async-dns-resolver) Local and [MDM](https://support.apple.com/guide/deployment/welcome/web) configurations are not supported yet.
+[Autodiscover for Exchange](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/autodiscover-for-exchange) is not supported at this time. Local and [MDM](https://support.apple.com/guide/deployment/welcome/web) configurations are not supported yet. 
+
+`Autoconfiguration` library depends on the [Swift Asynchronous DNS Resolver.](https://github.com/apple/swift-async-dns-resolver)
 
 ### Command-line interface
 
 `autoconfig` is a bundled CLI demo of `Autoconfiguration` library:
 
 ```zsh
-./autoconfig user123@aol.com -so
+./autoconfig toddheasley@aol.com -so
 ```
 
 Email address is a required argument, plus two flags:
