@@ -5,13 +5,19 @@ import Testing
 struct URLSessionTests {
     @Test func sourcesAutoconfig() async throws {
         await #expect(throws: URLError.self) {
+            try await URLSession.shared.autoconfig("username@thunderbird.net", queryMX: false)
+        }
+        let thundermail: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("username@thunderbird.net")
+        #expect(thundermail.config.emailProvider?.servers.count == 3)
+        #expect(thundermail.source == .ispDB)
+        await #expect(throws: URLError.self) {
             try await URLSession.shared.autoconfig("user.name@gmail.com", sources: [.provider, .wellKnown])
         }
-        let gmail: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user.name@gmail.com")
+        let gmail: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user.name@gmail.com", queryMX: false)
         #expect(gmail.config.emailProvider?.servers.count == 3)
         #expect(gmail.source == .ispDB)
         await #expect(throws: URLError.self) {
-            try await URLSession.shared.autoconfig("user@fastmail.com", sources: [.wellKnown, .ispDB])
+            try await URLSession.shared.autoconfig("user@fastmail.com", sources: [.ispDB], queryMX: false)
         }
         let fastmail: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user@fastmail.com")
         #expect(fastmail.config.emailProvider?.servers.count == 3)
@@ -95,5 +101,19 @@ struct URLSessionTests {
         await #expect(throws: URLError.self) {
             try await URLSession.shared.autoconfig("user123@aol.com", source: .wellKnown)
         }
+    }
+}
+
+extension URLSessionTests {
+    @Test func domain() async throws {
+        #expect(try await URLSession.shared.domain(host: "smtp.example.com") == "example.com")
+        await #expect(throws: URLError.self) {
+            try await URLSession.shared.domain(host: "host.example")
+        }
+    }
+    
+    @Test func suffixList() async throws {
+        let suffixList: [String] = try await URLSession.shared.suffixList()
+        print(suffixList)
     }
 }

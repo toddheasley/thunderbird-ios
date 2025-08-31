@@ -1,6 +1,7 @@
 import Foundation
 import dnssd
 
+// Use Apple `dnssd` to resolve DNS service (SRV) records
 // Adapted from https://github.com/jamf/NoMAD-2/blob/main/NoMAD/SRVLookups/SRVResolver.swift
 class SRVResolver {
     let timeoutInterval: TimeInterval

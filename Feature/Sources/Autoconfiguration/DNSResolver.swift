@@ -13,8 +13,8 @@ extension DNSResolver {
     }
 
     public static func querySRV(_ emailAddress: EmailAddress, service: Service) async throws -> [SRVRecord] {
-        let name: String = try emailAddress.name(service)
-        let records: [SRVRecord] = try await SRVResolver().query(name)
+        let query: String = try emailAddress.query(service)
+        let records: [SRVRecord] = try await SRVResolver().query(query)  // `AsyncDNSResolver` SRV querying doesn't work; fall back to `dnssd`-based resolver
         return records
     }
 

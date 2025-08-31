@@ -2,6 +2,7 @@ import AsyncDNSResolver
 import Foundation
 
 extension SRVRecord {
+    // Decode `AsyncDNSResolver` model from `SRVResolver` bytes
     init(_ data: Data) throws {
         guard data.count > 8, var host: String = String(bytes: data.suffix(from: 7), encoding: .utf8) else {
             throw URLError(.cannotDecodeRawData)

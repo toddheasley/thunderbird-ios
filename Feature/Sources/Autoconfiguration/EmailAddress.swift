@@ -24,7 +24,7 @@ extension EmailAddress {
         }
     }
 
-    public func name(_ service: Service) throws -> String {
+    public func query(_ service: Service) throws -> String {
         "_\(service.rawValue)._tcp.\(try host)"
     }
 }

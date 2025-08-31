@@ -2,7 +2,7 @@
 import Foundation
 import Testing
 
-struct ParserTests {
+struct XMLToJSONParserTests {
     @Test func dictionary() {
         let fastmail: [String: Any] = XMLToJSONParser("user@fastmail.com", data: fastmail).dictionary
         #expect((fastmail["clientConfig"] as? [String: Any])?.keys.count == 2)

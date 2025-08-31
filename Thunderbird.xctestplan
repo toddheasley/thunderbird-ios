@@ -33,7 +33,7 @@
             "name" : "DNSResolverTests"
           },
           {
-            "name" : "SRVResolverTests"
+            "name" : "DomainParserTests"
           },
           {
             "name" : "URLSessionTests"

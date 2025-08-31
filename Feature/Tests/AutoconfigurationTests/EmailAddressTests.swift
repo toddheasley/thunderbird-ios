@@ -23,12 +23,12 @@ struct EmailAddressTests {
         }
     }
 
-    @Test func name() throws {
-        #expect(try "user@example.com".name(.autodiscover) == "_autodiscover._tcp.example.com")
-        #expect(try "h@x0r@192.168.1.1".name(.imap) == "_imap._tcp.192.168.1.1")
-        #expect(try "example.com".name(.smtp) == "_smtp._tcp.example.com")
+    @Test func query() throws {
+        #expect(try "user@example.com".query(.autodiscover) == "_autodiscover._tcp.example.com")
+        #expect(try "h@x0r@192.168.1.1".query(.imap) == "_imap._tcp.192.168.1.1")
+        #expect(try "example.com".query(.smtp) == "_smtp._tcp.example.com")
         #expect(throws: URLError.self) {
-            try "abc@".name(.jmap)
+            try "abc@".query(.jmap)
         }
     }
 }

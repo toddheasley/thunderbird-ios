@@ -1,3 +1,4 @@
+/// Standard email services/protocols to query DNS SRV records for
 public enum Service: String, CaseIterable, CustomStringConvertible {
     case autodiscover, imap, imaps, jmap, smtp, submission
 
