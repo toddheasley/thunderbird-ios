@@ -9,13 +9,8 @@ import SwiftUI
 import Account
 
 struct ManualAccount: View {
-    init(_ getStarted: Binding<Bool> = .constant(false)) {
-        _getStarted = getStarted
-    }
-
-    @Environment(JMAPObject.self) private var jmap: JMAPObject
+    @State private var jmap: JMAPObject = JMAPObject()
     @Environment(\.openURL) private var openURL
-    @Binding private var getStarted: Bool
     @State private var server: String = ""
     @State private var port: String = ""
     @State private var username: String = ""
@@ -115,40 +110,12 @@ struct ManualAccount: View {
             .disabled(selectedProtocol == "IMAP")
         }
         .scrollContentBackground(.hidden)
-        .background {
-            Background()
-        }
     }
 }
 
 #Preview("Manual Account Setup") {
-    @Previewable @State var getStarted: Bool = false
     @Previewable @State var jmap: JMAPObject = JMAPObject()
 
-    ManualAccount($getStarted)
+    ManualAccount()
         .environment(jmap)
-        .sheet(isPresented: $getStarted) {
-            EmptyView()
-                .presentationDragIndicator(.visible)
-        }
-}
-
-private struct Background: View {
-
-    // MARK: View
-    var body: some View {
-        GeometryReader { proxy in
-            Image.background
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: proxy.size.width, height: proxy.size.height)
-                .opacity(proxy.size.width > 444.0 ? 0.0 : 1.0)
-        }
-        .ignoresSafeArea()
-    }
-}
-
-private extension Image {
-    static var background: Self { Self("Welcome/Background") }
-    static var logo: Self { Self("Welcome/Logo") }
 }

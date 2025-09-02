@@ -1,15 +1,18 @@
-import JMAP
+import Account
 import SwiftUI
 
 @main
 struct App: SwiftUI.App {
-    @State private var jmap: JMAPObject = JMAPObject()
 
     // MARK: App
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(jmap)
         }
+        #if os(macOS)
+        .defaultSize(width: 768.0, height: 512.0)
+        .windowResizability(.contentMinSize)
+        .windowStyle(.hiddenTitleBar)
+        #endif
     }
 }
