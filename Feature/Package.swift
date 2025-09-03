@@ -15,18 +15,29 @@ let package: Package = Package(
             targets: [
                 "Account"
             ]),
-        .library(
-            name: "JMAP",
+        .executable(
+            name: "autoconfig",
             targets: [
-                "JMAP"
+                "AutoconfigurationCLI"
+            ]),
+        .library(
+            name: "Autoconfiguration",
+            targets: [
+                "Autoconfiguration"
             ]),
         .library(
             name: "IMAP",
             targets: [
                 "IMAP"
+            ]),
+        .library(
+            name: "JMAP",
+            targets: [
+                "JMAP"
             ])
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
         .package(name: "Core", path: "../Core")
     ],
     targets: [
@@ -35,6 +46,24 @@ let package: Package = Package(
             name: "AccountTests",
             dependencies: [
                 "Account"
+            ]),
+        .target(name: "Autoconfiguration"),
+        .executableTarget(
+            name: "AutoconfigurationCLI",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "Autoconfiguration"
+            ]),
+        .testTarget(
+            name: "AutoconfigurationTests",
+            dependencies: [
+                "Autoconfiguration"
+            ]),
+        .target(name: "IMAP"),
+        .testTarget(
+            name: "IMAPTests",
+            dependencies: [
+                "IMAP"
             ]),
         .target(
             name: "JMAP",
@@ -45,11 +74,5 @@ let package: Package = Package(
             name: "JMAPTests",
             dependencies: [
                 "JMAP"
-            ]),
-        .target(name: "IMAP"),
-        .testTarget(
-            name: "IMAPTests",
-            dependencies: [
-                "IMAP"
             ])
     ])
