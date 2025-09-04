@@ -11,3 +11,7 @@
 "account_server_settings_authentication_password_cleartext" = "Password";
 "account_server_settings_authentication_password_encrypted" = "Password criptata";
 "donation_support" = "Dona";
+"account_oauth_sign_in_button" = "Log In";
+"account_server_settings_security_label" = "Sicurezza";
+"account_server_settings_authentication_client_certificate" = "Certificato E-mail Client";
+"account_server_settings_authentication_none" = "Nessuno";

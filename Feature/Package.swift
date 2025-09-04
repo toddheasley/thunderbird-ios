@@ -15,19 +15,30 @@ let package: Package = Package(
             targets: [
                 "Account"
             ]),
-        .library(
-            name: "JMAP",
+        .executable(
+            name: "autoconfig",
             targets: [
-                "JMAP"
+                "AutoconfigurationCLI"
+            ]),
+        .library(
+            name: "Autoconfiguration",
+            targets: [
+                "Autoconfiguration"
             ]),
         .library(
             name: "IMAP",
             targets: [
                 "IMAP"
+            ]),
+        .library(
+            name: "JMAP",
+            targets: [
+                "JMAP"
             ])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-nio-imap", from: "0.1.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
         .package(name: "Core", path: "../Core")
     ],
     targets: [
@@ -37,15 +48,17 @@ let package: Package = Package(
             dependencies: [
                 "Account"
             ]),
-        .target(
-            name: "JMAP",
+        .target(name: "Autoconfiguration"),
+        .executableTarget(
+            name: "AutoconfigurationCLI",
             dependencies: [
-                "Core"
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "Autoconfiguration"
             ]),
         .testTarget(
-            name: "JMAPTests",
+            name: "AutoconfigurationTests",
             dependencies: [
-                "JMAP"
+                "Autoconfiguration"
             ]),
         .target(
             name: "IMAP",
@@ -56,5 +69,15 @@ let package: Package = Package(
             name: "IMAPTests",
             dependencies: [
                 "IMAP"
+            ]),
+        .target(
+            name: "JMAP",
+            dependencies: [
+                "Core"
+            ]),
+        .testTarget(
+            name: "JMAPTests",
+            dependencies: [
+                "JMAP"
             ])
     ])
