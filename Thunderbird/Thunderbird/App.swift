@@ -1,4 +1,3 @@
-import Account
 import SwiftUI
 
 @main
