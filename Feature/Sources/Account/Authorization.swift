@@ -22,7 +22,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
     /// Encoded `URLCredential` password value (for keychain storage)
     var password: String {
         switch self {
-        case .basic(let user, let password): "\(user):\(password)".data(using: .utf8)!.base64EncodedString()
+        case .basic(let user, let password): "\(user.components(separatedBy: " ")[0]):\(password)".data(using: .utf8)!.base64EncodedString()
         case .oauth(_, let token): token
         }
     }
@@ -32,7 +32,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
         let password: String = password ?? ""
         if let data: Data = Data(base64Encoded: password),
             let components: [String] = String(data: data, encoding: .utf8)?.components(separatedBy: ":"),
-            components.count == 2, components.first == user
+            components.count == 2, components.first == user.components(separatedBy: " ")[0]
         {
             self = .basic(user: user, password: components.last!)
         } else {
