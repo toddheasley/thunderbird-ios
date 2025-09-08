@@ -1,33 +1,12 @@
 import Foundation
 import dnssd
 
-/// Query DNS SRV records for available service connections.
-///
-/// Adapted from [archived `SRVResolver.swift`](https://github.com/jamf/NoMAD-2/blob/main/NoMAD/SRVLookups/SRVResolver.swift); added async/await query interface and configurable request timeout.
-public class SRV {
-    public struct Record: CustomStringConvertible, Equatable, Sendable {
-        public let host: String
-        public let port: Int
-        public let priority: Int
-        public let weight: Int
+// Use Apple `dnssd` to resolve DNS service (SRV) records
+// Adapted from https://github.com/jamf/NoMAD-2/blob/main/NoMAD/SRVLookups/SRVResolver.swift
+class SRVResolver {
+    let timeoutInterval: TimeInterval
 
-        init(_ data: Data) throws {
-            guard data.count > 8, let host: String = String(bytes: data.suffix(from: 7), encoding: .utf8) else {
-                throw URLError(.cannotDecodeRawData)
-            }
-            self.host = host.components(separatedBy: .controlCharacters).filter { !$0.isEmpty }.joined(separator: ".")
-            port = (Int(data[4]) * 256) + Int(data[5])
-            priority = (Int(data[0]) * 256) + Int(data[1])
-            weight = (Int(data[2]) * 256) + Int(data[3])
-        }
-
-        // MARK: CustomStringConvertible
-        public var description: String { "\(priority) \(weight) \(port) \(host)" }
-    }
-
-    public let timeoutInterval: TimeInterval
-
-    public func query(_ query: String) async throws -> [Record] {
+    func query(_ query: String) async throws -> [SRVRecord] {
         try await withCheckedThrowingContinuation { continuation in
             self.query(query) { result in
                 switch result {
@@ -40,14 +19,14 @@ public class SRV {
         }
     }
 
-    public init(timeoutInterval: TimeInterval = 1.0) {
+    init(timeoutInterval: TimeInterval = 1.0) {
         self.timeoutInterval = timeoutInterval
     }
 
-    private typealias Completion = (Result<[Record], Error>) -> Void
+    private typealias Completion = (Result<[SRVRecord], Error>) -> Void
 
     private var completion: Completion?
-    private var records: [Record] = []
+    private var records: [SRVRecord] = []
     private var query: String?
     private var dispatchSourceRead: DispatchSourceRead?
     private var timeoutTimer: DispatchSourceTimer?
@@ -57,22 +36,21 @@ public class SRV {
     private let queue: DispatchQueue = DispatchQueue(label: "SRV")
     private let callback: DNSServiceQueryRecordReply = { _, flags, _, _, _, _, _, rdlen, rdata, _, context in
         guard let context else { return }
-        let srv: SRV = Unmanaged.fromOpaque(context).takeUnretainedValue()
+        let resolver: SRVResolver = Unmanaged.fromOpaque(context).takeUnretainedValue()
         if let bytes = rdata?.assumingMemoryBound(to: UInt8.self),
-            let record: Record = try? Record(Data(bytes: bytes, count: Int(rdlen)))
+            let record: SRVRecord = try? SRVRecord(Data(bytes: bytes, count: Int(rdlen)))
         {
-            srv.records.append(record)
+            resolver.records.append(record)
         }
         if (flags & kDNSServiceFlagsMoreComing) == 0 {
-            srv.cancel()
-            srv.completion?(.success(srv.records))
+            resolver.cancel()
+            resolver.completion?(.success(resolver.records))
         }
     }
 
     private func query(_ query: String, completion: Completion? = nil) {
         self.completion = completion
         self.query = query
-
         let error: DNSServiceErrorType = DNSServiceQueryRecord(
             &serviceRef,
             kDNSServiceFlagsReturnIntermediates,

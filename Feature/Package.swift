@@ -38,6 +38,7 @@ let package: Package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
+        .package(url: "https://github.com/apple/swift-async-dns-resolver", branch: "main"),
         .package(name: "Core", path: "../Core")
     ],
     targets: [
@@ -47,7 +48,11 @@ let package: Package = Package(
             dependencies: [
                 "Account"
             ]),
-        .target(name: "Autoconfiguration"),
+        .target(
+            name: "Autoconfiguration",
+            dependencies: [
+                .product(name: "AsyncDNSResolver", package: "swift-async-dns-resolver")
+            ]),
         .executableTarget(
             name: "AutoconfigurationCLI",
             dependencies: [

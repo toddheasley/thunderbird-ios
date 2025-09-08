@@ -1,6 +1,6 @@
 import Foundation
 
-/// Translate client config XML into JSON.
+// Translate client config XML into JSON
 class XMLToJSONParser: NSObject, XMLParserDelegate {
     private(set) var emailAddress: EmailAddress!
     private(set) var dictionary: [String: Any] = [:]

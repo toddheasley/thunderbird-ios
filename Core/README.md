@@ -1,18 +1,5 @@
 # Core Libraries
 
-## `Autodiscover`
-
-`Autodiscover` queries DNS [SRV records](https://en.wikipedia.org/wiki/SRV_record) for email service host names and port numbers. Useful during development of IMAP and JMAP protocol libraries, but meant to be superseded by [Autoconfiguration.](https://wiki.mozilla.org/Thunderbird%3AAutoconfiguration)
-
-```swift
-import Autodiscover
-
-let records: [SRV.Record] = try await SRV().query("_jmap._tcp.thundermail.com")
-print(records.first)  // "0 1 993 mail.thundermail.com"
-``` 
-
-`SRV` depends on [`dnssd`.](https://developer.apple.com/documentation/dnssd)
-
 ## `Weblate`
 
 Thunderbird for iOS and Android both depend on the same hosted [Weblate language translations](https://hosted.weblate.org/projects/tb-android) for localization.

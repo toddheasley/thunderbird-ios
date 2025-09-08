@@ -30,6 +30,12 @@
       "skippedTests" : {
         "suites" : [
           {
+            "name" : "DNSResolverTests"
+          },
+          {
+            "name" : "DomainParserTests"
+          },
+          {
             "name" : "URLSessionTests"
           }
         ]
@@ -73,20 +79,6 @@
         "containerPath" : "container:..\/Bolt",
         "identifier" : "EditorTests",
         "name" : "EditorTests"
-      }
-    },
-    {
-      "skippedTests" : {
-        "suites" : [
-          {
-            "name" : "SRVTests"
-          }
-        ]
-      },
-      "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "AutodiscoverTests",
-        "name" : "AutodiscoverTests"
       }
     },
     {

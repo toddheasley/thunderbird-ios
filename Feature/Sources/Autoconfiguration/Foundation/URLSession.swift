@@ -1,17 +1,24 @@
 import Foundation
 
 extension URLSession {
-
     /// Query multiple autoconfig sources for a given email address.
-    public func autoconfig(_ emailAddress: EmailAddress, sources: [Source] = Source.allCases) async throws -> (config: ClientConfig, source: Source) {
+    public func autoconfig(_ emailAddress: EmailAddress, sources: [Source] = Source.allCases, queryMX: Bool = true) async throws -> (config: ClientConfig, source: Source) {
         for source in sources {
             guard let config: ClientConfig = try? await autoconfig(emailAddress, source: source).config else { continue }
             return (config, source)
         }
-        throw URLError(.fileDoesNotExist)
+        guard queryMX else {
+            throw URLError(.fileDoesNotExist)
+        }
+        let records: [MXRecord] = try await DNSResolver.queryMX(emailAddress)
+        guard let host: String = records.first?.host else {
+            throw URLError(.unsupportedURL)
+        }
+        let domain: String = try await domain(host: host)
+        return try await autoconfig(domain, sources: sources, queryMX: false)
     }
 
-    // Query a single autoconfig source for a given email address.
+    /// Query a single autoconfig source using  a given email address.
     public func autoconfig(_ emailAddress: EmailAddress, source: Source) async throws -> (config: ClientConfig, data: (Data, Data)) {
         let url: URL = try .autoconfig(emailAddress, source: source)
         let data: (Data, URLResponse) = try await data(from: url)
@@ -26,8 +33,23 @@ extension URLSession {
             throw URLError(.unsupportedURL)
         }
     }
+
+    private struct Container: Decodable {
+        let clientConfig: ClientConfig
+    }
 }
 
-private struct Container: Decodable {
-    let clientConfig: ClientConfig
+extension URLSession {
+    /// Derive domain name from a give host name using the [Public Suffix List.](https://publicsuffix.org)
+    public func domain(host: String) async throws -> String {
+        let suffixList: [String] = try await suffixList()
+        let parser: DomainParser = try DomainParser(host: host, suffixList: suffixList)
+        return parser.domain
+    }
+
+    func suffixList() async throws -> [String] {
+        let data: (Data, URLResponse) = try await data(from: .suffixList)
+        let suffixList: [String] = try SuffixListParser(data: data.0).suffixList
+        return suffixList
+    }
 }
