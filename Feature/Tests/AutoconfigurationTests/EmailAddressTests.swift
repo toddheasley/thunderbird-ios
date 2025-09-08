@@ -1,6 +1,6 @@
 @testable import Autoconfiguration
-import Testing
 import Foundation
+import Testing
 
 struct EmailAddressTests {
     @Test func host() throws {
@@ -20,6 +20,15 @@ struct EmailAddressTests {
         #expect(try "h@x0r@192.168.1.1".local == "h@x0r")
         #expect(throws: URLError.self) {
             try "example.com".local
+        }
+    }
+
+    @Test func query() throws {
+        #expect(try "user@example.com".query(.autodiscover) == "_autodiscover._tcp.example.com")
+        #expect(try "h@x0r@192.168.1.1".query(.imap) == "_imap._tcp.192.168.1.1")
+        #expect(try "example.com".query(.smtp) == "_smtp._tcp.example.com")
+        #expect(throws: URLError.self) {
+            try "abc@".query(.jmap)
         }
     }
 }

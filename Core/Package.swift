@@ -15,20 +15,15 @@ let package: Package = Package(
             targets: [
                 "Core"
             ]),
-        .executable(
-            name: "weblate",
-            targets: [
-                "Weblate"
-            ]),
-        .library(
-            name: "Autodiscover",
-            targets: [
-                "Autodiscover"
-            ]),
         .library(
             name: "Log",
             targets: [
                 "Log"
+            ]),
+        .executable(
+            name: "weblate",
+            targets: [
+                "Weblate"
             ])
     ],
     dependencies: [
@@ -38,24 +33,17 @@ let package: Package = Package(
         .target(
             name: "Core",
             dependencies: [
-                "Autodiscover",
                 "Log"
-            ]),
-        .executableTarget(
-            name: "Weblate",
-            dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser")
-            ]),
-        .target(name: "Autodiscover"),
-        .testTarget(
-            name: "AutodiscoverTests",
-            dependencies: [
-                "Autodiscover"
             ]),
         .target(name: "Log"),
         .testTarget(
             name: "LogTests",
             dependencies: [
                 "Log"
+            ]),
+        .executableTarget(
+            name: "Weblate",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
             ])
     ])

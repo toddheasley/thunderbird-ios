@@ -37,3 +37,7 @@ extension URL {
         return url
     }
 }
+
+extension URL {
+    static let suffixList: Self = Self(string: "https://publicsuffix.org/list/public_suffix_list.dat")!
+}
