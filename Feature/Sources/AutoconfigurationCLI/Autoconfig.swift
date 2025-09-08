@@ -15,9 +15,12 @@ struct Autoconfig: AsyncParsableCommand {
 
     // MARK: AsyncParsableCommand
     func run() async throws {
+        // Routine explodes the paths that `URLSession.autoconfig(_ emailAddress:)` follows
+        // All sources are queried for printing/debugging purposes
         print("EMAIL ADDRESS: <\(emailAddress)>")
         print("")
         if !(try await query(emailAddress)) {
+            // No configuration found for email address host; look for underlying MX host and retry
             print("Querying MX records for \((try? emailAddress.host) ?? emailAddress)…")
             let records: [MXRecord] = try await DNSResolver.queryMX(emailAddress)
             guard let host: String = records.first?.host else {
@@ -35,7 +38,7 @@ struct Autoconfig: AsyncParsableCommand {
     }
 
     @discardableResult private func query(_ emailAddress: EmailAddress, domain: String? = nil) async throws -> Bool {
-        var found: Bool = false
+        var found: Bool = false  // Keep track of findings while looping sources
         for source in Source.allCases {
             print("Querying the \(source) for \(domain ?? (try? emailAddress.host) ?? emailAddress)…")
             do {
@@ -90,6 +93,6 @@ struct Autoconfig: AsyncParsableCommand {
                 print("")
             }
         }
-        return found
+        return found  // Returned value indicates whether retry needed
     }
 }
