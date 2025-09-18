@@ -14,7 +14,7 @@ struct AccountTests {
         #expect(Account(name: "user@example.com", servers: [.jmap]).outgoingServer?.serverProtocol == .jmap)
         #expect(Account(name: "user@example.com", servers: [.imap]).outgoingServer == nil)
     }
-    
+
     @Test func server() {
         #expect(Account(name: "user@example.com", servers: [.imap, .smtp]).server(.imap)?.serverProtocol == .imap)
         #expect(Account(name: "user@example.com", servers: [.imap, .smtp]).server(.smtp)?.serverProtocol == .smtp)
@@ -27,7 +27,7 @@ struct AccountTests {
 private extension Server {
     static var jmap: Self {
         Self(
-            serverProtocol: .jmap,
+            .jmap,
             connectionSecurity: .none,
             authenticationType: .none,
             username: "user",
@@ -37,7 +37,7 @@ private extension Server {
 
     static var imap: Self {
         Self(
-            serverProtocol: .imap,
+            .imap,
             connectionSecurity: .none,
             authenticationType: .none,
             username: "user",
@@ -47,7 +47,7 @@ private extension Server {
 
     static var smtp: Self {
         Self(
-            serverProtocol: .smtp,
+            .smtp,
             connectionSecurity: .none,
             authenticationType: .none,
             username: "user",

@@ -1,4 +1,4 @@
-public struct Identity: Codable, CustomStringConvertible {
+public struct Identity: Codable, CustomStringConvertible, Hashable {
     public let emailAddress: EmailAddress
     public let displayName: String?
 

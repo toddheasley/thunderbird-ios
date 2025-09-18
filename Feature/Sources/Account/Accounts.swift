@@ -5,6 +5,10 @@ public class Accounts {
     public private(set) var allAccounts: [Account] = []
     public private(set) var error: Error?
 
+    public func account(for id: UUID) -> Account? {
+        allAccounts.filter({ $0.id == id }).first
+    }
+
     public func set(_ account: Account, at index: Int? = nil) {
         error = nil
         do {

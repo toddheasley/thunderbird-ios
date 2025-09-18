@@ -1,6 +1,6 @@
 import Foundation
 
-public enum DeletePolicy: Codable, CustomStringConvertible, Equatable, RawRepresentable {
+public enum DeletePolicy: Codable, CustomStringConvertible, Equatable, Hashable, RawRepresentable {
     case after(days: Int = 7), onDelete, markAsRead, never
 
     // MARK: CustomStringConvertible

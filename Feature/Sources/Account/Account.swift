@@ -1,10 +1,10 @@
 import Foundation
 
-public struct Account: Codable, Equatable, Identifiable {
-    public let name: String
-    public let deletePolicy: DeletePolicy
-    public let identities: [Identity]
-    public let servers: [Server]
+public struct Account: Codable, Equatable, Hashable, Identifiable {
+    public var name: String
+    public var deletePolicy: DeletePolicy
+    public var identities: [Identity]
+    public var servers: [Server]
 
     public var incomingServer: Server? { server(.jmap) ?? server(.imap) ?? nil }
     public var outgoingServer: Server? { server(.jmap) ?? server(.smtp) ?? nil }

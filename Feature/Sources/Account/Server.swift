@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertible {
+public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertible, Identifiable {
     case jmap = "JMAP"
     case imap = "IMAP"
     case smtp = "SMTP"
@@ -15,35 +15,38 @@ public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertib
 
     // MARK: CustomStringConvertible
     public var description: String { rawValue }
+
+    // MARK: Identifiable
+    public var id: String { rawValue }
 }
 
-public struct Server: Codable, Identifiable {
-    public let serverProtocol: ServerProtocol
-    public let connectionSecurity: ConnectionSecurity
-    public let authenticationType: AuthenticationType
-    public let username: String
-    public let hostname: String
-    public let port: Int
+public struct Server: Codable, Equatable, Hashable, Identifiable {
+    public var serverProtocol: ServerProtocol
+    public var connectionSecurity: ConnectionSecurity
+    public var authenticationType: AuthenticationType
+    public var username: String
+    public var hostname: String
+    public var port: Int
 
-    public var authorization: Authorization? {
+    public var authorization: Authorization {
         set {  // Swap in keychain-specific user name
-            let authorization: Authorization = Authorization(user: user, password: newValue?.password ?? "")
+            let authorization: Authorization = Authorization(user: user, password: newValue.password)
             URLCredentialStorage.shared.set(authorization: authorization, persistence: .permanent)
         }
         get {
             guard let authorization: Authorization = URLCredentialStorage.shared.authorization(for: user) else {
-                return nil
+                return .none
             }
             return Authorization(user: username, password: authorization.password)  // Swap out keychain-specific user name
         }
     }
 
     public init(
-        serverProtocol: ServerProtocol,
-        connectionSecurity: ConnectionSecurity,
-        authenticationType: AuthenticationType,
-        username: String,
-        hostname: String,
+        _ serverProtocol: ServerProtocol,
+        connectionSecurity: ConnectionSecurity = .none,
+        authenticationType: AuthenticationType = .none,
+        username: String = "",
+        hostname: String = "",
         port: Int? = nil,
         id: UUID = UUID()
     ) {

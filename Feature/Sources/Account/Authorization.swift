@@ -4,10 +4,12 @@ import Foundation
 public enum Authorization: CustomStringConvertible, Equatable {
     case basic(user: String, password: String)
     case oauth(user: String, token: String)
+    case none
 
     public var user: String {
         switch self {
         case .basic(let user, _), .oauth(let user, _): user
+        case .none: ""
         }
     }
 
@@ -16,6 +18,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
         switch self {
         case .basic: "Basic \(password)"
         case .oauth: "Bearer \(password)"
+        case .none: ""
         }
     }
 
@@ -24,6 +27,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
         switch self {
         case .basic(let user, let password): "\(user.components(separatedBy: " ")[0]):\(password)".data(using: .utf8)!.base64EncodedString()
         case .oauth(_, let token): token
+        case .none: ""
         }
     }
 
