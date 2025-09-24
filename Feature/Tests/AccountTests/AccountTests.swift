@@ -3,59 +3,55 @@ import Testing
 import Foundation
 
 struct AccountTests {
-    @Test func delete() throws {
-        lock.lock()
-        defer {
-            lock.unlock()
-        }
-        Account.deleteAll()
-        let accounts: [Account] = [
-            Account(name: "Example 1"),
-            Account(name: "Example 2"),
-            Account(name: "Example 3")
-        ]
-        for account in accounts {
-            try account.save()
-        }
-        #expect(Account.allCases.count == 3)
-        try Account.allCases[1].delete()
-        #expect(Account.allCases.count == 2)
-        #expect(Account.allCases.first?.id == accounts[0].id)
-        #expect(Account.allCases.last?.id == accounts[2].id)
-        try Account.allCases.first?.delete()
-        #expect(Account.allCases.count == 1)
-        #expect(Account.allCases.first?.id == accounts[2].id)
-        try Account.allCases.first?.delete()
-        #expect(Account.allCases.count == 0)
+    @Test func incomingServer() {
+        #expect(Account(name: "user@example.com", servers: [.imap, .smtp]).incomingServer?.serverProtocol == .imap)
+        #expect(Account(name: "user@example.com", servers: [.jmap]).incomingServer?.serverProtocol == .jmap)
+        #expect(Account(name: "user@example.com", servers: [.smtp]).incomingServer == nil)
     }
 
-    @Test func save() throws {
-        lock.lock()
-        defer {
-            lock.unlock()
-        }
-        Account.deleteAll()
-        let accounts: [Account] = [
-            Account(name: "Example 1"),
-            Account(name: "Example 2"),
-            Account(name: "Example 3")
-        ]
-        for account in accounts {
-            try account.save()
-        }
-        #expect(Account.allCases.count == 3)
-        #expect(Account.allCases.first?.id == accounts[0].id)
-        #expect(Account.allCases.last?.id == accounts[2].id)
-        try accounts[1].save(at: 0)
-        #expect(Account.allCases.count == 3)
-        #expect(Account.allCases.first?.id == accounts[1].id)
-        #expect(Account.allCases.last?.id == accounts[2].id)
-        try accounts[0].save(at: 100)
-        #expect(Account.allCases.count == 3)
-        #expect(Account.allCases.first?.id == accounts[1].id)
-        #expect(Account.allCases.last?.id == accounts[0].id)
-        Account.deleteAll()
+    @Test func outgoingServer() {
+        #expect(Account(name: "user@example.com", servers: [.imap, .smtp]).outgoingServer?.serverProtocol == .smtp)
+        #expect(Account(name: "user@example.com", servers: [.jmap]).outgoingServer?.serverProtocol == .jmap)
+        #expect(Account(name: "user@example.com", servers: [.imap]).outgoingServer == nil)
+    }
+
+    @Test func server() {
+        #expect(Account(name: "user@example.com", servers: [.imap, .smtp]).server(.imap)?.serverProtocol == .imap)
+        #expect(Account(name: "user@example.com", servers: [.imap, .smtp]).server(.smtp)?.serverProtocol == .smtp)
+        #expect(Account(name: "user@example.com", servers: [.imap, .smtp]).server(.jmap) == nil)
+        #expect(Account(name: "user@example.com", servers: [.jmap]).server(.jmap)?.serverProtocol == .jmap)
+        #expect(Account(name: "user@example.com", servers: [.jmap]).server(.imap) == nil)
     }
 }
 
-private let lock: NSLock = NSLock()
+private extension Server {
+    static var jmap: Self {
+        Self(
+            .jmap,
+            connectionSecurity: .none,
+            authenticationType: .none,
+            username: "user",
+            hostname: "jmap.example.com"
+        )
+    }
+
+    static var imap: Self {
+        Self(
+            .imap,
+            connectionSecurity: .none,
+            authenticationType: .none,
+            username: "user",
+            hostname: "imap.example.com"
+        )
+    }
+
+    static var smtp: Self {
+        Self(
+            .smtp,
+            connectionSecurity: .none,
+            authenticationType: .none,
+            username: "user",
+            hostname: "smtp.example.com"
+        )
+    }
+}

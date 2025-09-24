@@ -13,7 +13,7 @@ extension URLCredentialStorage {
         }
     }
 
-    func removeAuthorizations(space: URLProtectionSpace = .account) {
+    func deleteAuthorizations(space: URLProtectionSpace = .account) {
         for credential in (credentials(for: space) ?? [:]).values {
             remove(credential, for: space)
         }
