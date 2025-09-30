@@ -10,7 +10,7 @@ on:
 
 jobs:
     test:
-      runs-on: macos-15
+      runs-on: macos-26
 
       steps:
         - name: Checkout repository
@@ -18,6 +18,6 @@ jobs:
         - name: Resolve package dependencies
           run: xcodebuild -resolvePackageDependencies -workspace Thunderbird.xcworkspace -scheme Thunderbird
         - name: Build and analyze
-          run: xcodebuild clean build analyze -workspace Thunderbird.xcworkspace -scheme Thunderbird -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16'
-        - name: Run tests in iPhone 16 Simulator
-          run: xcodebuild test -workspace Thunderbird.xcworkspace -scheme ThunderbirdTests -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16'
+          run: xcodebuild clean build analyze -workspace Thunderbird.xcworkspace -scheme Thunderbird -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17'
+        - name: Run tests in iPhone Simulator
+          run: xcodebuild test -workspace Thunderbird.xcworkspace -scheme ThunderbirdTests -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17'

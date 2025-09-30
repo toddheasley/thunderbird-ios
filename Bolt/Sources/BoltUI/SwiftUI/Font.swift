@@ -106,7 +106,7 @@ private struct FontPreview: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text("\(style)")
+                Text(style.description)
                     .textStyle(.subhead)
                     .foregroundStyle(.secondary)
                 Text(.quickBrownFox)
