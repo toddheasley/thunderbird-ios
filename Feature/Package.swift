@@ -39,6 +39,7 @@ let package: Package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
         .package(url: "https://github.com/apple/swift-async-dns-resolver", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-imap", branch: "main"),
         .package(name: "Core", path: "../Core")
     ],
     targets: [
@@ -64,7 +65,11 @@ let package: Package = Package(
             dependencies: [
                 "Autoconfiguration"
             ]),
-        .target(name: "IMAP"),
+        .target(
+            name: "IMAP",
+            dependencies: [
+                .product(name: "NIOIMAP", package: "swift-nio-imap")
+            ]),
         .testTarget(
             name: "IMAPTests",
             dependencies: [

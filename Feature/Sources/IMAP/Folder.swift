@@ -1,4 +1,5 @@
 import Foundation
+import NIOIMAP
 
 public struct Folder: Identifiable {
     public let name: String
