@@ -3,20 +3,42 @@ import Foundation
 import Testing
 
 struct OAuth2Tests {
+    @Test func matches() throws {
+        let request: OAuth2.Request = try OAuth2.Request(
+            authURI: "example.com",
+            tokenURI: "example.com",
+            redirectURI: "com.example:/oauth2redirect",
+            scope: [
+                "mail-w"
+            ],
+            clientID: "0123456789",
+            hosts: [
+                "example.com",
+                "examplemail.com"
+            ]
+        )
+        #expect(request.matches("google.com") == false)
+        #expect(request.matches("mail.example.com") == true)
+        #expect(request.matches("examplemail.com") == true)
+        #expect(request.matches("mail.com") == false)
+    }
     @Test func decoderInit() throws {
         let oauth2: [OAuth2] = try JSONDecoder().decode([OAuth2].self, from: data)
-        #expect(oauth2[0].scope == [
-            "mail-w"
-        ])
-        #expect(oauth2[1].scope == [
-            "https://mail.google.com/",
-            "https://www.googleapis.com/auth/contacts",
-            "https://www.googleapis.com/auth/calendar",
-            "https://www.googleapis.com/auth/carddav"
-        ])
-        #expect(oauth2[2].scope == [
-            "mail-w"
-        ])
+        #expect(
+            oauth2[0].scope == [
+                "mail-w"
+            ])
+        #expect(
+            oauth2[1].scope == [
+                "https://mail.google.com/",
+                "https://www.googleapis.com/auth/contacts",
+                "https://www.googleapis.com/auth/calendar",
+                "https://www.googleapis.com/auth/carddav"
+            ])
+        #expect(
+            oauth2[2].scope == [
+                "mail-w"
+            ])
     }
 }
 

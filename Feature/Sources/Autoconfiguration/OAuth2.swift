@@ -6,18 +6,45 @@ public struct OAuth2: Decodable {
         public let tokenURL: URL
         public let redirectURI: String
         public let scope: [String]
+        public let hosts: [String]
         public let clientID: String
 
-        public init(authURL: URL, tokenURL: URL, redirectURI: String, scope: [String], clientID: String) throws {
+        public func matches(_ host: String) -> Bool {
+            for _host in hosts {
+                guard host.hasSuffix(_host) else { continue }
+                return true
+            }
+            return false
+        }
+
+        public init(authURI: String, tokenURI: String, redirectURI: String, scope: [String], clientID: String, hosts: [String] = []) throws {
+            guard let authURL: URL = URL(string: authURI),
+                let tokenURL: URL = URL(string: tokenURI)
+            else {
+                throw URLError(.badURL)
+            }
+            try self.init(
+                authURL: authURL,
+                tokenURL: tokenURL,
+                redirectURI: redirectURI,
+                scope: scope,
+                clientID: clientID,
+                hosts: hosts
+            )
+        }
+
+        public init(authURL: URL, tokenURL: URL, redirectURI: String, scope: [String], clientID: String, hosts: [String] = []) throws {
             guard !redirectURI.isEmpty,
-                  !scope.isEmpty, !(scope.first ?? "").isEmpty,
-                  !clientID.isEmpty else {
+                !scope.isEmpty, !(scope.first ?? "").isEmpty,
+                !clientID.isEmpty
+            else {
                 throw URLError(.resourceUnavailable)
             }
             self.authURL = authURL
             self.tokenURL = tokenURL
             self.redirectURI = redirectURI
             self.scope = scope
+            self.hosts = hosts
             self.clientID = clientID
         }
 
