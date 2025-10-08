@@ -14,3 +14,4 @@
 "account_server_settings_authentication_none" = "Yok";
 "configuration_IMAP_not_supported" = "IMAP henüz desteklenmiyor";
 "account_server_settings_authentication_password_encrypted" = "Şifrelenmiş parola";
+"donation_support" = "Bağış yap";
