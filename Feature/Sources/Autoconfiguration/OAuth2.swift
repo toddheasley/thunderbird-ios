@@ -2,12 +2,23 @@ import Foundation
 
 public struct OAuth2: Decodable {
     public struct Request {
-        public let authURL: URL
-        public let tokenURL: URL
+        public let authURI: String
+        public let tokenURI: String
         public let redirectURI: String
         public let scope: [String]
         public let hosts: [String]
         public let clientID: String
+
+        public var authURL: URL {
+            var components: URLComponents = URLComponents(string: authURI)!
+            components.queryItems = [
+                URLQueryItem(name: "client_id", value: clientID),
+                URLQueryItem(name: "redirect_uri", value: redirectURI),
+                URLQueryItem(name: "response_type", value: "code"),
+                URLQueryItem(name: "scope", value: scope.joined(separator: ","))
+            ]
+            return components.url!
+        }
 
         public func matches(_ host: String) -> Bool {
             for _host in hosts {
@@ -18,30 +29,16 @@ public struct OAuth2: Decodable {
         }
 
         public init(authURI: String, tokenURI: String, redirectURI: String, scope: [String], clientID: String, hosts: [String] = []) throws {
-            guard let authURL: URL = URL(string: authURI),
-                let tokenURL: URL = URL(string: tokenURI)
-            else {
-                throw URLError(.badURL)
-            }
-            try self.init(
-                authURL: authURL,
-                tokenURL: tokenURL,
-                redirectURI: redirectURI,
-                scope: scope,
-                clientID: clientID,
-                hosts: hosts
-            )
-        }
-
-        public init(authURL: URL, tokenURL: URL, redirectURI: String, scope: [String], clientID: String, hosts: [String] = []) throws {
-            guard !redirectURI.isEmpty,
+            guard URL(string: authURI) != nil,
+                URL(string: tokenURI) != nil,
+                !redirectURI.isEmpty,
                 !scope.isEmpty, !(scope.first ?? "").isEmpty,
                 !clientID.isEmpty
             else {
-                throw URLError(.resourceUnavailable)
+                throw URLError(.badURL)
             }
-            self.authURL = authURL
-            self.tokenURL = tokenURL
+            self.authURI = authURI
+            self.tokenURI = tokenURI
             self.redirectURI = redirectURI
             self.scope = scope
             self.hosts = hosts
@@ -50,8 +47,8 @@ public struct OAuth2: Decodable {
 
         public init(_ oauth2: OAuth2, redirectURI: String, clientID: String) throws {
             try self.init(
-                authURL: oauth2.authURL,
-                tokenURL: oauth2.tokenURL,
+                authURI: oauth2.authURL.absoluteString,
+                tokenURI: oauth2.tokenURL.absoluteString,
                 redirectURI: redirectURI,
                 scope: oauth2.scope,
                 clientID: clientID

@@ -28,7 +28,11 @@ struct OAuth2Button: View {
             guard let request else { return }
             let url: URL =
                 try await webAuthenticationSession
-                .authenticate(using: request.authURL, callback: .customScheme("thunderbird"), additionalHeaderFields: [:])
+                .authenticate(
+                    using: request.authURL,
+                    callback: .customScheme("\(Bundle.main.schemes.first!)"),
+                    additionalHeaderFields: [:]
+                )
             print(url)
         } catch {
             self.error = error
@@ -42,7 +46,7 @@ struct OAuth2Button: View {
                 await authenticate()
             }
         }) {
-            Text("Authenticate")
+            Text("account_oauth_sign_in_button")
         }
         .disabled(request == nil)
         .task {
@@ -62,7 +66,7 @@ extension OAuth2.Request: @retroactive CaseIterable, @retroactive Equatable {
         try! Self(
             authURI: "https://api.login.aol.com/oauth2/request_auth",
             tokenURI: "https://api.login.aol.com/oauth2/get_token",
-            redirectURI: "\(Bundle.main.bundleIdentifier!)://oauth2redirect",
+            redirectURI: "\(Bundle.main.schemes.first!)://oauth2redirect",
             scope: [
                 "mail-w"
             ],
@@ -78,13 +82,14 @@ extension OAuth2.Request: @retroactive CaseIterable, @retroactive Equatable {
         try! Self(
             authURI: "https://api.fastmail.com/oauth/authorize",
             tokenURI: "https://api.fastmail.com/oauth/refresh",
-            redirectURI: "\(Bundle.main.bundleIdentifier!)://oauth2redirect",
+            redirectURI: "\(Bundle.main.schemes.first!)://oauth2redirect",
             scope: [
                 "https://www.fastmail.com/dev/protocol-imap",
                 "https://www.fastmail.com/dev/protocol-smtp"
             ],
             clientID: "353e41ae",
             hosts: [
+                "messagingengine.com",
                 "fastmail.com"
             ]
         )
@@ -95,7 +100,7 @@ extension OAuth2.Request: @retroactive CaseIterable, @retroactive Equatable {
         try! Self(
             authURI: "https://accounts.google.com/o/oauth2/v2/auth",
             tokenURI: "https://oauth2.googleapis.com/token",
-            redirectURI: "\(Bundle.main.bundleIdentifier!):/oauth2redirect",
+            redirectURI: "\(Bundle.main.schemes.first!):/oauth2redirect",
             scope: [
                 "https://mail.google.com/"
             ],
@@ -113,7 +118,7 @@ extension OAuth2.Request: @retroactive CaseIterable, @retroactive Equatable {
         try! Self(
             authURI: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
             tokenURI: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-            redirectURI: "msauth://\(Bundle.main.bundleIdentifier!)/eaXDuh6T3KFWjcJhsoaObT9OayU%3D",
+            redirectURI: "msauth://\(Bundle.main.schemes.first!)/eaXDuh6T3KFWjcJhsoaObT9OayU%3D",
             scope: [
                 "profile",
                 "openid",
@@ -135,7 +140,7 @@ extension OAuth2.Request: @retroactive CaseIterable, @retroactive Equatable {
         try! Self(
             authURI: "https://api.login.yahoo.com/oauth2/request_auth",
             tokenURI: "https://api.login.yahoo.com/oauth2/get_token",
-            redirectURI: "\(Bundle.main.bundleIdentifier!)://oauth2redirect",
+            redirectURI: "\(Bundle.main.schemes.first!)://oauth2redirect",
             scope: [
                 "mail-w"
             ],
@@ -151,7 +156,7 @@ extension OAuth2.Request: @retroactive CaseIterable, @retroactive Equatable {
         try! Self(
             authURI: "https://auth.tb.pro/realms/tbpro/protocol/openid-connect/auth",
             tokenURI: "https://auth.tb.pro/realms/tbpro/protocol/openid-connect/token",
-            redirectURI: "\(Bundle.main.bundleIdentifier!)://oauth2redirect",
+            redirectURI: "\(Bundle.main.schemes.first!)://oauth2redirect",
             scope: [
                 "openid",
                 "profile",
