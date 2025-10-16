@@ -1,5 +1,5 @@
-@testable import Account
-@testable import JMAP
+import Account
+import JMAP
 import SwiftUI
 
 @MainActor
@@ -9,7 +9,7 @@ import SwiftUI
 
     var token: String = "" {
         didSet {
-            URLCredentialStorage.shared.set(authorization: .oauth(user: .user, token: token))
+            // URLCredentialStorage.shared.set(authorization: .oauth(user: .user, token: token))
             Task {
                 await session()
             }
@@ -17,7 +17,7 @@ import SwiftUI
     }
 
     init() {
-        token = URLCredentialStorage.shared.authorization(for: .user)?.password ?? ""
+        token = ""  // URLCredentialStorage.shared.authorization(for: .user)?.password ?? ""
         Task {
             await session()
         }
@@ -101,6 +101,8 @@ extension Filter {
 
 extension URLSession {
     func thread(_ token: String, url: URL, for email: Email, account id: String) async throws -> [Email] {
+        throw URLError(.resourceUnavailable)
+        /*
         guard
             let response: MethodGetResponse = try await jmapAPI(
                 [
@@ -120,10 +122,12 @@ extension URLSession {
         else {
             throw URLError(.cannotDecodeContentData)
         }
-        return try await emails(token, url: url, ids: ids, account: id)
+        return try await emails(token, url: url, ids: ids, account: id) */
     }
 
     func emails(_ token: String, url: URL, in mailbox: Mailbox, account id: String) async throws -> [Email] {
+        throw URLError(.resourceUnavailable)
+        /*
         guard
             let response: MethodQueryResponse = try await jmapAPI(
                 [
@@ -133,10 +137,12 @@ extension URLSession {
         else {
             throw URLError(.cannotDecodeContentData)
         }
-        return try await emails(token, url: url, ids: response.ids, account: id)
+        return try await emails(token, url: url, ids: response.ids, account: id) */
     }
 
     func emails(_ token: String, url: URL, ids: [String], account id: String) async throws -> [Email] {
+        throw URLError(.resourceUnavailable)
+        /*
         guard
             let response: MethodGetResponse = try await jmapAPI(
                 [
@@ -146,10 +152,12 @@ extension URLSession {
         else {
             throw URLError(.cannotDecodeContentData)
         }
-        return try response.decode([Email].self)
+        return try response.decode([Email].self) */
     }
 
     func mailboxes(_ token: String, url: URL, account id: String) async throws -> [Mailbox] {
+        throw URLError(.resourceUnavailable)
+        /*
         guard
             let response: MethodGetResponse = try await jmapAPI(
                 [
@@ -159,7 +167,7 @@ extension URLSession {
         else {
             throw URLError(.cannotDecodeContentData)
         }
-        return try response.decode([Mailbox].self)
+        return try response.decode([Mailbox].self) */
     }
 
     func session(_ token: String) async throws -> Session {
