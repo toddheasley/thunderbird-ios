@@ -23,7 +23,7 @@ struct ManualServerSetup: View {
         self.outGoingHostname = tempAccount.outgoingServer?.hostname ?? ""
         self.outGoingPort = tempAccount.outgoingServer?.port
     }
-    
+
     @Environment(Accounts.self) private var accounts: Accounts
     @Environment(LoginDetails.self) private var loginDetails: LoginDetails
     @State private var incomingServer: Server
@@ -37,65 +37,64 @@ struct ManualServerSetup: View {
     @State private var manualConfig: Bool
     @State private var account: Account
 
-
     // MARK: View
     var body: some View {
         Form {
-            if(loginDetails.serverProtocol == .jmap){
-                Section(header: Text("Mail Server")){
-                    
+            if loginDetails.serverProtocol == .jmap {
+                Section(header: Text("Mail Server")) {
+
                     TextEntryWrapper("Server", "server.example.com", $incomingHostname)
                     NumEntryWrapper("Port", "443", $incomingPort)
-                        Picker("Authentication Type", selection: $incomingServer.authenticationType) {
-                            ForEach(AuthenticationType.allCases) { authentication in
-                                Text(authentication.text)
-                                    .tag(authentication)
-                            }
+                    Picker("Authentication Type", selection: $incomingServer.authenticationType) {
+                        ForEach(AuthenticationType.allCases) { authentication in
+                            Text(authentication.text)
+                                .tag(authentication)
                         }
-                        .onChange(of: incomingServer.authenticationType, initial: true) {
+                    }
+                    .onChange(of: incomingServer.authenticationType, initial: true) {
 
-                        }
+                    }
                     AuthorizationView($incomingServer.authorization, for: incomingServer.username, authenticationType: incomingServer.authenticationType)
-                    
+
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)
 
                 }
-                
+
             } else {
-                Section(header: Text("Incoming Mail Server")){
-                    
+                Section(header: Text("Incoming Mail Server")) {
+
                     TextEntryWrapper("Server", "server.example.com", $incomingHostname)
                     NumEntryWrapper("Port", "443", $incomingPort)
-                        Picker("Authentication Type", selection: $incomingServer.authenticationType) {
-                            ForEach(AuthenticationType.allCases) { authentication in
-                                Text(authentication.text)
-                                    .tag(authentication)
-                            }
+                    Picker("Authentication Type", selection: $incomingServer.authenticationType) {
+                        ForEach(AuthenticationType.allCases) { authentication in
+                            Text(authentication.text)
+                                .tag(authentication)
                         }
-                        .onChange(of: incomingServer.authenticationType, initial: true) {
+                    }
+                    .onChange(of: incomingServer.authenticationType, initial: true) {
 
-                        }
+                    }
                     AuthorizationView($incomingServer.authorization, for: incomingServer.username, authenticationType: incomingServer.authenticationType)
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)
 
                 }
-                Section(header: Text("Outgoing Mail Server")){
+                Section(header: Text("Outgoing Mail Server")) {
                     TextEntryWrapper("Server", "server.example.com", $outGoingHostname)
                     NumEntryWrapper("Port", "443", $outGoingPort)
 
-                        Picker("Authentication Type", selection: $outgoingServer.authenticationType) {
-                            ForEach(AuthenticationType.allCases) { authentication in
-                                Text(authentication.text)
-                                    .tag(authentication)
-                            }
+                    Picker("Authentication Type", selection: $outgoingServer.authenticationType) {
+                        ForEach(AuthenticationType.allCases) { authentication in
+                            Text(authentication.text)
+                                .tag(authentication)
                         }
-                        .onChange(of: incomingServer.authenticationType, initial: true) {
+                    }
+                    .onChange(of: incomingServer.authenticationType, initial: true) {
 
-                        }
+                    }
                     AuthorizationView(
                         $outgoingServer.authorization,
                         for: outgoingServer.username,
@@ -106,23 +105,21 @@ struct ManualServerSetup: View {
                         .listRowSeparator(.hidden)
                 }
             }
-            
-            
-            
+
         }
-        .safeAreaInset(edge: .bottom){
+        .safeAreaInset(edge: .bottom) {
             Button(
                 action: {
                     // TODO: Need validation
-                    
+
                     incomingServer.connectionSecurity = inSelectedSecurity ? ConnectionSecurity.tls : ConnectionSecurity.none
                     incomingServer.hostname = incomingHostname
                     incomingServer.port = incomingPort ?? 443
                     outgoingServer.connectionSecurity = outSelectedSecurity ? ConnectionSecurity.tls : ConnectionSecurity.none
                     outgoingServer.hostname = outGoingHostname
                     outgoingServer.port = outGoingPort ?? 443
-                    
-                    if(loginDetails.serverProtocol == .jmap){
+
+                    if loginDetails.serverProtocol == .jmap {
                         account.servers = [
                             incomingServer,
                             incomingServer
@@ -147,7 +144,7 @@ struct ManualServerSetup: View {
         .scrollContentBackground(.hidden)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
         .navigationTitle("Manual Account Setup")
-        
+
     }
 }
 

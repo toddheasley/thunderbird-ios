@@ -6,7 +6,6 @@
 //
 import SwiftUI
 
-
 struct TextEntryWrapper: View {
     init(
         _ header: String = "",
@@ -20,7 +19,7 @@ struct TextEntryWrapper: View {
     private var headerText: String
     private var suggestionText: String
     @Binding private var entryText: String
-    
+
     // MARK: View
     var body: some View {
         Text(headerText)
@@ -31,6 +30,6 @@ struct TextEntryWrapper: View {
             .autocorrectionDisabled()
             .autocapitalization(.none)
             .focusable()
-            
+
     }
 }

@@ -13,28 +13,30 @@ struct ManualAccount: View {
     @Environment(\.dismiss) private var dismiss
     @State private var loginDetails: LoginDetails = LoginDetails()
     @State private var path = NavigationPath()
-    
+
     // MARK: View
     var body: some View {
-        NavigationStack(path:$path) {
+        NavigationStack(path: $path) {
             AccountInformation($path)
                 .environment(loginDetails)
                 .environment(accounts)
                 .toolbarRole(.editor)
-                .toolbar{
-                    ToolbarItem(id: "navBar", placement: .cancellationAction){
-                        Button("Close", systemImage: "xmark", action: {
-                            dismiss()
-                        })
+                .toolbar {
+                    ToolbarItem(id: "navBar", placement: .cancellationAction) {
+                        Button(
+                            "Close", systemImage: "xmark",
+                            action: {
+                                dismiss()
+                            })
                     }
                 }
                 .navigationBarBackButtonHidden()
-                .navigationDestination(for:String.self){destination in
-                    if(destination == "EmailAccountTypeSelection"){
+                .navigationDestination(for: String.self) { destination in
+                    if destination == "EmailAccountTypeSelection" {
                         EmailAccountTypeSelection($path).toolbarRole(.editor).environment(loginDetails)
                     }
-                    if(destination == "ManualAccountSetup"){
-                        if(loginDetails.inProgressAccount == nil){
+                    if destination == "ManualAccountSetup" {
+                        if loginDetails.inProgressAccount == nil {
                             ManualServerSetup(loginDetails)
                                 .toolbarRole(.editor)
                                 .environment(accounts)
@@ -45,18 +47,16 @@ struct ManualAccount: View {
                                 .environment(accounts)
                                 .environment(loginDetails)
                         }
-                        
+
                     }
                 }
         }.accentColor(.gray)
     }
 }
 
-
 #Preview("Manual Account Setup") {
     @Previewable @State var getStarted: Bool = false
     @Previewable @State var accounts: Accounts = Accounts()
-    
 
     ManualAccount()
         .environment(accounts)
@@ -91,11 +91,10 @@ class LoginDetails {
     var inProgressAccount: Account?
     var enteredEmail: EmailAddress
     var serverProtocol: ServerProtocol?
-    
+
     init(inProgressAccount: Account? = nil, enteredEmail: EmailAddress = "", serverProtocol: ServerProtocol? = nil) {
         self.inProgressAccount = inProgressAccount
         self.enteredEmail = enteredEmail
         self.serverProtocol = serverProtocol
     }
 }
-
