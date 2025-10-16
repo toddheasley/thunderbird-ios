@@ -102,72 +102,18 @@ extension Filter {
 extension URLSession {
     func thread(_ token: String, url: URL, for email: Email, account id: String) async throws -> [Email] {
         throw URLError(.resourceUnavailable)
-        /*
-        guard
-            let response: MethodGetResponse = try await jmapAPI(
-                [
-                    Thread.GetMethod(
-                        id,
-                        ids: [
-                            email.threadID
-                        ])
-                ], url: url, authorization: "Bearer \(token)"
-            ).first as? MethodGetResponse
-        else {
-            throw URLError(.cannotDecodeContentData)
-        }
-        let threads: [JMAP.Thread] = try response.decode([JMAP.Thread].self)
-        guard let ids: [String] = threads.first?.emailIDs,
-            !ids.isEmpty
-        else {
-            throw URLError(.cannotDecodeContentData)
-        }
-        return try await emails(token, url: url, ids: ids, account: id) */
     }
 
     func emails(_ token: String, url: URL, in mailbox: Mailbox, account id: String) async throws -> [Email] {
         throw URLError(.resourceUnavailable)
-        /*
-        guard
-            let response: MethodQueryResponse = try await jmapAPI(
-                [
-                    Email.QueryMethod(id, filter: .inMailbox(mailbox.id))
-                ], url: url, authorization: "Bearer \(token)"
-            ).first as? MethodQueryResponse
-        else {
-            throw URLError(.cannotDecodeContentData)
-        }
-        return try await emails(token, url: url, ids: response.ids, account: id) */
     }
 
     func emails(_ token: String, url: URL, ids: [String], account id: String) async throws -> [Email] {
         throw URLError(.resourceUnavailable)
-        /*
-        guard
-            let response: MethodGetResponse = try await jmapAPI(
-                [
-                    Email.GetMethod(id, ids: ids)
-                ], url: url, authorization: "Bearer \(token)"
-            ).first as? MethodGetResponse
-        else {
-            throw URLError(.cannotDecodeContentData)
-        }
-        return try response.decode([Email].self) */
     }
 
     func mailboxes(_ token: String, url: URL, account id: String) async throws -> [Mailbox] {
         throw URLError(.resourceUnavailable)
-        /*
-        guard
-            let response: MethodGetResponse = try await jmapAPI(
-                [
-                    Mailbox.GetMethod(id)
-                ], url: url, authorization: "Bearer \(token)"
-            ).first as? MethodGetResponse
-        else {
-            throw URLError(.cannotDecodeContentData)
-        }
-        return try response.decode([Mailbox].self) */
     }
 
     func session(_ token: String) async throws -> Session {
