@@ -2,12 +2,12 @@ import SwiftUI
 import Account
 
 struct WelcomeScreen: View {
-    init(_ getStarted: Binding<Bool> = .constant(false)) {
-        _getStarted = getStarted
+    init(_ isPresented: Binding<Bool> = .constant(false)) {
+        _isPresented = isPresented
     }
-
+    @Environment(Accounts.self) private var accounts: Accounts
     @Environment(\.openURL) private var openURL
-    @Binding private var getStarted: Bool
+    @Binding private var isPresented: Bool
 
     // MARK: View
     var body: some View {
@@ -22,10 +22,14 @@ struct WelcomeScreen: View {
                 .multilineTextAlignment(.center)
                 .opacity(0.75)
                 .padding()
+            Text("onboarding_welcome_text_alpha")
+                .multilineTextAlignment(.center)
+                .opacity(0.75)
+                .padding()
             Spacer()
             Spacer()
             Button(action: {
-                getStarted = true
+                isPresented = true
             }) {
                 Text("onboarding_welcome_start_button")
                     .padding(5.5)
@@ -46,10 +50,10 @@ struct WelcomeScreen: View {
 }
 
 #Preview("Welcome Screen") {
-    @Previewable @State var getStarted: Bool = false
+    @Previewable @State var isPresented: Bool = false
 
-    WelcomeScreen($getStarted)
-        .sheet(isPresented: $getStarted) {
+    WelcomeScreen($isPresented)
+        .sheet(isPresented: $isPresented) {
             EmptyView()
                 .presentationDragIndicator(.visible)
         }
