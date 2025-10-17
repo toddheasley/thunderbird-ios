@@ -5,13 +5,14 @@ import Testing
 struct OAuth2Tests {
     @Test func matches() throws {
         let request: OAuth2.Request = try OAuth2.Request(
-            authURI: "example.com",
-            tokenURI: "example.com",
+            authURI: "https://example.com/authorize",
+            tokenURI: "https://example.com/token",
             redirectURI: "com.example:/oauth2redirect",
+            responseType: "code",
             scope: [
                 "mail-w"
             ],
-            clientID: "0123456789",
+            clientID: "Cl13n+-ID",
             hosts: [
                 "example.com",
                 "examplemail.com"

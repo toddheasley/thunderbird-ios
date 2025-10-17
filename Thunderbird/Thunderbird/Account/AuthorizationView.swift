@@ -31,7 +31,7 @@ struct AuthorizationView: View {
                     authorization = .basic(user: username, password: password)
                 }
         case .oAuth2:
-            OAuth2Button(username)
+            OAuthButton(username)
         case .none:
             EmptyView()
         }
