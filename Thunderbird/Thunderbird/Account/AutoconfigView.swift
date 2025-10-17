@@ -45,6 +45,7 @@ struct AutoconfigView: View {
                 }
             }
             .buttonStyle(.bordered)
+            .tint(.blue)
             .disabled(!isEnabled)
             if let config {
                 VStack(alignment: .leading) {
