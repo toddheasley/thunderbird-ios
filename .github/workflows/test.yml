@@ -21,3 +21,5 @@ jobs:
           run: xcodebuild clean build analyze -workspace Thunderbird.xcworkspace -scheme Thunderbird -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17'
         - name: Run tests in iPhone Simulator
           run: xcodebuild test -workspace Thunderbird.xcworkspace -scheme ThunderbirdTests -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17'
+        - name: Archive
+          run: xcodebuild clean archive -workspace Thunderbird.xcworkspace -scheme Thunderbird -sdk iphoneos -configuration Release -destination 'generic/platform=iOS' -archivePath build/Thunderbird.xcarchive CODE_SIGNING_ALLOWED=NO
