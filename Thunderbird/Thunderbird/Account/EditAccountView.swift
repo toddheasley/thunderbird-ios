@@ -51,22 +51,22 @@ struct EditAccountView: View {
     }
 }
 
-private extension Server {
-    func clone() -> Self {
-        var server: Self = Server(
-            serverProtocol,
-            connectionSecurity: connectionSecurity,
-            authenticationType: authenticationType,
-            username: username,
-            hostname: hostname,
-            port: port
-        )
-        switch authorization {
-        case .basic(let user, let password): print("basic(user: \(user); password: \(password))")
-        case .oauth(let user, let password): print("oauth(user: \(user); password: \(password))")
-        case .none: print("none")
-        }
-        server.authorization = authorization
-        return server
-    }
-}
+//private extension Server {
+//    func clone() -> Self {
+//        var server: Self = Server(
+//            serverProtocol,
+//            connectionSecurity: connectionSecurity,
+//            authenticationType: authenticationType,
+//            username: username,
+//            hostname: hostname,
+//            port: port
+//        )
+//        switch authorization {
+//        case .basic(let user, let password): print("basic(user: \(user); password: \(password))")
+//        case .oauth(let user, let password): print("oauth(user: \(user); password: \(password))")
+//        case .none: print("none")
+//        }
+//        server.authorization = authorization
+//        return server
+//    }
+//}

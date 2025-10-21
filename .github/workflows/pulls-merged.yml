@@ -26,19 +26,21 @@ jobs:
           app-id: ${{ vars.BOT_CLIENT_ID }}
           private-key: ${{ secrets.BOT_PRIVATE_KEY }}
 
-      - name: Get active milestone
-        id: milestone
-        env:
-          PR_NUMBER: ${{  github.event.pull_request.number  }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
-        run: |
-          # The furthest open milestone in the future should be current main
-          gh api repos/$GITHUB_REPOSITORY/milestones --jq '
-                map(select(.state == "open" and .due_on != null))
-                | sort_by(.due_on) | reverse
-                | .[0] | { number, title }
-                | to_entries
-                | map(.key + "=" + (.value|tostring)) | join("\n")' | tee -a $GITHUB_OUTPUT
+      # NOTE(coreycb): Enable when we have milestones similar to github.com/thunderbird/thunderbird-android/milestones
+      #
+      # - name: Get active milestone
+      #   id: milestone
+      #   env:
+      #     PR_NUMBER: ${{  github.event.pull_request.number  }}
+      #     GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
+      #   run: |
+      #     # The furthest open milestone in the future should be current main
+      #     gh api repos/$GITHUB_REPOSITORY/milestones --jq '
+      #           map(select(.state == "open" and .due_on != null))
+      #           | sort_by(.due_on) | reverse
+      #           | .[0] | { number, title }
+      #           | to_entries
+      #           | map(.key + "=" + (.value|tostring)) | join("\n")' | tee -a $GITHUB_OUTPUT
 
       - name: Thank you
         if: |
@@ -49,22 +51,35 @@ jobs:
         env:
           PR_NUMBER: ${{  github.event.pull_request.number  }}
           GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
-          MILESTONE: ${{ steps.milestone.outputs.title }}
+          # NOTE(coreycb): Enable when we have milestones similar to github.com/thunderbird/thunderbird-android/milestones
+          #
+          # MILESTONE: ${{ steps.milestone.outputs.title }}
+          #
+          # MESSAGE: >-
+          #  Thanks for your contribution! Your pull request has been merged and will be part of
+          #  ${{ steps.milestone.outputs.title }}. We appreciate the time and effort you put into
+          #  improving Thunderbird. If you haven’t already, you’re welcome to join our Matrix chat
+          #  for contributors. It’s where we discuss development and help each other out.
+          #  https://matrix.to/#/#tb-mobile-dev:mozilla.org
+          #
+          #  Hope to see you there! 🚀📱🐦
           MESSAGE: >-
             Thanks for your contribution! Your pull request has been merged and will be part of
-            ${{ steps.milestone.outputs.title }}. We appreciate the time and effort you put into
-            improving Thunderbird. If you haven’t already, you’re welcome to join our Matrix chat
-            for contributors. It’s where we discuss development and help each other out.
+            the initial release. We appreciate the time and effort you put into improving
+            Thunderbird. If you haven’t already, you’re welcome to join our Matrix chat for
+            contributors. It’s where we discuss development and help each other out.
             https://matrix.to/#/#tb-mobile-dev:mozilla.org
 
             Hope to see you there! 🚀📱🐦
         run: |
           gh pr comment $PR_NUMBER --repo $GITHUB_REPOSITORY --body "$MESSAGE"
 
-      - name: Set active milestone on PR
-        env:
-          PR_NUMBER: ${{  github.event.pull_request.number  }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
-          MILESTONE: ${{ steps.milestone.outputs.number }}
-        run: |
-          gh api --method PATCH /repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER -f milestone=$MILESTONE
+      # NOTE(coreycb): Enable when we have milestones similar to github.com/thunderbird/thunderbird-android/milestones
+      #
+      # - name: Set active milestone on PR
+      #   env:
+      #     PR_NUMBER: ${{  github.event.pull_request.number  }}
+      #     GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
+      #     MILESTONE: ${{ steps.milestone.outputs.number }}
+      #   run: |
+      #     gh api --method PATCH /repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER -f milestone=$MILESTONE

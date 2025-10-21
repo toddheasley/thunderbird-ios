@@ -32,7 +32,7 @@ struct AuthorizationView: View {
                 }
         case .oAuth2:
             OAuthButton(username)
-                .disabled(true)
+                .disabled(false)
         case .none:
             EmptyView()
         }
@@ -106,6 +106,7 @@ struct OAuthButton: View {
             }
         }
         .buttonStyle(.bordered)
+        .tint(.blue)
         .disabled(oAuth == nil)
     }
 }
