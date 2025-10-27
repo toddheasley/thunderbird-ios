@@ -44,6 +44,7 @@ struct AccountInformation: View {
             if config != nil && account != nil {
                 Button(
                     action: {
+                        loginDetails.inProgressAccount = account
                         loginDetails.enteredEmail = emailAddress
                         path.append("ManualAccountSetup")
 

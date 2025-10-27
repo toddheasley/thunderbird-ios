@@ -74,8 +74,7 @@ struct EmailAccountTypeSelection: View {
 
 struct FullToggleStyle: ToggleStyle {
 
-    var systemImage: String = "checkmark"
-
+    var systemImage: String = "checkmark"    
     func makeBody(configuration: Configuration) -> some View {
         HStack {
             configuration.label
@@ -93,7 +92,7 @@ struct FullToggleStyle: ToggleStyle {
                 .frame(width: 50, height: 32)
                 .overlay {
                     Image(systemName: systemImage)
-                        .foregroundColor(.white)
+                        .foregroundColor(.buttonFillOff)
                 }
 
         }
@@ -104,17 +103,16 @@ struct FullToggleStyle: ToggleStyle {
         }
         .background {
             RoundedRectangle(cornerRadius: 12)
-                .fill(configuration.isOn ? Color.blue.opacity(0.05) : .white)
+                .fill(configuration.isOn ? .buttonFillOn : .buttonFillOff)
                 .stroke(configuration.isOn ? .blue : .gray, lineWidth: 1)
         }
-        .background(configuration.isOn ? Color.blue.opacity(0.05) : .white)
-
     }
 }
 
 #Preview("Outgoing Account Setup") {
+    @Previewable @State var loginDetails: LoginDetails = LoginDetails()
     @Previewable @State var path: NavigationPath = NavigationPath()
 
-    EmailAccountTypeSelection($path)
+    EmailAccountTypeSelection($path).environment(loginDetails)
 
 }

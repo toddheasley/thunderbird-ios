@@ -36,6 +36,8 @@ struct ManualServerSetup: View {
     @State private var outSelectedSecurity: Bool
     @State private var manualConfig: Bool
     @State private var account: Account
+    
+    @State private var showAlert: Bool = false
 
     // MARK: View
     var body: some View {
@@ -52,7 +54,7 @@ struct ManualServerSetup: View {
                         }
                     }
                     .onChange(of: incomingServer.authenticationType, initial: true) {
-
+                        showAlert = true
                     }
                     AuthorizationView($incomingServer.authorization, for: incomingServer.username, authenticationType: incomingServer.authenticationType)
 
@@ -105,7 +107,11 @@ struct ManualServerSetup: View {
                         .listRowSeparator(.hidden)
                 }
             }
-
+        }
+        .alert("Alert", isPresented:$showAlert){
+            
+        } message: {
+            Text("Something went wrong")
         }
         .safeAreaInset(edge: .bottom) {
             Button(

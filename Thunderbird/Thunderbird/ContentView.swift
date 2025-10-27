@@ -8,20 +8,28 @@ struct ContentView: View {
 
     // MARK: View
     var body: some View {
-        NavigationStack {
-            // TODO: Maybe a different check later
+        VStack {
             if hasAuthorization {
-                // TODO: Go to logged in state
-                WelcomeScreen($isPresented)
+                EmailListView()
+                    .environment(accounts)
+                    
             } else {
-                WelcomeScreen($isPresented)
+                NavigationStack {
+                    WelcomeScreen($isPresented)
+                }
+                .sheet(isPresented: $isPresented) {
+                    ManualAccount()
+                }
+                .presentationDragIndicator(.visible)
+
             }
-        }
-        .sheet(isPresented: $isPresented) {
-            ManualAccount()
+
         }
         .onChange(of: accounts.allAccounts, initial: true) {
-            guard !accounts.allAccounts.isEmpty else { return }
+            guard !accounts.allAccounts.isEmpty else {
+                hasAuthorization = false
+                return
+            }
             hasAuthorization =
                 accounts
                 .allAccounts[0].incomingServer?.authorization != nil
@@ -29,11 +37,11 @@ struct ContentView: View {
                     .allAccounts[0].outgoingServer?.authorization != nil
             isPresented = false
         }
-
-        .presentationDragIndicator(.visible)
     }
 }
 
 #Preview("Content View") {
-    ContentView()
+    @Previewable @State var accounts: Accounts = Accounts()
+
+    ContentView().environment(accounts)
 }

@@ -5,7 +5,6 @@ struct WelcomeScreen: View {
     init(_ isPresented: Binding<Bool> = .constant(false)) {
         _isPresented = isPresented
     }
-    @Environment(Accounts.self) private var accounts: Accounts
     @Environment(\.openURL) private var openURL
     @Binding private var isPresented: Bool
 
