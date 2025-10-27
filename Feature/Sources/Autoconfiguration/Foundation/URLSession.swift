@@ -53,3 +53,9 @@ extension URLSession {
         return suffixList
     }
 }
+
+extension URLSession {
+    func token(_ request: OAuth2.Request, code: String) async throws -> String {
+        fatalError()
+    }
+}
