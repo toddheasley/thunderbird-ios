@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EmailCellView: View {
     
+    // Some hard coded value for testing
     let senderText:String = "Sender"
     let headerText:String = "Read This Email"
     let bodyText:String = "This is an email about stuff with a very long line of text"

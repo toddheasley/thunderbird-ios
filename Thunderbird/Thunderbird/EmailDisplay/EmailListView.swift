@@ -12,7 +12,7 @@ struct EmailListView: View {
     @Environment(Accounts.self) private var accounts: Accounts
     @Environment(\.openURL) private var openURL
     
-    //Hardcoded
+    //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
         data: Data("""
     <html>
@@ -42,10 +42,10 @@ struct EmailListView: View {
             .toolbar{
                 ToolbarItem(id: "navBar", placement: .automatic) {
                     Menu {
-                        Button("Log out", action: {
+                        Button("account_sign_out_button", action: {
                             accounts.deleteAccounts()
                         })
-                        Button("Donate", action: {
+                        Button("donation_support", action: {
                             guard let url = URL(string: "https://www.thunderbird.net/en-US/donate/") else { return }
                             openURL(url)
                         })

@@ -34,7 +34,7 @@ struct AccountInformation: View {
 
     var body: some View {
         Form {
-            TextEntryWrapper("Email Address", "your.email@example.com", $emailAddress)
+            TextEntryWrapper("account_server_settings_email_address_label", "your.email@example.com", $emailAddress)
                 #if os(iOS)
             .keyboardType(.emailAddress)
             .submitLabel(.search)
@@ -49,7 +49,7 @@ struct AccountInformation: View {
                         path.append("ManualAccountSetup")
 
                     }) {
-                        Text("Edit Configuration")
+                        Text("account_server_edit_configuration")
                             .padding(5.5)
                             .frame(maxWidth: .infinity)
                             .underline()
@@ -82,7 +82,7 @@ struct AccountInformation: View {
                         path.append("EmailAccountTypeSelection")
 
                     }) {
-                        Text("Manual Account Setup")
+                        Text("account_server_manual_configuration")
                             .padding(5.5)
                             .frame(maxWidth: .infinity)
                             .underline()
@@ -101,6 +101,6 @@ struct AccountInformation: View {
         }
         .scrollContentBackground(.hidden)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
-        .navigationTitle("Account Information")
+        .navigationTitle("account_server_information_title")
     }
 }

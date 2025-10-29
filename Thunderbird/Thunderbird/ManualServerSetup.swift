@@ -43,11 +43,11 @@ struct ManualServerSetup: View {
     var body: some View {
         Form {
             if loginDetails.serverProtocol == .jmap {
-                Section(header: Text("Mail Server")) {
+                Section(header: Text("account_server_edit_configuration")) {
 
-                    TextEntryWrapper("Server", "server.example.com", $incomingHostname)
-                    NumEntryWrapper("Port", "443", $incomingPort)
-                    Picker("Authentication Type", selection: $incomingServer.authenticationType) {
+                    TextEntryWrapper("account_server_settings_server_label", "server.example.com", $incomingHostname)
+                    NumEntryWrapper("account_server_settings_port_label", "443", $incomingPort)
+                    Picker("account_server_settings_authentication_label", selection: $incomingServer.authenticationType) {
                         ForEach(AuthenticationType.allCases) { authentication in
                             Text(authentication.text)
                                 .tag(authentication)
@@ -65,10 +65,10 @@ struct ManualServerSetup: View {
                 }
 
             } else {
-                Section(header: Text("Incoming Mail Server")) {
+                Section(header: Text("account_incoming_server_label")) {
 
-                    TextEntryWrapper("Server", "server.example.com", $incomingHostname)
-                    NumEntryWrapper("Port", "443", $incomingPort)
+                    TextEntryWrapper("account_server_settings_server_label", "server.example.com", $incomingHostname)
+                    NumEntryWrapper("account_server_settings_port_label", "443", $incomingPort)
                     Picker("Authentication Type", selection: $incomingServer.authenticationType) {
                         ForEach(AuthenticationType.allCases) { authentication in
                             Text(authentication.text)
@@ -84,11 +84,11 @@ struct ManualServerSetup: View {
                         .listRowSeparator(.hidden)
 
                 }
-                Section(header: Text("Outgoing Mail Server")) {
-                    TextEntryWrapper("Server", "server.example.com", $outGoingHostname)
-                    NumEntryWrapper("Port", "443", $outGoingPort)
+                Section(header: Text("account_outgoing_server_label")) {
+                    TextEntryWrapper("account_server_settings_server_label", "server.example.com", $outGoingHostname)
+                    NumEntryWrapper("account_server_settings_port_label", "443", $outGoingPort)
 
-                    Picker("Authentication Type", selection: $outgoingServer.authenticationType) {
+                    Picker("account_server_settings_authentication_label", selection: $outgoingServer.authenticationType) {
                         ForEach(AuthenticationType.allCases) { authentication in
                             Text(authentication.text)
                                 .tag(authentication)
@@ -108,11 +108,11 @@ struct ManualServerSetup: View {
                 }
             }
         }
-        .alert("Alert", isPresented:$showAlert){
-            
-        } message: {
-            Text("Something went wrong")
-        }
+//        .alert("Alert", isPresented:$showAlert){
+//            
+//        } message: {
+//            Text("Something went wrong")
+//        }
         .safeAreaInset(edge: .bottom) {
             Button(
                 action: {
@@ -138,7 +138,7 @@ struct ManualServerSetup: View {
                     }
                     accounts.set(account)
                 }) {
-                    Text("Next")
+                    Text("account_oauth_sign_in_button")
                         .padding(5.5)
                         .frame(maxWidth: .infinity)
                 }
@@ -149,12 +149,12 @@ struct ManualServerSetup: View {
         }
         .scrollContentBackground(.hidden)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
-        .navigationTitle("Manual Account Setup")
+        .navigationTitle("account_server_manual_configuration")
 
     }
 }
 
-#Preview("Incoming Account Setup") {
+#Preview("Manual Server Account Setup") {
     @Previewable @State var accounts: Accounts = Accounts()
     @Previewable @State var loginDetails: LoginDetails = LoginDetails()
     ManualServerSetup(loginDetails).environment(accounts).environment(loginDetails)

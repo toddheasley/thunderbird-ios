@@ -21,20 +21,20 @@ struct EmailAccountTypeSelection: View {
     // MARK: View
     var body: some View {
         Form {
-            Text("Protocol").listRowSeparator(.hidden)
-            Toggle(isOn: $selectedJMAP) {
-                VStack(alignment: .leading) {
-                    Text("JMAP")
-                    Text("JSON Meta Application Protocol")
-                }
-            }
-            .simultaneousGesture(
-                TapGesture().onEnded {
-                    selectedIMAP = false
-                }
-            )
-            .toggleStyle(FullToggleStyle())
-            .listRowSeparator(.hidden)
+            Text("account_server_settings_protocol_type_label").listRowSeparator(.hidden)
+//            Toggle(isOn: $selectedJMAP) {
+//                VStack(alignment: .leading) {
+//                    Text("JMAP")
+//                    Text("JSON Meta Application Protocol")
+//                }
+//            }
+//            .simultaneousGesture(
+//                TapGesture().onEnded {
+//                    selectedIMAP = false
+//                }
+//            )
+//            .toggleStyle(FullToggleStyle())
+//            .listRowSeparator(.hidden)
             Toggle(isOn: $selectedIMAP) {
                 VStack(alignment: .leading) {
                     Text("IMAP")
@@ -52,7 +52,7 @@ struct EmailAccountTypeSelection: View {
         }
         .scrollContentBackground(.hidden)
         .listRowBackground(Color.clear)
-        .navigationTitle("Choose Email Account Type")
+        .navigationTitle("account_choose_email_type_label")
         .safeAreaInset(edge: .bottom) {
             Button(
                 action: {
@@ -60,7 +60,7 @@ struct EmailAccountTypeSelection: View {
                     path.append("ManualAccountSetup")
 
                 }) {
-                    Text("Next")
+                    Text("next_button")
                         .padding(5.5)
                         .frame(maxWidth: .infinity)
                 }
