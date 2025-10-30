@@ -60,6 +60,7 @@ struct AccountInformation: View {
                 if account?.incomingServer?.authenticationType != nil {
                     AuthorizationView(
                         $loginServer.authorization,
+                        error: $error,
                         for: loginServer.username,
                         authenticationType: loginServer.authenticationType
                     ).onChange(of: loginServer.authorization) {
