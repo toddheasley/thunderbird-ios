@@ -5,7 +5,6 @@ struct WelcomeScreen: View {
     init(_ isPresented: Binding<Bool> = .constant(false)) {
         _isPresented = isPresented
     }
-    @Environment(Accounts.self) private var accounts: Accounts
     @Environment(\.openURL) private var openURL
     @Binding private var isPresented: Bool
 
@@ -22,7 +21,7 @@ struct WelcomeScreen: View {
                 .multilineTextAlignment(.center)
                 .opacity(0.75)
                 .padding()
-            Text("onboarding_welcome_text_alpha")
+            Text("onboarding_welcome_text_early")
                 .multilineTextAlignment(.center)
                 .opacity(0.75)
                 .padding()
