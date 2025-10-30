@@ -8,6 +8,7 @@ struct EditServerView: View {
 
     @Binding private var server: Server
     @State private var password: String = ""
+    @State private var error: Error?
 
     // MARK: View
     var body: some View {
@@ -70,7 +71,12 @@ struct EditServerView: View {
 
                 }
             }
-            AuthorizationView($server.authorization, for: server.username, authenticationType: server.authenticationType)
+            AuthorizationView(
+                $server.authorization,
+                error: $error,
+                for: server.username,
+                authenticationType: server.authenticationType
+            )
         }
         .textFieldStyle(.roundedBorder)
         #if os(iOS)

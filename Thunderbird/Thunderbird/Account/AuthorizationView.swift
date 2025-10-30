@@ -7,20 +7,25 @@ struct AuthorizationView: View {
     let username: String
     let authenticationType: AuthenticationType
 
-    init(_ authorization: Binding<Authorization>, for username: String, authenticationType: AuthenticationType = .oAuth2) {
+    init(_ authorization: Binding<Authorization>, error: Binding<Error?>, for username: String, authenticationType: AuthenticationType = .oAuth2) {
         self.username = username
         self.authenticationType = authenticationType
         _authorization = authorization
         switch authorization.wrappedValue {
-        case .basic(_, let password), .oauth(_, let password):
+        case .basic(_, let password):
             self.password = password
+        case .oauth(_, let token):
+            self.token = token
         case .none:
             break
         }
+        _error = error
     }
 
     @Binding private var authorization: Authorization
+    @Binding private var error: Error?
     @State private var password: String = ""
+    @State private var token: Token?
 
     // MARK: View
     var body: some View {
@@ -31,7 +36,14 @@ struct AuthorizationView: View {
                     authorization = .basic(user: username, password: password)
                 }
         case .oAuth2:
-            OAuthButton(username)
+            OAuthButton(username, token: $token, error: $error)
+                .onChange(of: token, initial: true) {
+                    if let token {
+                        authorization = .oauth(user: username, token: token)
+                    } else {
+                        authorization = .none
+                    }
+                }
         case .none:
             EmptyView()
         }
@@ -40,7 +52,8 @@ struct AuthorizationView: View {
 
 #Preview("Authorization View") {
     @Previewable @State var authorization: Authorization = .none
+    @Previewable @State var error: Error?
 
-    AuthorizationView($authorization, for: "example@thunderbird.net")
+    AuthorizationView($authorization, error: $error, for: "example@thunderbird.net")
         .padding()
 }
