@@ -36,8 +36,7 @@ struct ManualServerSetup: View {
     @State private var outSelectedSecurity: Bool
     @State private var manualConfig: Bool
     @State private var account: Account
-    
-    @State private var showAlert: Bool = false
+    @State private var error: Error?
 
     // MARK: View
     var body: some View {
@@ -53,10 +52,12 @@ struct ManualServerSetup: View {
                                 .tag(authentication)
                         }
                     }
-                    .onChange(of: incomingServer.authenticationType, initial: true) {
-                        showAlert = true
-                    }
-                    AuthorizationView($incomingServer.authorization, for: incomingServer.username, authenticationType: incomingServer.authenticationType)
+                    AuthorizationView(
+                        $incomingServer.authorization,
+                        error: $error,
+                        for: incomingServer.username,
+                        authenticationType: incomingServer.authenticationType
+                    )
 
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
@@ -78,7 +79,12 @@ struct ManualServerSetup: View {
                     .onChange(of: incomingServer.authenticationType, initial: true) {
 
                     }
-                    AuthorizationView($incomingServer.authorization, for: incomingServer.username, authenticationType: incomingServer.authenticationType)
+                    AuthorizationView(
+                        $incomingServer.authorization,
+                        error: $error,
+                        for: incomingServer.username,
+                        authenticationType: incomingServer.authenticationType
+                    )
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)
@@ -99,6 +105,7 @@ struct ManualServerSetup: View {
                     }
                     AuthorizationView(
                         $outgoingServer.authorization,
+                        error: $error,
                         for: outgoingServer.username,
                         authenticationType: outgoingServer.authenticationType
                     )
@@ -108,11 +115,6 @@ struct ManualServerSetup: View {
                 }
             }
         }
-//        .alert("Alert", isPresented:$showAlert){
-//            
-//        } message: {
-//            Text("Something went wrong")
-//        }
         .safeAreaInset(edge: .bottom) {
             Button(
                 action: {

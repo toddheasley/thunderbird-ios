@@ -61,17 +61,17 @@ struct AccountInformation: View {
                 if account?.incomingServer?.authenticationType != nil {
                     AuthorizationView(
                         $loginServer.authorization,
+                        error: $error,
                         for: loginServer.username,
                         authenticationType: loginServer.authenticationType
                     ).onChange(of: loginServer.authorization) {
-                        // Placeholder, doesn't work yet
-                        //                        guard var account = account else { return }
-                        //                        var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
-                        //                        var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
-                        //                        incomingServerInfo.authorization =  loginServer.authorization
-                        //                        outgoingServerInfo.authorization =  loginServer.authorization
-                        //                        account.servers = [incomingServerInfo, outgoingServerInfo]
-                        //                        accounts.set(account)
+                        guard var account = account else { return }
+                        var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
+                        var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
+                        incomingServerInfo.authorization =  loginServer.authorization
+                        outgoingServerInfo.authorization =  loginServer.authorization
+                        account.servers = [incomingServerInfo, outgoingServerInfo]
+                        accounts.set(account)
                     }
                 }
             }
