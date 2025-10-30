@@ -3,7 +3,7 @@ import Foundation
 /// Authorization credential  for a given user name, either an OAuth token or basic password
 public enum Authorization: CustomStringConvertible, Equatable {
     case basic(user: String, password: String)
-    case oauth(user: String, token: String)
+    case oauth(user: String, token: Token)
     case none
 
     public var user: String {
@@ -26,7 +26,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
     var password: String {
         switch self {
         case .basic(let user, let password): "\(user.components(separatedBy: " ")[0]):\(password)".data(using: .utf8)!.base64EncodedString()
-        case .oauth(_, let token): token
+        case .oauth(_, let token): token.description
         case .none: ""
         }
     }
@@ -40,7 +40,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
         {
             self = .basic(user: user, password: components.last!)
         } else {
-            self = .oauth(user: user, token: password)
+            self = .oauth(user: user, token: .bearer(password))
         }
     }
 
