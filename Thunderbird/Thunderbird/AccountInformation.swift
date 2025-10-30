@@ -68,8 +68,8 @@ struct AccountInformation: View {
                         guard var account = account else { return }
                         var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
                         var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
-                        incomingServerInfo.authorization =  loginServer.authorization
-                        outgoingServerInfo.authorization =  loginServer.authorization
+                        incomingServerInfo.authorization = loginServer.authorization
+                        outgoingServerInfo.authorization = loginServer.authorization
                         account.servers = [incomingServerInfo, outgoingServerInfo]
                         accounts.set(account)
                     }

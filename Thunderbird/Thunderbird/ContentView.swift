@@ -12,7 +12,7 @@ struct ContentView: View {
             if hasAuthorization {
                 EmailListView()
                     .environment(accounts)
-                    
+
             } else {
                 NavigationStack {
                     WelcomeScreen($isPresented)

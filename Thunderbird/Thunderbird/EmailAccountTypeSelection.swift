@@ -22,19 +22,19 @@ struct EmailAccountTypeSelection: View {
     var body: some View {
         Form {
             Text("account_server_settings_protocol_type_label").listRowSeparator(.hidden)
-//            Toggle(isOn: $selectedJMAP) {
-//                VStack(alignment: .leading) {
-//                    Text("JMAP")
-//                    Text("JSON Meta Application Protocol")
-//                }
-//            }
-//            .simultaneousGesture(
-//                TapGesture().onEnded {
-//                    selectedIMAP = false
-//                }
-//            )
-//            .toggleStyle(FullToggleStyle())
-//            .listRowSeparator(.hidden)
+            //            Toggle(isOn: $selectedJMAP) {
+            //                VStack(alignment: .leading) {
+            //                    Text("JMAP")
+            //                    Text("JSON Meta Application Protocol")
+            //                }
+            //            }
+            //            .simultaneousGesture(
+            //                TapGesture().onEnded {
+            //                    selectedIMAP = false
+            //                }
+            //            )
+            //            .toggleStyle(FullToggleStyle())
+            //            .listRowSeparator(.hidden)
             Toggle(isOn: $selectedIMAP) {
                 VStack(alignment: .leading) {
                     Text("IMAP")
@@ -74,7 +74,7 @@ struct EmailAccountTypeSelection: View {
 
 struct FullToggleStyle: ToggleStyle {
 
-    var systemImage: String = "checkmark"    
+    var systemImage: String = "checkmark"
     func makeBody(configuration: Configuration) -> some View {
         HStack {
             configuration.label
