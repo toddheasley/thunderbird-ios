@@ -51,6 +51,8 @@ struct OAuthButton: View {
         }) {
             Text("account_oauth_sign_in_button")
         }
+        .buttonStyle(.borderedProminent)
+        .tint(.accent)
         .disabled(request == nil)
         .task {
             await configure()

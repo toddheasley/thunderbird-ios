@@ -21,20 +21,20 @@ struct EmailAccountTypeSelection: View {
     // MARK: View
     var body: some View {
         Form {
-            Text("Protocol").listRowSeparator(.hidden)
-            Toggle(isOn: $selectedJMAP) {
-                VStack(alignment: .leading) {
-                    Text("JMAP")
-                    Text("JSON Meta Application Protocol")
-                }
-            }
-            .simultaneousGesture(
-                TapGesture().onEnded {
-                    selectedIMAP = false
-                }
-            )
-            .toggleStyle(FullToggleStyle())
-            .listRowSeparator(.hidden)
+            Text("account_server_settings_protocol_type_label").listRowSeparator(.hidden)
+            //            Toggle(isOn: $selectedJMAP) {
+            //                VStack(alignment: .leading) {
+            //                    Text("JMAP")
+            //                    Text("JSON Meta Application Protocol")
+            //                }
+            //            }
+            //            .simultaneousGesture(
+            //                TapGesture().onEnded {
+            //                    selectedIMAP = false
+            //                }
+            //            )
+            //            .toggleStyle(FullToggleStyle())
+            //            .listRowSeparator(.hidden)
             Toggle(isOn: $selectedIMAP) {
                 VStack(alignment: .leading) {
                     Text("IMAP")
@@ -52,7 +52,7 @@ struct EmailAccountTypeSelection: View {
         }
         .scrollContentBackground(.hidden)
         .listRowBackground(Color.clear)
-        .navigationTitle("Choose Email Account Type")
+        .navigationTitle("account_choose_email_type_label")
         .safeAreaInset(edge: .bottom) {
             Button(
                 action: {
@@ -60,7 +60,7 @@ struct EmailAccountTypeSelection: View {
                     path.append("ManualAccountSetup")
 
                 }) {
-                    Text("Next")
+                    Text("next_button")
                         .padding(5.5)
                         .frame(maxWidth: .infinity)
                 }
@@ -75,7 +75,6 @@ struct EmailAccountTypeSelection: View {
 struct FullToggleStyle: ToggleStyle {
 
     var systemImage: String = "checkmark"
-
     func makeBody(configuration: Configuration) -> some View {
         HStack {
             configuration.label
@@ -93,7 +92,7 @@ struct FullToggleStyle: ToggleStyle {
                 .frame(width: 50, height: 32)
                 .overlay {
                     Image(systemName: systemImage)
-                        .foregroundColor(.white)
+                        .foregroundColor(.buttonFillOff)
                 }
 
         }
@@ -104,17 +103,16 @@ struct FullToggleStyle: ToggleStyle {
         }
         .background {
             RoundedRectangle(cornerRadius: 12)
-                .fill(configuration.isOn ? Color.blue.opacity(0.05) : .white)
+                .fill(configuration.isOn ? .buttonFillOn : .buttonFillOff)
                 .stroke(configuration.isOn ? .blue : .gray, lineWidth: 1)
         }
-        .background(configuration.isOn ? Color.blue.opacity(0.05) : .white)
-
     }
 }
 
 #Preview("Outgoing Account Setup") {
+    @Previewable @State var loginDetails: LoginDetails = LoginDetails()
     @Previewable @State var path: NavigationPath = NavigationPath()
 
-    EmailAccountTypeSelection($path)
+    EmailAccountTypeSelection($path).environment(loginDetails)
 
 }

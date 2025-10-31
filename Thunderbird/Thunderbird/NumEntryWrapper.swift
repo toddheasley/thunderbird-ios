@@ -8,7 +8,7 @@ import SwiftUI
 
 struct NumEntryWrapper: View {
     init(
-        _ header: String,
+        _ header: LocalizedStringResource,
         _ suggestion: String,
         _ entryText: Binding<Int?>,
     ) {
@@ -16,7 +16,7 @@ struct NumEntryWrapper: View {
         suggestionText = suggestion
         _entryText = entryText
     }
-    private var headerText: String
+    private var headerText: LocalizedStringResource
     private var suggestionText: String
     @Binding private var entryText: Int?
 
