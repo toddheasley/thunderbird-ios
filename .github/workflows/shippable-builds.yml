@@ -1,7 +1,7 @@
 name: Shippable Builds
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       version:
         description: 'Version to build (optional)'
