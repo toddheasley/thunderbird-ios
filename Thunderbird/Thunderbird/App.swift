@@ -11,5 +11,10 @@ struct App: SwiftUI.App {
             ContentView()
                 .environment(accounts)
         }
+        #if os(macOS)
+        .defaultSize(width: 768.0, height: 512.0)
+        .windowResizability(.contentMinSize)
+        .windowStyle(.hiddenTitleBar)
+        #endif
     }
 }
