@@ -20,7 +20,7 @@ struct WelcomeScreen: View {
             Text("onboarding_welcome_text")
                 .multilineTextAlignment(.center)
                 .padding()
-            Text("onboarding_welcome_text_alpha")
+            Text("onboarding_welcome_text_early")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .padding()

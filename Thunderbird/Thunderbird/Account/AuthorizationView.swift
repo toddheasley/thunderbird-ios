@@ -7,20 +7,25 @@ struct AuthorizationView: View {
     let username: String
     let authenticationType: AuthenticationType
 
-    init(_ authorization: Binding<Authorization>, for username: String, authenticationType: AuthenticationType = .oAuth2) {
+    init(_ authorization: Binding<Authorization>, error: Binding<Error?>, for username: String, authenticationType: AuthenticationType = .oAuth2) {
         self.username = username
         self.authenticationType = authenticationType
         _authorization = authorization
         switch authorization.wrappedValue {
-        case .basic(_, let password), .oauth(_, let password):
+        case .basic(_, let password):
             self.password = password
+        case .oauth(_, let token):
+            self.token = token
         case .none:
             break
         }
+        _error = error
     }
 
     @Binding private var authorization: Authorization
+    @Binding private var error: Error?
     @State private var password: String = ""
+    @State private var token: Token?
 
     // MARK: View
     var body: some View {
@@ -31,8 +36,14 @@ struct AuthorizationView: View {
                     authorization = .basic(user: username, password: password)
                 }
         case .oAuth2:
-            OAuthButton(username)
-                .disabled(false)
+            OAuthButton(username, token: $token, error: $error)
+                .onChange(of: token, initial: true) {
+                    if let token {
+                        authorization = .oauth(user: username, token: token)
+                    } else {
+                        authorization = .none
+                    }
+                }
         case .none:
             EmptyView()
         }
@@ -41,77 +52,8 @@ struct AuthorizationView: View {
 
 #Preview("Authorization View") {
     @Previewable @State var authorization: Authorization = .none
+    @Previewable @State var error: Error?
 
-    AuthorizationView($authorization, for: "example@thunderbird.net")
-        .padding()
-}
-
-struct OAuthButton: View {
-    let emailAddress: EmailAddress
-
-    init(_ emailAddress: EmailAddress, oAuth: OAuth2? = nil) {
-        self.emailAddress = emailAddress
-        self.oAuth = oAuth
-    }
-
-    @Environment(\.webAuthenticationSession) private var webAuthenticationSession
-    @State private var oAuth: OAuth2?
-    @State private var error: Error?
-
-    private func configureOAuth() async {
-        do {
-            let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress).config
-            guard let oAuth: OAuth2 = config.oAuth2 else {
-                throw URLError(.resourceUnavailable)
-            }
-            self.oAuth = oAuth
-        } catch {
-            self.error = error
-        }
-    }
-
-    // MARK: View
-    var body: some View {
-        Button(action: {
-            Task {
-                do {
-                    guard let oAuth else {
-                        throw URLError(.resourceUnavailable)
-                    }
-                    let url: URL = try await webAuthenticationSession.authenticate(
-                        using: oAuth.authURL,
-                        callback: .https(host: oAuth.tokenURL.host() ?? "", path: oAuth.tokenURL.path()),
-                        preferredBrowserSession: .shared,
-                        additionalHeaderFields: [:]
-                    )
-                    print(url.absoluteString)
-                } catch {
-                    self.error = error
-                }
-            }
-        }) {
-            if let oAuth {
-                Text("Sign in with \(oAuth.issuer)")
-            } else if error != nil {
-                Text("Loading OAuth Failed")
-            } else {
-                HStack {
-                    Text("Loading OAuth…  ")
-                    ProgressView()
-                }
-                .task {
-                    // TODO: Debounce email address changes
-                    await configureOAuth()
-                }
-            }
-        }
-        .buttonStyle(.bordered)
-        .tint(.blue)
-        .disabled(oAuth == nil)
-    }
-}
-
-#Preview("OAuth Button") {
-    OAuthButton("gmail.com")
+    AuthorizationView($authorization, error: $error, for: "example@thunderbird.net")
         .padding()
 }

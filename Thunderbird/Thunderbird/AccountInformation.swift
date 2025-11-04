@@ -34,7 +34,7 @@ struct AccountInformation: View {
 
     var body: some View {
         Form {
-            TextEntryWrapper("Email Address", "your.email@example.com", $emailAddress)
+            TextEntryWrapper("account_server_settings_email_address_label", "your.email@example.com", $emailAddress)
                 #if os(iOS)
             .keyboardType(.emailAddress)
             .submitLabel(.search)
@@ -44,11 +44,12 @@ struct AccountInformation: View {
             if config != nil && account != nil {
                 Button(
                     action: {
+                        loginDetails.inProgressAccount = account
                         loginDetails.enteredEmail = emailAddress
                         path.append("ManualAccountSetup")
 
                     }) {
-                        Text("Edit Configuration")
+                        Text("account_server_edit_configuration")
                             .padding(5.5)
                             .frame(maxWidth: .infinity)
                             .underline()
@@ -60,17 +61,17 @@ struct AccountInformation: View {
                 if account?.incomingServer?.authenticationType != nil {
                     AuthorizationView(
                         $loginServer.authorization,
+                        error: $error,
                         for: loginServer.username,
                         authenticationType: loginServer.authenticationType
                     ).onChange(of: loginServer.authorization) {
-                        // Placeholder, doesn't work yet
-                        //                        guard var account = account else { return }
-                        //                        var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
-                        //                        var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
-                        //                        incomingServerInfo.authorization =  loginServer.authorization
-                        //                        outgoingServerInfo.authorization =  loginServer.authorization
-                        //                        account.servers = [incomingServerInfo, outgoingServerInfo]
-                        //                        accounts.set(account)
+                        guard var account = account else { return }
+                        var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
+                        var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
+                        incomingServerInfo.authorization = loginServer.authorization
+                        outgoingServerInfo.authorization = loginServer.authorization
+                        account.servers = [incomingServerInfo, outgoingServerInfo]
+                        accounts.set(account)
                     }
                 }
             }
@@ -81,7 +82,7 @@ struct AccountInformation: View {
                         path.append("EmailAccountTypeSelection")
 
                     }) {
-                        Text("Manual Account Setup")
+                        Text("account_server_manual_configuration")
                             .padding(5.5)
                             .frame(maxWidth: .infinity)
                             .underline()
@@ -100,6 +101,6 @@ struct AccountInformation: View {
         }
         .scrollContentBackground(.hidden)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
-        .navigationTitle("Account Information")
+        .navigationTitle("account_server_information_title")
     }
 }
