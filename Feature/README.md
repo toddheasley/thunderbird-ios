@@ -69,6 +69,10 @@ Email address is a required argument, plus two flags:
 
 ![](docs/autoconfig.png)
 
+## `IMAP` and `SMTP`
+
+
+
 ## `JMAP`
 
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.

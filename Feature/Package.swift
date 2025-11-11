@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import PackageDescription
 
@@ -34,11 +34,21 @@ let package: Package = Package(
             name: "JMAP",
             targets: [
                 "JMAP"
+            ]),
+        .library(
+            name: "SMTP",
+            targets: [
+                "SMTP"
             ])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
         .package(url: "https://github.com/apple/swift-async-dns-resolver", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-extras", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-imap", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-ssl", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-transport-services", branch: "main"),
         .package(name: "Core", path: "../Core")
     ],
     targets: [
@@ -64,7 +74,11 @@ let package: Package = Package(
             dependencies: [
                 "Autoconfiguration"
             ]),
-        .target(name: "IMAP"),
+        .target(
+            name: "IMAP",
+            dependencies: [
+                .product(name: "NIOIMAP", package: "swift-nio-imap")
+            ]),
         .testTarget(
             name: "IMAPTests",
             dependencies: [
@@ -79,5 +93,18 @@ let package: Package = Package(
             name: "JMAPTests",
             dependencies: [
                 "JMAP"
+            ]),
+        .target(
+            name: "SMTP",
+            dependencies: [
+                .product(name: "NIO", package: "swift-nio"),
+                .product(name: "NIOExtras", package: "swift-nio-extras"),
+                .product(name: "NIOSSL", package: "swift-nio-ssl"),
+                .product(name: "NIOTransportServices", package: "swift-nio-transport-services")
+            ]),
+        .testTarget(
+            name: "SMTPTests",
+            dependencies: [
+                "SMTP"
             ])
     ])
