@@ -71,7 +71,17 @@ Email address is a required argument, plus two flags:
 
 ## `IMAP` and `SMTP`
 
+Thunderbird supports sending and receiving email for most email providers through [Internet Message Access Protocol](https://wikipedia.org/wiki/Internet_Message_Access_Protocol) (IMAP) and [Simple Mail Transfer Protocol](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) (SMTP).
 
+Both protocols use [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) for transport, not HTTP; both libraries are built on top of [SwiftNIO.](https://opensource.apple.com/projects/swiftnio)
+
+### `IMAP` Library
+
+
+
+### `SMTP` Library
+
+`SMTP` implementation is based on `NIOSMTP` example project included in the [SwiftNIO examples.](https://github.com/apple/swift-nio-examples) 
 
 ## `JMAP`
 
