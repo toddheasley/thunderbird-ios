@@ -12,7 +12,7 @@ public struct FeatureFlags: Sendable, Decodable {
     //False = feature is turned off
     public var featureSettings: [String: Bool]
 
-    public init(distribution: Distribution) {
+    public init(distribution: Distribution) async {
         featureSettings = featureList.reduce(into: [:], { (dict, number) in
             dict[number] = false
         })
@@ -30,21 +30,28 @@ public struct FeatureFlags: Sendable, Decodable {
         var remoteSettings: [String: Bool]
         //if allowed to use url
         if(true){
-            remoteSettings = getURLSettings(distribution: distribution)
+            remoteSettings = (try? await getURLSettings(distribution: distribution)) ?? [:]
         }
         featureSettings.merge(remoteSettings) {(current, new) in new}
     }
 
-    public func getURLSettings(distribution: Distribution)-> [String:Bool]{
+    public func getURLSettings(distribution: Distribution) async throws -> [String:Bool]{
+        var url: URL
+
         switch distribution {
         case .debug:
-
+            url = URL(string: "")!
         case .appstore:
-
+            url = URL(string: "")!
         case .beta:
-
+            url = URL(string: "")!
         }
-
-        // TODO: Parse JSON to dictionary and return
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let response = try JSONDecoder().decode(Response.self, from: data)
+        return response.flags
     }
+}
+
+struct Response: Decodable{
+    let flags: [String: Bool]
 }
