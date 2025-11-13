@@ -9,7 +9,12 @@ struct App: SwiftUI.App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(accounts)
+                .environment(accounts).environment(\.featureFlags, FeatureFlags(distribution: .current))
         }
     }
 }
+
+extension EnvironmentValues {
+    @Entry var featureFlags = FeatureFlags(distribution: .debug)
+}
+
