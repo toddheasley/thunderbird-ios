@@ -1,7 +1,7 @@
 import Foundation
 import NIOCore
 
-public enum Response {
+enum Response {
     case ok(Int, String)
     case error(String)
 }
@@ -17,7 +17,7 @@ final class ResponseHandler: ChannelInboundHandler, Sendable {
         guard let prefix: String = buffer.readString(length: 4),
             let code: Int = Int(prefix.dropLast())
         else {
-            context.fireErrorCaught(URLError(.cannotDecodeContentData))
+            context.fireErrorCaught(SMTPError.responseNotDecoded)
             return
         }
         let string: String = buffer.readString(length: buffer.readableBytes) ?? ""
@@ -25,7 +25,7 @@ final class ResponseHandler: ChannelInboundHandler, Sendable {
         case ("2", " "), ("3", " "):
             context.fireChannelRead(wrapInboundOut(.ok(code, string)))
         case (_, "-"):
-            break
+            break  // Ignore messages except OK and error
         default:
             context.fireChannelRead(wrapInboundOut(.error("\(prefix)\(string)")))
         }

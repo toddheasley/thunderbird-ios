@@ -8,7 +8,7 @@ struct EmailTests {
     }
 
     @Test func contentType() {
-        #expect(Email.email.contentType == "multipart/mixed; boundary=\"|/\\/\\/\\/\\/\\/|\"")
+        #expect(Email.email.contentType == "multipart/alternate; boundary=\"|-----|\"")
     }
 
     @Test func messageID() {
@@ -40,8 +40,8 @@ private extension Email {
 // swift-format-ignore
 private let emailBody: String = """
 
---|/\\/\\/\\/\\/\\/|
+--|-----|
 Body content parts can be plain text or <a href="https://html.spec.whatwg.org">HTML</a> -- or included <em>images and other binary data attachments</em>.
---|/\\/\\/\\/\\/\\/|--
+--|-----|--
 
 """

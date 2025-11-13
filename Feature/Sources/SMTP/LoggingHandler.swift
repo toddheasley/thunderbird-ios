@@ -1,12 +1,8 @@
 import Foundation
 import NIOCore
+import OSLog
 
 final class LoggingHandler: ChannelDuplexHandler, @unchecked Sendable {
-    init(_ logger: @escaping (String) -> Void) {
-        self.logger = logger
-    }
-
-    private let logger: (String) -> Void
 
     // MARK: ChannelDuplexHandler
     typealias InboundIn = ByteBuffer
@@ -15,16 +11,18 @@ final class LoggingHandler: ChannelDuplexHandler, @unchecked Sendable {
     func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
         let buffer: ByteBuffer = unwrapOutboundIn(data)
         let string: String = String(decoding: buffer.readableBytesView, as: UTF8.self)
+        // TODO: Replace console printing with OS logger
         if buffer.readableBytesView.starts(with: Data("password".utf8).base64EncodedData()) {
-            logger(String(repeating: "•", count: string.count))  // Redact password from logging
+            print(String(repeating: "•", count: string.count))  // Redact password from logging
         } else {
-            logger(string)
+            print(string)
         }
         context.write(data, promise: promise)
     }
 
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
-        logger(String(decoding: unwrapInboundIn(data).readableBytesView, as: UTF8.self))
+        // TODO: Replace console printing with OS logger
+        print(String(decoding: unwrapInboundIn(data).readableBytesView, as: UTF8.self))
         context.fireChannelRead(data)
     }
 }

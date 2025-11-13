@@ -1,7 +1,7 @@
 import Foundation
 import NIOCore
 
-public enum Request {
+enum Request {
     case hello(String)
     case startTLS
     case authLogin
@@ -44,6 +44,7 @@ struct RequestEncoder: MessageToByteEncoder {
             out.writeString("MIME-Version: 1.0\(line)")
             out.writeString("Content-type: \(email.contentType)\(line)")
             out.writeBytes(email.body)
+            out.writeString("\(line).")
         case .quit:
             out.writeString("QUIT")
         }

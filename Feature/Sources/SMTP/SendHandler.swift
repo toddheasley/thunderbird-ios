@@ -1,15 +1,19 @@
 import NIOCore
 import NIOSSL
-import NIOFoundationCompat
 
 final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
     let email: Email
+    let recipient: EmailAddress
     let server: Server
 
-    init(_ email: Email, server: Server, done: EventLoopPromise<Void>) {
+    init(_ email: Email, recipient: EmailAddress?, server: Server, done: EventLoopPromise<Void>) {
         self.email = email
+        self.recipient = recipient ?? email.recipients.first ?? ""
         self.server = server
         self.done = done
+        if self.recipient.value.isEmpty {
+            expect = .error(SMTPError.emailRecipientNotFound)
+        }
     }
 
     private enum Expect {
@@ -25,8 +29,8 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
         case okAfterData
         case okAfterTransferData
         case okAfterQuit
-        case nothing
         case error(Error)
+        case nothing
     }
 
     private let done: EventLoopPromise<Void>
@@ -60,11 +64,12 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
                     self.expect = .error(error)
                 }
             } else {
-                expect = .error(ChannelError.inappropriateOperationForState)
+                expect = .error(SMTPError.requiredTLSNotConfigured)
             }
         case .none:
             send()  // Authenticate in plain text
         }
+        self.context = nil
     }
 
     // MARK: ChannelInboundHandler
@@ -75,8 +80,7 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         switch unwrapInboundIn(data) {
         case .error(let error):
-            print(error)
-            done.fail(ChannelError.operationUnsupported)
+            expect = .error(SMTPError.response(error))
         case .ok:
             switch expect {
             case .initialMessageFromServer:
@@ -110,11 +114,11 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
                         }
                         break
                     default:
-                        self.expect = .error(ChannelError.inappropriateOperationForState)
+                        self.expect = .error(SMTPError.requiredTLSNotConfigured)
                     }
                 }
             case .tlsHandlerToBeAdded:
-                expect = .error(ChannelError.inputClosed)
+                fatalError("channel read during .tlsHandlerToBeAdded")
             case .okForAuthBegin:
                 send(context: context, command: .authUser(server.username))
                 expect = .okAfterUsername
@@ -125,12 +129,8 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
                 send(context: context, command: .mailFrom(email.sender))
                 expect = .okAfterMailFrom
             case .okAfterMailFrom:
-                if let recipient: EmailAddress = email.recipients.first {
-                    send(context: context, command: .recipient(recipient))
-                    expect = .okAfterRecipient
-                } else {
-                    expect = .error(ChannelError.unknownLocalAddress)
-                }
+                send(context: context, command: .recipient(recipient))
+                expect = .okAfterRecipient
             case .okAfterRecipient:
                 send(context: context, command: .data)
                 expect = .okAfterData
@@ -144,21 +144,20 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
                 done.succeed()
                 context.close(promise: nil)
                 expect = .nothing
+            case .error(let error):
+                fatalError("SendHandler.channelRead during .error(\(error))")
             case .nothing:
                 break
-            case .error(let error):
-                fatalError("\(error)")
             }
         }
     }
 
     func channelInactive(context: ChannelHandlerContext) {
-        done.fail(ChannelError.eof)
+        expect = .error(SMTPError.remoteConnectionClosed)
     }
 
     func errorCaught(context: ChannelHandlerContext, error: any Error) {
         expect = .error(error)
-        done.fail(error)
         context.close(promise: nil)
     }
 }
