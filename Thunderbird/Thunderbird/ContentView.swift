@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var isPresented: Bool = false
     @State private var hasAuthorization: Bool = false
     @Environment(Accounts.self) private var accounts: Accounts
+   
 
     // MARK: View
     var body: some View {

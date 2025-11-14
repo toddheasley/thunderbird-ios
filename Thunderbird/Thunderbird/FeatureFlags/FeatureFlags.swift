@@ -7,48 +7,74 @@
 
 import Foundation
 
-public struct FeatureFlags: Sendable, Decodable {
-    public var featureList: [String] = ["featureX", "FeatureY"]
+@MainActor
+@Observable final public class FeatureFlags: Sendable, Decodable {
+    private var featureList: [String] = ["featureX", "featureY"]
     //False = feature is turned off
-    public var featureSettings: [String: Bool]
+    private var featureSettings: [String: Bool] = [:]
+    private var allowRemote: Bool = true
+    private var usingLocalDebugFlags: Bool = false
 
-    public init(distribution: Distribution) async {
+    public init(distribution: Distribution) {
+        allowRemote = (UserDefaults().value(forKey: "allowRemoteFeatureFlags") ?? true) as! Bool
+        usingLocalDebugFlags = (UserDefaults().value(forKey: "hasUsedDebugFlagSettings") ?? false) as! Bool
         featureSettings = featureList.reduce(into: [:], { (dict, number) in
             dict[number] = false
         })
-        var storedSettings: [String: Bool]
+
+        var defaultsKey: String
         switch distribution {
         case .debug:
-            storedSettings = UserDefaults().dictionary(forKey: "featureListDebug") as! [String : Bool]
+            defaultsKey = "featureListDebug"
         case .appstore:
-            storedSettings = UserDefaults().dictionary(forKey: "featureListAppStore") as! [String : Bool]
+            defaultsKey = "featureListAppStore"
         case .beta:
-            storedSettings = UserDefaults().dictionary(forKey: "featureListBeta") as! [String : Bool]
+            defaultsKey = "featureListBeta"
         }
+        let storedSettings = (UserDefaults().dictionary(forKey: defaultsKey) ?? [:]) as! [String : Bool]
         featureSettings.merge(storedSettings) {(current, new) in new}
-
-        var remoteSettings: [String: Bool]
         //if allowed to use url
-        if(true){
-            remoteSettings = (try? await getURLSettings(distribution: distribution)) ?? [:]
+        if(allowRemote){
+            Task {
+                let remoteSettings: [String: Bool] =  await getURLSettings(distribution: distribution)
+                featureSettings.merge(remoteSettings) {(current, new) in new}
+            }
         }
-        featureSettings.merge(remoteSettings) {(current, new) in new}
+        UserDefaults.setValue(featureSettings, forKey: defaultsKey)
     }
 
-    public func getURLSettings(distribution: Distribution) async throws -> [String:Bool]{
+    public func flagForKey(key: String)->Bool{
+        return featureSettings[key] ?? false
+    }
+
+    public func setAllowRemoteFlags(allowRemote: Bool){
+        self.allowRemote = allowRemote
+        UserDefaults.setValue(allowRemote, forKey: "allowRemoteFeatureFlags")
+    }
+
+    public func setUsingLocalFlags(usingLocal: Bool){
+        self.usingLocalDebugFlags = usingLocal
+        UserDefaults.setValue(allowRemote, forKey: "hasUsedDebugFlagSettings")
+    }
+
+    public func getURLSettings(distribution: Distribution) async -> [String:Bool]{
         var url: URL
 
         switch distribution {
         case .debug:
-            url = URL(string: "")!
+            url = URL(string: "https://thunderbird.github.io/thunderbird-ios/feature_flag_config_debug.json")!
         case .appstore:
-            url = URL(string: "")!
+            url = URL(string: "https://thunderbird.github.io/thunderbird-ios/feature_flag_config_appstore.json")!
         case .beta:
-            url = URL(string: "")!
+            url = URL(string: "https://thunderbird.github.io/thunderbird-ios/feature_flag_config_beta.json")!
         }
-        let (data, _) = try await URLSession.shared.data(from: url)
-        let response = try JSONDecoder().decode(Response.self, from: data)
-        return response.flags
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(Response.self, from: data)
+            return response.flags
+        } catch {
+            return [:]
+        }
     }
 }
 

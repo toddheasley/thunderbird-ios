@@ -7,6 +7,7 @@ struct WelcomeScreen: View {
     }
     @Environment(Accounts.self) private var accounts: Accounts
     @Environment(\.openURL) private var openURL
+    @Environment(FeatureFlags.self) private var featureFlags: FeatureFlags
     @Binding private var isPresented: Bool
 
     // MARK: View
@@ -22,10 +23,12 @@ struct WelcomeScreen: View {
                 .multilineTextAlignment(.center)
                 .opacity(0.75)
                 .padding()
-            Text("onboarding_welcome_text_alpha")
-                .multilineTextAlignment(.center)
-                .opacity(0.75)
-                .padding()
+            if(featureFlags.flagForKey(key: "featureX")){
+                Text("onboarding_welcome_text_alpha")
+                    .multilineTextAlignment(.center)
+                    .opacity(0.75)
+                    .padding()
+            }
             Spacer()
             Spacer()
             Button(action: {
