@@ -1,6 +1,12 @@
 import Foundation
+import UniformTypeIdentifiers
 
 public struct Email: Identifiable, Sendable {
+    public struct Part {
+        public let data: Data
+        public let contentType: String
+    }
+
     public let sender: EmailAddress
     public let recipients: [EmailAddress]
     public let copied: [EmailAddress]
@@ -12,21 +18,24 @@ public struct Email: Identifiable, Sendable {
     public var body: Data {
         var data: Data = Data()
         for part in parts {
-            data.append("\(line)--\(boundary)\(line)".data(using: .utf8)!)
+            data.append("\(line)--\(dataBoundary)\(line)".data(using: .utf8)!)
             data.append(part)
         }
-        data.append("\(line)--\(boundary)--\(line)".data(using: .utf8)!)
+        data.append("\(line)--\(dataBoundary)--\(line)".data(using: .utf8)!)
         return data
     }
 
     public var contentType: String {
-        "multipart/alternate; boundary=\"\(boundary)\""
+        "multipart/alternate; boundary=\"\(dataBoundary)\"; charset=UTF-8"
+        // multipart/related
+        // multipart/mixed
+        // text/plain
+        // text/html
     }
 
     public var messageID: String {
         // Format: https://www.jwz.org/doc/mid.html
-        let id: String = id.uuidString.components(separatedBy: "-").first!
-        let local: String = "\(Int(date.timeIntervalSince1970)).\(id)"
+        let local: String = "\(Int(date.timeIntervalSince1970)).\(id.uuidString(1))"
         guard let host: String = sender.host else {
             return "<\(local)>"
         }
@@ -53,13 +62,22 @@ public struct Email: Identifiable, Sendable {
         self.id = id
     }
 
-    var allRecipients: [EmailAddress] {
-        recipients + copied + blindCopied
-    }
+    var iso8601Date: String { ISO8601DateFormatter().string(from: date) }
+    var allRecipients: [EmailAddress] { recipients + copied + blindCopied }
+    var dataBoundary: String { "\(id.uuidString(1))_part" }
 
     // MARK: Identifiable
     public let id: UUID
 }
 
-private var boundary: String { "|-----|" }
-private var line: String { "\r\n" }
+extension UUID {
+    func uuidString(_ segments: Int) -> String {
+        uuidString.components(separatedBy: "-").prefix(max(segments, 0)).joined(separator: "-")
+    }
+}
+
+extension String {
+    static var line: Self { "\r\n" }
+}
+
+var line: String { .line }

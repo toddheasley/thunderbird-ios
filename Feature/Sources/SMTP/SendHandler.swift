@@ -100,7 +100,7 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
                 self.context = context
                 context.channel.eventLoop.makeCompletedFuture {
                     try context.channel.pipeline.syncOperations.addHandler(
-                        try NIOSSLClientHandler(context: .context, serverHostname: server.hostname),
+                        try NIOSSLClientHandler(context: .sslContext, serverHostname: server.hostname),
                         position: .first
                     )
                 }.whenComplete { result in
@@ -118,7 +118,7 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
                     }
                 }
             case .tlsHandlerToBeAdded:
-                fatalError("channel read during .tlsHandlerToBeAdded")
+                fatalError("SMTP.SendHandler.channelRead(context:data:) before TLS handler added to pipeline")
             case .okForAuthBegin:
                 send(context: context, command: .authUser(server.username))
                 expect = .okAfterUsername
@@ -145,7 +145,7 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
                 context.close(promise: nil)
                 expect = .nothing
             case .error(let error):
-                fatalError("SendHandler.channelRead during .error(\(error))")
+                fatalError("SMTP.SendHandler.channelRead(context:data:) after error: \(error)")
             case .nothing:
                 break
             }
@@ -160,4 +160,8 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
         expect = .error(error)
         context.close(promise: nil)
     }
+}
+
+private extension NIOSSLContext {
+    static var sslContext: Self { try! Self(configuration: .makeClientConfiguration()) }
 }

@@ -2,15 +2,19 @@ import Network
 import NIOCore
 import NIOExtras
 import NIOSSL
-import NIOTLS
 import NIOTransportServices
+import OSLog
 
 public struct SMTPClient {
     public let server: Server
 
-    public init(_ server: Server, qos: DispatchQoS = .utility) {
+    public init(
+        _ server: Server,
+        logger: Logger? = Logger(subsystem: "net.thunderbird.ios", category: "SMTP")
+    ) {
+        group = NIOTSEventLoopGroup(loopCount: 1, defaultQoS: .utility)
         self.server = server
-        group = NIOTSEventLoopGroup(loopCount: 1, defaultQoS: qos)
+        self.logger = logger
     }
 
     public func send(_ email: Email) async throws {
@@ -46,10 +50,7 @@ public struct SMTPClient {
     }
 
     private let group: EventLoopGroup
-}
-
-extension NIOSSLContext {
-    static var context: Self { try! Self(configuration: .makeClientConfiguration()) }
+    private let logger: Logger?
 }
 
 private extension NIOClientTCPBootstrap {
@@ -57,23 +58,33 @@ private extension NIOClientTCPBootstrap {
         email: Email,
         recipient: EmailAddress,
         server: Server,
+        logger: Logger? = nil,
         group: EventLoopGroup,
         done: EventLoopPromise<Void>
     ) throws -> Self {
-        let bootstrap: NIOClientTCPBootstrap
+        let bootstrap: Self
         switch server.connectionSecurity {
         case .startTLS:
-            bootstrap = try NIOClientTCPBootstrap(NIOTSConnectionBootstrap(group: group), tls: NIOSSLClientTLSProvider(context: .context, serverHostname: server.hostname))
+            bootstrap = try Self(
+                NIOTSConnectionBootstrap(group: group),
+                tls: NIOSSLClientTLSProvider(context: .sslContext, serverHostname: server.hostname)
+            )
         case .tls:
-            bootstrap = NIOClientTCPBootstrap(NIOTSConnectionBootstrap(group: group), tls: NIOTSClientTLSProvider())
+            bootstrap = Self(
+                NIOTSConnectionBootstrap(group: group),
+                tls: NIOTSClientTLSProvider()
+            )
             bootstrap.enableTLS()
         case .none:
-            bootstrap = NIOClientTCPBootstrap(NIOTSConnectionBootstrap(group: group), tls: NIOTSClientTLSProvider())
+            bootstrap = Self(
+                NIOTSConnectionBootstrap(group: group),
+                tls: NIOTSClientTLSProvider()
+            )
         }
         return bootstrap.channelInitializer { channel in
             channel.pipeline.addHandlers(
                 [
-                    LoggingHandler(),
+                    LoggingHandler(logger),
                     MessageHandler(LineBasedFrameDecoder()),
                     ResponseHandler(),
                     ByteHandler(RequestEncoder()),
@@ -82,4 +93,8 @@ private extension NIOClientTCPBootstrap {
             )
         }
     }
+}
+
+private extension NIOSSLContext {
+    static var sslContext: Self { try! Self(configuration: .makeClientConfiguration()) }
 }

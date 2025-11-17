@@ -38,11 +38,11 @@ struct RequestEncoder: MessageToByteEncoder {
         case .transferData(let email):
             out.writeString("From: \(email.sender)\(line)")
             out.writeString("To: \(email.recipients.map { $0.description }.joined(separator: " "))\(line)")
-            out.writeString("Date: \(dateFormatter.string(from: email.date))\(line)")  // "EEE, dd MMM yyyy HH:mm:ss Z"
+            out.writeString("Date: \(email.iso8601Date)\(line)")  // "EEE, dd MMM yyyy HH:mm:ss Z"
             out.writeString("Message-ID: \(email.messageID)\(line)")
             out.writeString("Subject: \(email.subject)\(line)")
             out.writeString("MIME-Version: 1.0\(line)")
-            out.writeString("Content-type: \(email.contentType)\(line)")
+            out.writeString("Content-Type: \(email.contentType)\(line)")
             out.writeBytes(email.body)
             out.writeString("\(line).")
         case .quit:
@@ -51,6 +51,3 @@ struct RequestEncoder: MessageToByteEncoder {
         out.writeString(line)
     }
 }
-
-nonisolated(unsafe) private let dateFormatter: ISO8601DateFormatter = ISO8601DateFormatter()
-private var line: String { "\r\n" }

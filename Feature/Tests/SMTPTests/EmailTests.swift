@@ -8,7 +8,7 @@ struct EmailTests {
     }
 
     @Test func contentType() {
-        #expect(Email.email.contentType == "multipart/alternate; boundary=\"|-----|\"")
+        #expect(Email.email.contentType == "multipart/alternate; boundary=\"\"")
     }
 
     @Test func messageID() {
@@ -16,6 +16,45 @@ struct EmailTests {
         let date: Date = Date(timeIntervalSince1970: 1762463150.82521)
         #expect(Email(sender: "user@example.com", date: date, id: id).messageID == "<1762463150.A51D5B17@example.com>")
         #expect(Email(sender: "abc@", date: date, id: id).messageID == "<1762463150.A51D5B17>")
+    }
+
+    @Test func iso8601Date() {
+        #expect(Email.email.iso8601Date == "2025-11-06T21:05:50Z")
+    }
+
+    @Test func allRecipients() {
+        #expect(
+            Email.email.allRecipients == [
+                "recipient@example.com",
+                "no.name@exmaple.com",
+                "cc@example.com",
+                "bcc@example.com"
+            ]
+        )
+    }
+
+    @Test func dataBoundary() {
+        #expect(Email.email.dataBoundary == "A51D5B17_part")
+    }
+}
+
+struct UUIDTests {
+    @Test func uuidString() {
+        #expect(Email.email.id.uuidString == "A51D5B17-CA61-4FF1-A4A8-C717289B8F9E")
+        #expect(Email.email.id.uuidString(-2) == "")
+        #expect(Email.email.id.uuidString(0) == "")
+        #expect(Email.email.id.uuidString(1) == "A51D5B17")
+        #expect(Email.email.id.uuidString(2) == "A51D5B17-CA61")
+        #expect(Email.email.id.uuidString(3) == "A51D5B17-CA61-4FF1")
+        #expect(Email.email.id.uuidString(4) == "A51D5B17-CA61-4FF1-A4A8")
+        #expect(Email.email.id.uuidString(5) == "A51D5B17-CA61-4FF1-A4A8-C717289B8F9E")
+        #expect(Email.email.id.uuidString(99) == "A51D5B17-CA61-4FF1-A4A8-C717289B8F9E")
+    }
+}
+
+struct StringTests {
+    @Test func line() {
+        #expect(String.line == "\r\n")
     }
 }
 
@@ -26,6 +65,12 @@ private extension Email {
             recipients: [
                 "Recipient Name <recipient@example.com>",
                 "no.name@exmaple.com"
+            ],
+            copied: [
+                "Copied Recipient <cc@example.com>"
+            ],
+            blindCopied: [
+                "bcc@example.com"
             ],
             subject: "Example email subject",
             date: Date(timeIntervalSince1970: 1762463150.82521),
@@ -39,9 +84,5 @@ private extension Email {
 
 // swift-format-ignore
 private let emailBody: String = """
-
---|-----|
-Body content parts can be plain text or <a href="https://html.spec.whatwg.org">HTML</a> -- or included <em>images and other binary data attachments</em>.
---|-----|--
 
 """

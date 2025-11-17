@@ -1,5 +1,6 @@
 import NIOCore
 
+// Proxy `ByteToMessageHandler` as `@unchecked Sendable`
 final class MessageHandler<Decoder: ByteToMessageDecoder>: ChannelInboundHandler, @unchecked Sendable {
     init(_ decoder: Decoder) {
         handler = ByteToMessageHandler(decoder)

@@ -55,11 +55,7 @@ Date: 2025-11-06T21:05:50Z
 Message-ID: <1762463150.A51D5B17@example.com>
 Subject: Example email subject
 MIME-Version: 1.0
-Content-type: multipart/alternate; boundary="|-----|"
-
---|-----|
-Body content parts can be plain text or <a href="https://html.spec.whatwg.org">HTML</a> -- or included <em>images and other binary data attachments</em>.
---|-----|--
+Content-type: multipart/alternate; boundary=""
 
 .
 """
