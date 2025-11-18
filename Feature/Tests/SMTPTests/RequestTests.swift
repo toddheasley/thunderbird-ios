@@ -40,7 +40,7 @@ private extension Email {
             subject: "Example email subject",
             date: Date(timeIntervalSince1970: 1762463150.82521),
             body: [
-                "Body content parts can be plain text or <a href=\"https://html.spec.whatwg.org\">HTML</a> -- or included <em>images and other binary data attachments</em>.".data(using: .utf8)!
+                "Body content parts can be plain text for now ;)".data(using: .utf8)!
             ],
             id: UUID(uuidString: "A51D5B17-CA61-4FF1-A4A8-C717289B8F9E")!
         )
@@ -54,8 +54,9 @@ To: Recipient Name <recipient@example.com> no.name@exmaple.com
 Date: 2025-11-06T21:05:50Z
 Message-ID: <1762463150.A51D5B17@example.com>
 Subject: Example email subject
-MIME-Version: 1.0
-Content-type: multipart/alternate; boundary=""
+Content-Type: text/plain; charset="UTF-8"
+
+Body content parts can be plain text for now ;)
 
 .
 """

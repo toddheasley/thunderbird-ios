@@ -41,7 +41,7 @@ struct RequestEncoder: MessageToByteEncoder {
             out.writeString("Date: \(email.iso8601Date)\(line)")  // "EEE, dd MMM yyyy HH:mm:ss Z"
             out.writeString("Message-ID: \(email.messageID)\(line)")
             out.writeString("Subject: \(email.subject)\(line)")
-            out.writeString("MIME-Version: 1.0\(line)")
+            // out.writeString("MIME-Version: 1.0\(line)")
             out.writeString("Content-Type: \(email.contentType)\(line)")
             out.writeBytes(email.body)
             out.writeString("\(line).")

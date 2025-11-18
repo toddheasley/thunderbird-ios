@@ -8,7 +8,7 @@ struct EmailTests {
     }
 
     @Test func contentType() {
-        #expect(Email.email.contentType == "multipart/alternate; boundary=\"\"")
+        #expect(Email.email.contentType == "text/plain; charset=\"UTF-8\"")
     }
 
     @Test func messageID() {
@@ -34,7 +34,7 @@ struct EmailTests {
     }
 
     @Test func dataBoundary() {
-        #expect(Email.email.dataBoundary == "A51D5B17_part")
+        #expect(Email.email.dataBoundary == "A51D5B17-CA61-4FF1-A4A8_part")
     }
 }
 
@@ -75,7 +75,7 @@ private extension Email {
             subject: "Example email subject",
             date: Date(timeIntervalSince1970: 1762463150.82521),
             body: [
-                "Body content parts can be plain text or <a href=\"https://html.spec.whatwg.org\">HTML</a> -- or included <em>images and other binary data attachments</em>.".data(using: .utf8)!
+                "Body content parts can be plain text for now ;)".data(using: .utf8)!
             ],
             id: UUID(uuidString: "A51D5B17-CA61-4FF1-A4A8-C717289B8F9E")!
         )
@@ -84,5 +84,7 @@ private extension Email {
 
 // swift-format-ignore
 private let emailBody: String = """
+
+Body content parts can be plain text for now ;)
 
 """

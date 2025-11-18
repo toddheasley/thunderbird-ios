@@ -18,20 +18,16 @@ public struct Email: Identifiable, Sendable {
     public var body: Data {
         var data: Data = Data()
         for part in parts {
-            data.append("\(line)--\(dataBoundary)\(line)".data(using: .utf8)!)
+            // data.append("\(line)--\(dataBoundary)\(line)".data(using: .utf8)!)
+            data.append(line.data(using: .utf8)!)
             data.append(part)
         }
-        data.append("\(line)--\(dataBoundary)--\(line)".data(using: .utf8)!)
+        // data.append("\(line)--\(dataBoundary)--\(line)".data(using: .utf8)!)
+        data.append(line.data(using: .utf8)!)
         return data
     }
 
-    public var contentType: String {
-        "multipart/alternate; boundary=\"\(dataBoundary)\"; charset=UTF-8"
-        // multipart/related
-        // multipart/mixed
-        // text/plain
-        // text/html
-    }
+    public var contentType: String { "text/plain; charset=\"UTF-8\"" }
 
     public var messageID: String {
         // Format: https://www.jwz.org/doc/mid.html
@@ -64,7 +60,7 @@ public struct Email: Identifiable, Sendable {
 
     var iso8601Date: String { ISO8601DateFormatter().string(from: date) }
     var allRecipients: [EmailAddress] { recipients + copied + blindCopied }
-    var dataBoundary: String { "\(id.uuidString(1))_part" }
+    var dataBoundary: String { "\(id.uuidString(4))_part" }
 
     // MARK: Identifiable
     public let id: UUID
