@@ -1,11 +1,10 @@
 import SwiftUI
-import Account
 
 struct WelcomeScreen: View {
     init(_ isPresented: Binding<Bool> = .constant(false)) {
         _isPresented = isPresented
     }
-    @Environment(Accounts.self) private var accounts: Accounts
+
     @Environment(\.openURL) private var openURL
     @Environment(FeatureFlags.self) private var featureFlags: FeatureFlags
     @Binding private var isPresented: Bool
@@ -21,14 +20,11 @@ struct WelcomeScreen: View {
                 .frame(height: 172.0)
             Text("onboarding_welcome_text")
                 .multilineTextAlignment(.center)
-                .opacity(0.75)
                 .padding()
-            if(featureFlags.flagForKey(key: "featureX")){
-                Text("onboarding_welcome_text_alpha")
-                    .multilineTextAlignment(.center)
-                    .opacity(0.75)
-                    .padding()
-            }
+            Text("onboarding_welcome_text_early")
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .padding()
             Spacer()
             Spacer()
             Button(action: {
@@ -42,13 +38,11 @@ struct WelcomeScreen: View {
             Spacer()
             Text("onboarding_welcome_developed_by")
                 .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
                 .font(.caption)
-                .opacity(0.75)
                 .padding()
         }
-        .background {
-            Background()
-        }
+        .wallpaper()
     }
 }
 
@@ -62,22 +56,59 @@ struct WelcomeScreen: View {
         }
 }
 
-private struct Background: View {
-
-    // MARK: View
-    var body: some View {
-        GeometryReader { proxy in
-            Image.background
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: proxy.size.width, height: proxy.size.height)
-                .opacity(proxy.size.width > 444.0 ? 0.0 : 1.0)
-        }
-        .ignoresSafeArea()
+private extension View {
+    func wallpaper() -> some View {
+        modifier(WelcomeWallpaperViewModifier())
     }
 }
 
+struct WelcomeWallpaperViewModifier: ViewModifier {
+
+    // MARK: ViewModifier
+    func body(content: Content) -> some View {
+        content
+            .background {
+                Image.wallpaper
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .opacity(0.97)
+                    .ignoresSafeArea()
+                    .containerRelativeFrame(.horizontal)
+                    .background(Color.background)
+            }
+    }
+}
+
+#Preview("Welcome Wallpaper View Modifier") {
+    Rectangle()
+        .fill(.clear)
+        .modifier(WelcomeWallpaperViewModifier())
+}
+
 private extension Image {
-    static var background: Self { Self("Welcome/Background") }
+    static var wallpaper: Self { Self("Welcome/Wallpaper") }
     static var logo: Self { Self("Welcome/Logo") }
+}
+
+#Preview("Welcome Wallpaper Image") {
+    Image.wallpaper
+        .resizable()
+        .aspectRatio(contentMode: .fill)
+        .ignoresSafeArea()
+}
+
+#Preview("Welcome Logo Image") {
+    Image.logo
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+        .padding()
+}
+
+private extension Color {
+    static var background: Self { Self("Welcome/Background") }
+}
+
+#Preview("Welcome Background Color") {
+    Color.background
+        .ignoresSafeArea()
 }

@@ -6,23 +6,20 @@
 //
 
 import Foundation
+let allowRemoteFlags = "allowRemoteFeatureFlags"
 
 @MainActor
 @Observable final public class FeatureFlags: Sendable, Decodable {
-    private var featureList: [String] = ["featureX", "featureY"]
+    public var featureList: [String] = ["featureX", "featureY"]
     //False = feature is turned off
     private var featureSettings: [String: Bool] = [:]
     private var allowRemote: Bool = true
-    private var usingLocalDebugFlags: Bool = false
+    private var defaultsKey: String
+
 
     public init(distribution: Distribution) {
-        allowRemote = (UserDefaults().value(forKey: "allowRemoteFeatureFlags") ?? true) as! Bool
-        usingLocalDebugFlags = (UserDefaults().value(forKey: "hasUsedDebugFlagSettings") ?? false) as! Bool
-        featureSettings = featureList.reduce(into: [:], { (dict, number) in
-            dict[number] = false
-        })
+        allowRemote = (UserDefaults().value(forKey: allowRemoteFlags) ?? true) as! Bool
 
-        var defaultsKey: String
         switch distribution {
         case .debug:
             defaultsKey = "featureListDebug"
@@ -31,6 +28,13 @@ import Foundation
         case .beta:
             defaultsKey = "featureListBeta"
         }
+        setDefaultFlags(distribution: distribution)
+    }
+
+    private func setDefaultFlags(distribution: Distribution){
+        featureSettings = featureList.reduce(into: [:], { (dict, number) in
+            dict[number] = false
+        })
         let storedSettings = (UserDefaults().dictionary(forKey: defaultsKey) ?? [:]) as! [String : Bool]
         featureSettings.merge(storedSettings) {(current, new) in new}
         //if allowed to use url
@@ -40,21 +44,20 @@ import Foundation
                 featureSettings.merge(remoteSettings) {(current, new) in new}
             }
         }
-        UserDefaults.setValue(featureSettings, forKey: defaultsKey)
+        UserDefaults().setValue(featureSettings, forKey: defaultsKey)
     }
 
     public func flagForKey(key: String)->Bool{
+        print(featureSettings[key])
         return featureSettings[key] ?? false
+    }
+    public func setFlagForKey(key: String, val: Bool){
+        featureSettings[key] = val
     }
 
     public func setAllowRemoteFlags(allowRemote: Bool){
         self.allowRemote = allowRemote
-        UserDefaults.setValue(allowRemote, forKey: "allowRemoteFeatureFlags")
-    }
-
-    public func setUsingLocalFlags(usingLocal: Bool){
-        self.usingLocalDebugFlags = usingLocal
-        UserDefaults.setValue(allowRemote, forKey: "hasUsedDebugFlagSettings")
+        UserDefaults.setValue(allowRemote, forKey: allowRemoteFlags)
     }
 
     public func getURLSettings(distribution: Distribution) async -> [String:Bool]{

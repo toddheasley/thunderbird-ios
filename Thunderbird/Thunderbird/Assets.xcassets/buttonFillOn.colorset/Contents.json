@@ -1,7 +1,15 @@
 {
-  "images" : [
+  "colors" : [
     {
-      "filename" : "WelcomeBackground.png",
+      "color" : {
+        "color-space" : "srgb",
+        "components" : {
+          "alpha" : "0.050",
+          "blue" : "0.851",
+          "green" : "0.451",
+          "red" : "0.075"
+        }
+      },
       "idiom" : "universal"
     },
     {
@@ -11,7 +19,6 @@
           "value" : "dark"
         }
       ],
-      "filename" : "WelcomeBackgroundDark.png",
       "idiom" : "universal"
     }
   ],
