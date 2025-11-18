@@ -81,7 +81,29 @@ Both protocols use [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Prot
 
 ### `SMTP` Library
 
-`SMTP` implementation is based on `NIOSMTP` example project included in the [SwiftNIO examples.](https://github.com/apple/swift-nio-examples) 
+`SMTP` implementation is based on `NIOSMTP` example project included in the [SwiftNIO examples repository.](https://github.com/apple/swift-nio-examples)
+
+Configure `SMTPClient` with a `Server` to connect to; send one or more emails through the same server:
+
+```swift
+import SMTP
+import Foundation
+
+try await SMTPClient(Server(
+    hostname: "smtp.mail.example.com",
+    username: "username",
+    password: "fake-appp-pass-word"
+)).send(Email(
+    sender: "sender@example.com",
+    recipients: [
+        "recipient@example.com"
+    ],
+    subject: "Example email subject",
+    body: [
+        "Body content parts can be plain text for now ;)".data(using: .utf8)!
+    ]
+))
+```
 
 ## `JMAP`
 

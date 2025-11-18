@@ -5,6 +5,7 @@ import NIOSSL
 import NIOTransportServices
 import OSLog
 
+/// Configure `SMTPClient` with a single ``Server`` and send ``Email``.
 public struct SMTPClient {
     public let server: Server
 
@@ -15,6 +16,12 @@ public struct SMTPClient {
         group = NIOTSEventLoopGroup(loopCount: 1, defaultQoS: .utility)
         self.server = server
         self.logger = logger
+    }
+
+    public func send(_ email: [Email]) async throws {
+        for email in email {
+            try await send(email)
+        }
     }
 
     public func send(_ email: Email) async throws {

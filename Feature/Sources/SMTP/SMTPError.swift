@@ -1,3 +1,4 @@
+/// ``SMTPClient`` throws `SMTPError`.
 public enum SMTPError: Error {
     case emailRecipientNotFound
     case remoteConnectionClosed

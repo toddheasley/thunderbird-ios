@@ -3,6 +3,7 @@ import NIO
 @preconcurrency import NIOIMAP
 import OSLog
 
+/// Configure `IMAPClient` with a single ``Server``.
 public struct IMAPClient {
     public let server: Server
 
@@ -37,6 +38,3 @@ private extension ClientBootstrap {
         }
     }
 }
-
-// .connect(host: "imap.mail.example.com", port: 993).get()
-// try await channel.writeAndFlush(IMAPClientHandler.Message.part(CommandStreamPart.tagged(TaggedCommand(tag: "a001", command: .login(username: "", password: "")))), promise: nil)

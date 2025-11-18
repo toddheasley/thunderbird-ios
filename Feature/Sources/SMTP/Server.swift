@@ -1,3 +1,4 @@
+/// ``SMTPClient`` connects to `Server`.
 public struct Server: Equatable, Sendable {
     public let connectionSecurity: ConnectionSecurity
     public let hostname: String

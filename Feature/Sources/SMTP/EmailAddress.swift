@@ -1,5 +1,6 @@
 import Foundation
 
+/// SMTP-compatible email address
 public struct EmailAddress: CustomStringConvertible, Equatable, ExpressibleByStringLiteral, Identifiable, Sendable {
     public let value: String
     public let label: String?

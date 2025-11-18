@@ -1,6 +1,7 @@
 import Foundation
 import UniformTypeIdentifiers
 
+/// ``SMTPClient`` sends `Email`.
 public struct Email: Identifiable, Sendable {
     public struct Part {
         public let data: Data
