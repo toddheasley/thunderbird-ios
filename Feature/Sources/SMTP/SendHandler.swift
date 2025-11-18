@@ -100,7 +100,7 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
                 self.context = context
                 context.channel.eventLoop.makeCompletedFuture {
                     try context.channel.pipeline.syncOperations.addHandler(
-                        try NIOSSLClientHandler(context: .sslContext, serverHostname: server.hostname),
+                        try NIOSSLClientHandler(context: .ssl, serverHostname: server.hostname),
                         position: .first
                     )
                 }.whenComplete { result in
@@ -163,5 +163,5 @@ final class SendHandler: ChannelInboundHandler, @unchecked Sendable {
 }
 
 private extension NIOSSLContext {
-    static var sslContext: Self { try! Self(configuration: .makeClientConfiguration()) }
+    static var ssl: Self { try! Self(configuration: .makeClientConfiguration()) }
 }

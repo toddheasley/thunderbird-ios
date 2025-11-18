@@ -74,7 +74,7 @@ private extension NIOClientTCPBootstrap {
         case .startTLS:
             bootstrap = try Self(
                 NIOTSConnectionBootstrap(group: group),
-                tls: NIOSSLClientTLSProvider(context: .sslContext, serverHostname: server.hostname)
+                tls: NIOSSLClientTLSProvider(context: .ssl, serverHostname: server.hostname)
             )
         case .tls:
             bootstrap = Self(
@@ -103,5 +103,5 @@ private extension NIOClientTCPBootstrap {
 }
 
 private extension NIOSSLContext {
-    static var sslContext: Self { try! Self(configuration: .makeClientConfiguration()) }
+    static var ssl: Self { try! Self(configuration: .makeClientConfiguration()) }
 }
