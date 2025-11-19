@@ -13,7 +13,6 @@ public enum Flag: String {
     case featureY
 }
 
-
 @MainActor
 @Observable final public class FeatureFlags: Sendable, Decodable {
     public var featureList: [String] = ["featureX", "featureY"]
