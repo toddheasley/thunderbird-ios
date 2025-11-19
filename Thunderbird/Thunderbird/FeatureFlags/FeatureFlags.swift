@@ -8,6 +8,12 @@
 import Foundation
 let allowRemoteFlags = "allowRemoteFeatureFlags"
 
+public enum Flag: String {
+    case featureX
+    case featureY
+}
+
+
 @MainActor
 @Observable final public class FeatureFlags: Sendable, Decodable {
     public var featureList: [String] = ["featureX", "featureY"]
@@ -49,11 +55,11 @@ let allowRemoteFlags = "allowRemoteFeatureFlags"
 
     }
 
-    public func flagForKey(key: String) -> Bool {
-        return featureSettings[key] ?? false
+    public func flagForKey(key: Flag) -> Bool {
+        return featureSettings[key.rawValue] ?? false
     }
-    public func setFlagForKey(key: String, val: Bool) {
-        featureSettings[key] = val
+    public func setFlagForKey(key: Flag, val: Bool) {
+        featureSettings[key.rawValue] = val
     }
 
     public func setAllowRemoteFlags(allowRemote: Bool) {
@@ -61,7 +67,7 @@ let allowRemoteFlags = "allowRemoteFeatureFlags"
         UserDefaults().setValue(allowRemote, forKey: allowRemoteFlags)
     }
 
-    public func getURLSettings(distribution: Distribution) async -> [String: Bool] {
+    private func getURLSettings(distribution: Distribution) async -> [String: Bool] {
         var url: URL
 
         switch distribution {
