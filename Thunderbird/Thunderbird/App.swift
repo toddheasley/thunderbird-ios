@@ -19,4 +19,3 @@ struct App: SwiftUI.App {
         #endif
     }
 }
-

@@ -16,7 +16,6 @@ let allowRemoteFlags = "allowRemoteFeatureFlags"
     public var allowRemote: Bool = true
     private var defaultsKey: String
 
-
     public init(distribution: Distribution) {
         allowRemote = (UserDefaults().value(forKey: allowRemoteFlags) ?? true) as! Bool
 
@@ -31,36 +30,38 @@ let allowRemoteFlags = "allowRemoteFeatureFlags"
         setDefaultFlags(distribution: distribution)
     }
 
-    private func setDefaultFlags(distribution: Distribution){
-        featureSettings = featureList.reduce(into: [:], { (dict, number) in
-            dict[number] = false
-        })
-        let storedSettings = (UserDefaults().dictionary(forKey: defaultsKey) ?? [:]) as! [String : Bool]
-        featureSettings.merge(storedSettings) {(current, new) in new}
+    private func setDefaultFlags(distribution: Distribution) {
+        featureSettings = featureList.reduce(
+            into: [:],
+            { (dict, number) in
+                dict[number] = false
+            })
+        let storedSettings = (UserDefaults().dictionary(forKey: defaultsKey) ?? [:]) as! [String: Bool]
+        featureSettings.merge(storedSettings) { (current, new) in new }
         //if allowed to use url
-        if(allowRemote){
+        if allowRemote {
             Task {
-                let remoteSettings: [String: Bool] =  await getURLSettings(distribution: distribution)
-                featureSettings.merge(remoteSettings) {(current, new) in new}
+                let remoteSettings: [String: Bool] = await getURLSettings(distribution: distribution)
+                featureSettings.merge(remoteSettings) { (current, new) in new }
                 UserDefaults().setValue(featureSettings, forKey: defaultsKey)
             }
         }
 
     }
 
-    public func flagForKey(key: String)->Bool{
+    public func flagForKey(key: String) -> Bool {
         return featureSettings[key] ?? false
     }
-    public func setFlagForKey(key: String, val: Bool){
+    public func setFlagForKey(key: String, val: Bool) {
         featureSettings[key] = val
     }
 
-    public func setAllowRemoteFlags(allowRemote: Bool){
+    public func setAllowRemoteFlags(allowRemote: Bool) {
         self.allowRemote = allowRemote
         UserDefaults().setValue(allowRemote, forKey: allowRemoteFlags)
     }
 
-    public func getURLSettings(distribution: Distribution) async -> [String:Bool]{
+    public func getURLSettings(distribution: Distribution) async -> [String: Bool] {
         var url: URL
 
         switch distribution {
@@ -81,6 +82,6 @@ let allowRemoteFlags = "allowRemoteFeatureFlags"
     }
 }
 
-struct Response: Decodable{
+struct Response: Decodable {
     let flags: [String: Bool]
 }

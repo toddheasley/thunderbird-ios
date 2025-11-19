@@ -58,7 +58,7 @@ struct EmailListView: View {
                         Label("Options", systemImage: "ellipsis", )
                     }
                 }
-                ToolbarItem(placement: .automatic){
+                ToolbarItem(placement: .automatic) {
                     NavigationLink("Settings", destination: FeatureFlagDebugView())
                 }
             }
