@@ -8,10 +8,19 @@ import SwiftUI
 
 struct FeatureFlagDebugView: View {
     @Environment(FeatureFlags.self) private var flags: FeatureFlags
+    @State private var allowRemoteFlags = false
     var body: some View {
-        List(flags.featureList, id: \.self){ string in
-            SettingRowView(string, flags.flagForKey(key: string))
+        VStack{
+            Toggle("Allow remote feature flags", isOn: $allowRemoteFlags).padding()
+            List(flags.featureList, id: \.self){ string in
+                SettingRowView(string, flags.flagForKey(key: string))
+            }
+        }.onChange(of: allowRemoteFlags){
+            flags.setAllowRemoteFlags(allowRemote: allowRemoteFlags)
+        }.task{
+            allowRemoteFlags = flags.allowRemote
         }
+
     }
 }
 
@@ -23,6 +32,7 @@ struct SettingRowView: View {
         self.isOn = onState
     }
     @State private var isOn: Bool
+
     private var flagName: String
 
 
@@ -33,6 +43,7 @@ struct SettingRowView: View {
         }.onChange(of: isOn){
             flags.setFlagForKey(key: flagName, val: isOn)
         }
+
     }
 }
 

@@ -13,7 +13,7 @@ let allowRemoteFlags = "allowRemoteFeatureFlags"
     public var featureList: [String] = ["featureX", "featureY"]
     //False = feature is turned off
     private var featureSettings: [String: Bool] = [:]
-    private var allowRemote: Bool = true
+    public var allowRemote: Bool = true
     private var defaultsKey: String
 
 
@@ -42,13 +42,13 @@ let allowRemoteFlags = "allowRemoteFeatureFlags"
             Task {
                 let remoteSettings: [String: Bool] =  await getURLSettings(distribution: distribution)
                 featureSettings.merge(remoteSettings) {(current, new) in new}
+                UserDefaults().setValue(featureSettings, forKey: defaultsKey)
             }
         }
-        UserDefaults().setValue(featureSettings, forKey: defaultsKey)
+
     }
 
     public func flagForKey(key: String)->Bool{
-        print(featureSettings[key])
         return featureSettings[key] ?? false
     }
     public func setFlagForKey(key: String, val: Bool){
@@ -57,7 +57,7 @@ let allowRemoteFlags = "allowRemoteFeatureFlags"
 
     public func setAllowRemoteFlags(allowRemote: Bool){
         self.allowRemote = allowRemote
-        UserDefaults.setValue(allowRemote, forKey: allowRemoteFlags)
+        UserDefaults().setValue(allowRemote, forKey: allowRemoteFlags)
     }
 
     public func getURLSettings(distribution: Distribution) async -> [String:Bool]{
