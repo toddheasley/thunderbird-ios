@@ -11,7 +11,7 @@
 "account_oauth_loading_error" = "OAuth sign in failed";
 "account_server_settings_email_address_label" = "Email Address";
 "account_server_settings_protocol_type_label" = "Protocol";
-"account_server_settings_security_label" = "Use SSL/TSL";
+"account_server_settings_security_label" = "Use SSL/TLS";
 "account_server_settings_port_label" = "Port";
 "account_choose_email_type_label" = "Choose Email Account Type";
 "account_server_settings_server_label" = "Server";
