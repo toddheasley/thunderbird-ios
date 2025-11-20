@@ -78,6 +78,8 @@ Both protocols use [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Prot
 ### `IMAP` Library
 
 
+### `MIME` Library
+
 
 ### `SMTP` Library
 

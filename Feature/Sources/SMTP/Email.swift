@@ -1,4 +1,5 @@
 import Foundation
+import MIME
 import UniformTypeIdentifiers
 
 /// ``SMTPClient`` sends `Email`.
