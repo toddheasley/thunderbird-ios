@@ -6,7 +6,7 @@
 //
 
 import Foundation
-let allowRemoteFlags = "allowRemoteFeatureFlags"
+private let allowRemoteFlags = "allowRemoteFeatureFlags"
 
 public enum Flag: String {
     case featureX
@@ -14,7 +14,7 @@ public enum Flag: String {
 }
 
 @MainActor
-@Observable final public class FeatureFlags: Sendable, Decodable {
+@Observable final public class FeatureFlags: Sendable {
     public var featureList: [String] = ["featureX", "featureY"]
     //False = feature is turned off
     private var featureSettings: [String: Bool] = [:]
@@ -22,7 +22,7 @@ public enum Flag: String {
     private var defaultsKey: String
 
     public init(distribution: Distribution) {
-        allowRemote = (UserDefaults().value(forKey: allowRemoteFlags) ?? true) as! Bool
+        allowRemote = (UserDefaults.standard.value(forKey: allowRemoteFlags) ?? true) as! Bool
 
         switch distribution {
         case .debug:
@@ -41,14 +41,14 @@ public enum Flag: String {
             { (dict, number) in
                 dict[number] = false
             })
-        let storedSettings = (UserDefaults().dictionary(forKey: defaultsKey) ?? [:]) as! [String: Bool]
+        let storedSettings = (UserDefaults.standard.dictionary(forKey: defaultsKey) ?? [:]) as! [String: Bool]
         featureSettings.merge(storedSettings) { (current, new) in new }
         //if allowed to use url
         if allowRemote {
             Task {
                 let remoteSettings: [String: Bool] = await getURLSettings(distribution: distribution)
                 featureSettings.merge(remoteSettings) { (current, new) in new }
-                UserDefaults().setValue(featureSettings, forKey: defaultsKey)
+                UserDefaults.standard.setValue(featureSettings, forKey: defaultsKey)
             }
         }
 
@@ -63,7 +63,7 @@ public enum Flag: String {
 
     public func setAllowRemoteFlags(allowRemote: Bool) {
         self.allowRemote = allowRemote
-        UserDefaults().setValue(allowRemote, forKey: allowRemoteFlags)
+        UserDefaults.standard.setValue(allowRemote, forKey: allowRemoteFlags)
     }
 
     private func getURLSettings(distribution: Distribution) async -> [String: Bool] {
@@ -87,6 +87,6 @@ public enum Flag: String {
     }
 }
 
-struct Response: Decodable {
+private struct Response: Decodable {
     let flags: [String: Bool]
 }

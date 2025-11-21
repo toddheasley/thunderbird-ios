@@ -12,7 +12,7 @@ public enum Distribution: Sendable {
 }
 
 extension Distribution {
-    static var current: Self {
+    public static var current: Self {
         #if RELEASE
         return .appstore
         #elseif BETA
