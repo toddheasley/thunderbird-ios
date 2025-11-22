@@ -32,6 +32,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		142ECC532ECE4D1C00518776 /* Exceptions for "Thunderbird" folder in "ThunderbirdTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				FeatureFlags/Distribution.swift,
+				FeatureFlags/FeatureFlags.swift,
+			);
+			target = 1521D8232D9C4D6300C4DFDF /* ThunderbirdTests */;
+		};
 		1593E40E2E7254CC00B82438 /* Exceptions for "Thunderbird" folder in "Thunderbird" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -51,6 +59,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				1593E40E2E7254CC00B82438 /* Exceptions for "Thunderbird" folder in "Thunderbird" target */,
+				142ECC532ECE4D1C00518776 /* Exceptions for "Thunderbird" folder in "ThunderbirdTests" target */,
 			);
 			path = Thunderbird;
 			sourceTree = "<group>";
