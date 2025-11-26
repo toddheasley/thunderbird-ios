@@ -27,5 +27,6 @@
 "account_server_settings_authentication_password_encrypted" = "Encrypted Password";
 "account_server_settings_authentication_client_oauth" = "OAuth 2.0";
 "account_server_settings_authentication_none" = "None";
+"feature_not_implemented" = "This feature has not been implemented yet";
 "next_button" = "Next";
 "donation_support" = "Donate";
