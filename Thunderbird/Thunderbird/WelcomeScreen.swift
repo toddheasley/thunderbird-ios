@@ -6,6 +6,7 @@ struct WelcomeScreen: View {
     }
 
     @Environment(\.openURL) private var openURL
+    @Environment(FeatureFlags.self) private var featureFlags: FeatureFlags
     @Binding private var isPresented: Bool
 
     // MARK: View

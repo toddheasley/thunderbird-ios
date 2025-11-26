@@ -5,13 +5,14 @@ import SwiftUI
 struct App: SwiftUI.App {
     @State private var accounts: Accounts = Accounts()
     @State private var showAlert = false
+    @State private var featureFlags: FeatureFlags = FeatureFlags(distribution: .current)
 
     // MARK: App
     var body: some Scene {
         WindowGroup {
             ZStack {
                 ContentView()
-                    .environment(accounts)
+                    .environment(accounts).environment(featureFlags)
                 if showAlert {
                     FeatureNotImplementedView()
                 }
