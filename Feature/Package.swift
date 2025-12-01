@@ -107,6 +107,9 @@ let package: Package = Package(
             name: "MIMETests",
             dependencies: [
                 "MIME"
+            ],
+            resources: [
+                .process("Resources")
             ]),
         .target(
             name: "SMTP",

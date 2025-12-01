@@ -10,8 +10,8 @@ public enum ContentType: CustomStringConvertible, Equatable, RawRepresentable {
     case image(String)
     case message(String)
     case model(String)
-    case multipart(String)
-    case text(String)
+    case multipart(String, Boundary = UUID().dataBoundary())
+    case text(String, CharacterSet? = nil)
     case video(String)
 
     public var subType: String {
@@ -24,10 +24,44 @@ public enum ContentType: CustomStringConvertible, Equatable, RawRepresentable {
             .image(let subType),
             .message(let subType),
             .model(let subType),
-            .multipart(let subType),
-            .text(let subType),
+            .multipart(let subType, _),
+            .text(let subType, _),
             .video(let subType):
             subType
+        }
+    }
+
+    public var isMultipart: Bool {
+        switch self {
+        case .multipart: true
+        default: false
+        }
+    }
+
+    var parameters: [String] {
+        var parameters: [String] = [
+            "\(value)/\(subType)"
+        ]
+        if let boundary {
+            parameters.append("boundary=\"\(boundary)\"")
+        }
+        if let charset {
+            parameters.append("charset=\"\(charset)\"")
+        }
+        return parameters
+    }
+
+    var boundary: Boundary? {
+        switch self {
+        case .multipart(_, let boundary): boundary
+        default: nil
+        }
+    }
+
+    var charset: CharacterSet? {
+        switch self {
+        case .text(_, let charset): charset
+        default: nil
         }
     }
 
@@ -51,53 +85,60 @@ public enum ContentType: CustomStringConvertible, Equatable, RawRepresentable {
     public var description: String { rawValue }
 
     // MARK: RawRepresentable
-    public var rawValue: String { "\(value)/\(subType)" }
+    public var rawValue: String { parameters.joined(separator: "; ") }
 
     public init?(rawValue: String) {
-        guard let data: Data = rawValue.trimmingCharacters(in: .whitespacesAndNewlines).data(using: .ascii),
-            let rawValue: [String] = String(data: data, encoding: .ascii)?.components(separatedBy: "/"),
+        guard let parameters: [String] = rawValue.ascii?.components(separatedBy: ";"),
+            let rawValue: [String] = parameters[0].trimmed().ascii?.components(separatedBy: "/"),
             rawValue.count == 2, rawValue[1].count > 1
         else {
             return nil
         }
-        let subType: String = rawValue[1]
         switch rawValue[0].lowercased() {
         case "application":
-            self = .application(subType)
+            self = .application(rawValue[1])
         case "audio":
-            self = .audio(subType)
+            self = .audio(rawValue[1])
         case "example":
-            self = .example(subType)
+            self = .example(rawValue[1])
         case "font":
-            self = .font(subType)
+            self = .font(rawValue[1])
         case "haptics":
-            self = .haptics(subType)
+            self = .haptics(rawValue[1])
         case "image":
-            self = .image(subType)
+            self = .image(rawValue[1])
         case "message":
-            self = .message(subType)
+            self = .message(rawValue[1])
         case "model":
-            self = .model(subType)
+            self = .model(rawValue[1])
         case "multipart":
-            self = .multipart(subType)
+            guard let parameter: [String] = parameters.last?.trimmed().components(separatedBy: "="),
+                parameter.count == 2,
+                parameter[0] == "boundary",
+                let boundary: Boundary = try? Boundary(parameter[1].removing(.quotes))
+            else {
+                return nil
+            }
+            self = .multipart(rawValue[1], boundary)
         case "text":
-            self = .text(subType)
+            if let parameter: [String] = parameters.last?.trimmed().components(separatedBy: "="),
+                parameter.count == 2,
+                parameter[0] == "charset"
+            {
+                self = .text(rawValue[1], CharacterSet(rawValue: parameter[1].removing(.quotes)))
+            } else {
+                self = .text(rawValue[1])
+            }
         case "video":
-            self = .video(subType)
+            self = .video(rawValue[1])
         default:
             return nil
         }
     }
 }
 
-extension ContentType {
-    public static var multipartAlternative: Self { .multipart(.alternative) }
-    public static var multipartMixed: Self { .multipart(.mixed) }
-    public static var multipartRelated: Self { .multipart(.related) }
-}
-
 extension String {
-    static var alternative: Self { "alternative" }
-    static var mixed: Self { "mixed" }
-    static var related: Self { "related" }
+    public static var alternative: Self { "alternative" }
+    public static var mixed: Self { "mixed" }
+    public static var related: Self { "related" }
 }

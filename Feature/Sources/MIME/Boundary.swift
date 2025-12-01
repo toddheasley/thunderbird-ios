@@ -1,25 +1,25 @@
-import Foundation
-
-/// Multipart data boundary described in [RFC 2046](https://www.rfc-editor.org/rfc/rfc2046)
-public struct Boundary: CustomStringConvertible {
+/// Multipart data boundary described in [RFC 2046](https://www.rfc-editor.org/rfc/rfc2046#section-5.1.1)
+public struct Boundary: CustomStringConvertible, Equatable, RawRepresentable {
     public static var bounds: ClosedRange<Int> { 1...70 }
 
     /// Valid boundary is 1-70 characters US-ASCII, no trailing white space.
     public init(_ description: String = "") throws {
-        let description: String = description.trimmingCharacters(in: .whitespacesAndNewlines)
-        let count: Int = description.count
-        guard let data: Data = description.data(using: .ascii),
-            let description: String = String(data: data, encoding: .ascii),
-            description.count == count
-        else {
+        guard let description: String = description.trimmed().ascii else {
             throw MIMEError.boundaryNotASCII
         }
         guard Self.bounds.contains(description.count) else {
             throw MIMEError.boundaryLength(description.count)
         }
-        self.description = description
+        self.rawValue = description
     }
 
     // MARK: CustomStringConvertible
-    public let description: String
+    public var description: String { rawValue }
+
+    // MARK: RawRepresentable
+    public let rawValue: String
+
+    public init?(rawValue: String) {
+        try? self.init(rawValue)
+    }
 }

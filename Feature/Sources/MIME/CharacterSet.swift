@@ -1,7 +1,7 @@
 import Foundation
 
 /// Character encoding described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.2)
-public struct CharacterSet: CustomStringConvertible, ExpressibleByStringLiteral, RawRepresentable {
+public struct CharacterSet: CustomStringConvertible, Equatable, ExpressibleByStringLiteral, RawRepresentable {
     public static var ascii: Self { "US-ASCII" }  // Default character encoding
 
     public let value: String
@@ -22,10 +22,7 @@ public struct CharacterSet: CustomStringConvertible, ExpressibleByStringLiteral,
     public var rawValue: String { value }
 
     public init?(rawValue: String) {
-        guard let data: Data = rawValue.data(using: .ascii),
-            let value: String = String(data: data, encoding: .ascii),
-            !value.isEmpty
-        else {
+        guard let value: String = rawValue.ascii, !value.isEmpty else {
             return nil
         }
         self.value = value

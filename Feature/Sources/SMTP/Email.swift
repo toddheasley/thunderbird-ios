@@ -20,11 +20,9 @@ public struct Email: Identifiable, Sendable {
     public var body: Data {
         var data: Data = Data()
         for part in parts {
-            // data.append("\(line)--\(dataBoundary)\(line)".data(using: .utf8)!)
             data.append(line.data(using: .utf8)!)
             data.append(part)
         }
-        // data.append("\(line)--\(dataBoundary)--\(line)".data(using: .utf8)!)
         data.append(line.data(using: .utf8)!)
         return data
     }

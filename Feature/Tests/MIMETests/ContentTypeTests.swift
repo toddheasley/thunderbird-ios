@@ -5,8 +5,26 @@ struct ContentTypeTests {
     @Test func subType() {
         #expect(ContentType.application("zip").subType == "zip")
         #expect(ContentType.image("png").subType == "png")
-        #expect(ContentType.multipart("mixed").subType == "mixed")
+        #expect(ContentType.multipart(.mixed).subType == "mixed")
         #expect(ContentType.text("html").subType == "html")
+    }
+
+    @Test func isMultipart() {
+        #expect(ContentType.multipart(.mixed).isMultipart == true)
+        #expect(ContentType.image("heic").isMultipart == false)
+    }
+
+    @Test func boundary() {
+        #expect(ContentType.multipart(.mixed).boundary?.description.count == 36)  // UUID string default
+        #expect(ContentType.multipart(.mixed).boundary?.description.components(separatedBy: "-").count == 5)
+        #expect(ContentType.text("html", .ascii).boundary == nil)
+
+    }
+
+    @Test func charset() {
+        #expect(ContentType.text("html", .utf8).charset == .utf8)
+        #expect(ContentType.text("plain", .ascii).charset == .ascii)
+        #expect(ContentType.image("tiff").charset == nil)
     }
 
     @Test func value() {
@@ -27,7 +45,8 @@ struct ContentTypeTests {
     @Test func rawValue() {
         #expect(ContentType.application("zip").rawValue == "application/zip")
         #expect(ContentType.image("png").rawValue == "image/png")
-        #expect(ContentType.multipart("mixed").rawValue == "multipart/mixed")
+        #expect(ContentType.multipart(.mixed, try! Boundary("5A8AE6FB")).rawValue == "multipart/mixed; boundary=\"5A8AE6FB\"")
+        #expect(ContentType.text("plain", .ascii).rawValue == "text/plain; charset=\"US-ASCII\"")
         #expect(ContentType.text("html").rawValue == "text/html")
     }
 
@@ -40,22 +59,9 @@ struct ContentTypeTests {
         #expect(ContentType(rawValue: "image/png") == .image("png"))
         #expect(ContentType(rawValue: "message/ex") == .message("ex"))
         #expect(ContentType(rawValue: "MODEL/EX") == .model("EX"))
-        #expect(ContentType(rawValue: "multipart/mixed") == .multipart("mixed"))
-        #expect(ContentType(rawValue: "text/html") == .text("html"))
+        #expect(ContentType(rawValue: "multipart/mixed; boundary=\"5A8AE6FB\"") == .multipart(.mixed, try! Boundary("5A8AE6FB")))
+        #expect(ContentType(rawValue: "text/html; charset=\"UTF-8\"") == .text("html", .utf8))
+        #expect(ContentType(rawValue: "text/plain") == .text("plain"))
         #expect(ContentType(rawValue: "video/mpeg") == .video("mpeg"))
-    }
-}
-
-extension ContentTypeTests {
-    @Test func multipartAlternative() {
-        #expect(ContentType.multipartAlternative.rawValue == "multipart/alternative")
-    }
-
-    @Test func multipartMixed() {
-        #expect(ContentType.multipartMixed.rawValue == "multipart/mixed")
-    }
-
-    @Test func multipartRelated() {
-        #expect(ContentType.multipartRelated.rawValue == "multipart/related")
     }
 }

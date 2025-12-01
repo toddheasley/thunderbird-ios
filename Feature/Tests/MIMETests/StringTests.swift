@@ -1,0 +1,62 @@
+import Foundation
+@testable import MIME
+import Testing
+
+struct StringTests {
+    @Test func crlf() {
+        #expect(String.crlf == "\r\n")
+    }
+
+    @Test func separator() {
+        #expect(String.separator == "-")
+    }
+
+    @Test func ascii() {
+        #expect("👎 NOT ASCII".ascii == nil)
+        #expect("/@scii=12345...".ascii == "/@scii=12345...")
+        #expect("".ascii == "")
+    }
+
+    @Test func quotedPrintableInit() throws {
+        print(try String(quotedPrintable: .quotedPrintable))
+
+        #expect(try String(quotedPrintable: .quotedPrintable) == quotedPrintable)
+        #expect(throws: MIMEError.dataNotQuotedPrintable) {
+            try String(quotedPrintable: notQuotedPrintable)
+        }
+    }
+}
+
+private extension Data {
+    static var quotedPrintable: Self { Bundle.module.data(forResource: "mime-part.html")! }
+}
+
+// swift-format-ignore
+private let quotedPrintable: String = """
+<!DOCTYPE html>
+<style>
+
+    :root {
+        color-scheme: light dark;
+    }
+
+</style>
+<p>HTML MIME part with local <a href="#anchor">anchor link</a>, <a href="https://www.thunderbird.net/donate/mobile/?form=tfi">remote link</a> and remote image</p>
+<p><img id="anchor" src="https://avatars.githubusercontent.com/u/15187237" alt="Thunderbird avatar"></p>
+
+"""
+
+// swift-format-ignore
+private let notQuotedPrintable: Data = """
+<!DOCTYPE html>
+<style>
+
+    :root {
+        color-scheme: light dark;
+    }
+
+</style>
+<p>HTML MIME part with local <a href="#anchor">⚓️ link</a>, <a href="https://www.thunderbird.net/donate/mobile/?form=tfi">remote link</a> and remote image</p>
+<p><img id="anchor" src="https://avatars.githubusercontent.com/u/15187237" alt="Thunderbird avatar"></p>
+
+""".data(using: .utf8)!

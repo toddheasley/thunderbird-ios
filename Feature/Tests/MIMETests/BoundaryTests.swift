@@ -7,7 +7,7 @@ struct BoundaryTests {
         #expect(Boundary.bounds == 1...70)
     }
 
-    @Test func description() throws {
+    @Test func descriptionInit() throws {
         let description: String = UUID().uuidString
         #expect(try Boundary(description).description == description)
         #expect(try Boundary("======== ").description == "========")
