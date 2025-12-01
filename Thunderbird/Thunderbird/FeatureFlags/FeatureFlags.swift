@@ -23,15 +23,7 @@ public enum Flag: String {
 
     public init(distribution: Distribution) {
         allowRemote = (UserDefaults.standard.value(forKey: allowRemoteFlags) ?? true) as! Bool
-
-        switch distribution {
-        case .debug:
-            defaultsKey = "featureListDebug"
-        case .appstore:
-            defaultsKey = "featureListAppStore"
-        case .beta:
-            defaultsKey = "featureListBeta"
-        }
+        defaultsKey = distribution.defaultsKey
         setDefaultFlags(distribution: distribution)
     }
 
@@ -85,8 +77,26 @@ public enum Flag: String {
             return [:]
         }
     }
+
+    static func resetFeatureFlags(distribution: Distribution = .current) {
+        UserDefaults.standard.removeObject(forKey: distribution.defaultsKey)
+    }
+
+    static func resetAllowRemoteFlags() {
+        UserDefaults.standard.removeObject(forKey: allowRemoteFlags)
+    }
 }
 
 private struct Response: Decodable {
     let flags: [String: Bool]
+}
+
+private extension Distribution {
+    var defaultsKey: String {
+        switch self {
+        case .debug: "featureListDebug"
+        case .appstore: "featureListAppStore"
+        case .beta: "featureListBeta"
+        }
+    }
 }
