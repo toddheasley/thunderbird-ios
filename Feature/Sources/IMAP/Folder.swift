@@ -1,5 +1,3 @@
-import Foundation
-
 public struct Folder: Identifiable {
     public let name: String
     public let unreadCount: Int

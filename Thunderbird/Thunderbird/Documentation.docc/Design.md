@@ -24,32 +24,48 @@ User-facing string localization is accomplished using [`LocalizedStringKey`](htt
 
 ### Feature Package
 
-Features are the backend functionality for the app, starting with these libraries:
+Features are the backend functionality for the app, mostly a kit of standard, modular mail client components. 
 
-* `JMAP` / `IMAP`: Connect to mail servers and retrieve folders and messages.
-* `SMTP`: Send mail.
+#### `Autoconfiguration`
+
+ [Thunderbird Autoconfiguration](https://www.bucksch.org/1/projects/thunderbird/autoconfiguration), often just "autoconfig," is an XML syndication format where email service providers advertise public mail server settings. Given an email address or host name, `Autoconfiguration` library uses a combination of the [Public Suffix List](https://publicsuffix.org), [MX records](https://en.wikipedia.org/wiki/MX_record) and [ISPDB](https://github.com/thunderbird/autoconfig) to find the correct mail server and OAuth settings.
+
+#### `IMAP` and `SMTP`
+
+Almost every mail server and mail provider support receiving and sending email with [Internet Message Access Protocol](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) (IMAP) and [Simple Mail Transfer Protocol](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) (SMTP).
+
+Separate, complementary libraries handle email retrieval and sending for all mail accounts with all providers. Both client implementations use [SwiftNIO](https://opensource.apple.com/projects/swiftnio) for [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) communication with mail servers.
+
+#### `JMAP`
+
+ [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit. `JMAP` feature library is a client implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, intended to replace IMAP/SMTP for mail accounts with provider support for JMAP.
 
 ### Bolt Package
 
-[Bolt](https://bolt.thunderbird.net) is Thunderbird's design system. `Bolt` package is where all design system things live, as well as any reusable UI components:
+[Bolt](https://bolt.thunderbird.net) is Thunderbird's design system. `Bolt` package implements the design system as SwiftUI views, colors and type
 
-* `BoltUI`: Vend SwiftUI design system components
-* `Editor`: Read and compose messages in [WKWebView.](https://developer.apple.com/documentation/webkit/wkwebview)
+#### `BoltUI`
+
+Vend SwiftUI design system components.
+
+#### `Editor`
+
+Read and compose messages in [WKWebView.](https://developer.apple.com/documentation/webkit/wkwebview)
 
 ### Core Package
 
-App- and system-level services belong to `Core`, starting with these libraries:
+App- and system-level services belong to `Core`.
 
-* `Autodiscover`: Locate mail services using DNS.
-* `Log`: Log to system log and disk.
-* `Weblate`: Sync language translation changes with command-line interface.
+#### `Weblate`
+
+Command-line interface for syncing language translation changes with Weblate project repository
 
 -----
 
-`BoltUI` is unusual, because it depends on SwiftUI and implements views specifically for iOS/watchOS platforms. Generally, libraries follow these conventions:
+`BoltUI` is unusual, because it depends on SwiftUI and implements views specifically for iOS, macOS and watchOS platforms. Generally, libraries follow these conventions:
 
 * Corresponding test target containing unit test coverage for logic and anything computed; use [Swift Testing.](https://developer.apple.com/documentation/testing)
-* Configurable programming interfaces; no user interface, no user-facing strings
+* Configurable programming interfaces; no user interface, no localization or user-facing strings
 * Explicit interfaces and responsibility, encapsulated for being moved into separate repositories and reused in other apps
 
 ### Additional Workspace Components

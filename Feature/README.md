@@ -69,6 +69,42 @@ Email address is a required argument, plus two flags:
 
 ![](docs/autoconfig.png)
 
+## `IMAP` and `SMTP`
+
+Thunderbird supports sending and receiving email for most email providers through [Internet Message Access Protocol](https://wikipedia.org/wiki/Internet_Message_Access_Protocol) (IMAP) and [Simple Mail Transfer Protocol](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) (SMTP).
+
+Both protocols use [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) for transport, not HTTP; both libraries are built on top of [SwiftNIO.](https://opensource.apple.com/projects/swiftnio)
+
+### `IMAP` Library
+
+
+
+### `SMTP` Library
+
+`SMTP` implementation is based on `NIOSMTP` example project included in the [SwiftNIO examples repository.](https://github.com/apple/swift-nio-examples)
+
+Configure `SMTPClient` with a `Server` to connect to; send one or more emails through the same server:
+
+```swift
+import SMTP
+import Foundation
+
+try await SMTPClient(Server(
+    hostname: "smtp.mail.example.com",
+    username: "username",
+    password: "fake-appp-pass-word"
+)).send(Email(
+    sender: "sender@example.com",
+    recipients: [
+        "recipient@example.com"
+    ],
+    subject: "Example email subject",
+    body: [
+        "Body content parts can be plain text for now ;)".data(using: .utf8)!
+    ]
+))
+```
+
 ## `JMAP`
 
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.

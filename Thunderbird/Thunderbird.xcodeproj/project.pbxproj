@@ -11,6 +11,8 @@
 		1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE72DDF611F00F6295C /* BoltUI */; };
 		158C47212E4376FA0035F732 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 158C47202E4376FA0035F732 /* Account */; };
 		158C47252E4376FA0035F732 /* JMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 158C47242E4376FA0035F732 /* JMAP */; };
+		15B58B2B2EC374DF0061A707 /* IMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 15B58B2A2EC374DF0061A707 /* IMAP */; };
+		15B58B2D2EC374DF0061A707 /* SMTP in Frameworks */ = {isa = PBXBuildFile; productRef = 15B58B2C2EC374DF0061A707 /* SMTP */; };
 		15E360BE2E71C1D300B31753 /* Autoconfiguration in Frameworks */ = {isa = PBXBuildFile; productRef = 15E360BD2E71C1D300B31753 /* Autoconfiguration */; };
 /* End PBXBuildFile section */
 
@@ -71,9 +73,11 @@
 			files = (
 				158C47252E4376FA0035F732 /* JMAP in Frameworks */,
 				158C47212E4376FA0035F732 /* Account in Frameworks */,
+				15B58B2D2EC374DF0061A707 /* SMTP in Frameworks */,
 				15E360BE2E71C1D300B31753 /* Autoconfiguration in Frameworks */,
 				1560FEE22DDF60C100F6295C /* Core in Frameworks */,
 				1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */,
+				15B58B2B2EC374DF0061A707 /* IMAP in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +142,8 @@
 				158C47202E4376FA0035F732 /* Account */,
 				158C47242E4376FA0035F732 /* JMAP */,
 				15E360BD2E71C1D300B31753 /* Autoconfiguration */,
+				15B58B2A2EC374DF0061A707 /* IMAP */,
+				15B58B2C2EC374DF0061A707 /* SMTP */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -174,7 +180,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1630;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					1521D8152D9C4D6200C4DFDF = {
 						CreatedOnToolsVersion = 16.3;
@@ -379,6 +385,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -435,6 +442,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
@@ -644,6 +652,14 @@
 		158C47242E4376FA0035F732 /* JMAP */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = JMAP;
+		};
+		15B58B2A2EC374DF0061A707 /* IMAP */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IMAP;
+		};
+		15B58B2C2EC374DF0061A707 /* SMTP */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SMTP;
 		};
 		15E360BD2E71C1D300B31753 /* Autoconfiguration */ = {
 			isa = XCSwiftPackageProductDependency;
