@@ -1,12 +1,17 @@
 import Foundation
 
 /// Multipart part content disposition and parameters described in [RFC 2183](https://www.rfc-editor.org/rfc/rfc2183)
+/// Instruct mail client to display decoded body part inline, in message, or link as an attachment. Optionally include metadata for source file.
 public enum ContentDisposition: CustomStringConvertible, RawRepresentable {
     public struct File {
-        public let filename: String?  // ASCII
+
+        /// Suggested attachment filename and extension; expressed in ASCII characters
+        public let filename: String?
         public let creationDate: Date?
         public let modificationDate: Date?
         public let readDate: Date?
+
+        /// Approximate attachment file size in bytes; i.e.,  `Data.count`
         public let size: Int?  // Bytes (`Data.count`)
 
         public init(
@@ -23,6 +28,7 @@ public enum ContentDisposition: CustomStringConvertible, RawRepresentable {
             self.size = (size ?? 0) > 0 ? size : nil  // Prevent zero-byte size
         }
 
+        /// Decode `File`from `ContentDisposition` parameter strings.
         public init(_ parameters: [String]) {
             lazy var formatter: DateFormatter = RFC822DateFormatter()
             var filename: String? = nil
@@ -123,6 +129,17 @@ public enum ContentDisposition: CustomStringConvertible, RawRepresentable {
     public var rawValue: String { parameters.joined(separator: "; ") }
 
     public init?(rawValue: String) {
-        self.init(rawValue.components(separatedBy: ";").map { $0.trimmed() })
+        var parameters: [String] = []
+        for (index, value) in rawValue.components(separatedBy: ";").enumerated() {
+            let last: Int = parameters.count - 1
+            if index == 0 || value.contains("=") {
+                parameters.append(value)
+            } else if parameters[last].contains("=") {
+                parameters[last] += ";\(value)"  // Repair RFC822 date-time split on semicolon
+            } else {
+                continue  // Skip unexpected parameters
+            }
+        }
+        self.init(parameters.map { $0.trimmed() })
     }
 }

@@ -60,4 +60,29 @@ struct ContentDispositionTests {
         #expect(ContentDisposition.inline.value == "inline")
         #expect(ContentDisposition.extensionToken.value == "extension-token")
     }
+
+    // MARK: RawRepresentable
+    @Test func rawValueInit() {
+        #expect(ContentDisposition(rawValue: inlineJPEG)?.rawValue == inlineJPEG)
+        #expect(ContentDisposition(rawValue: attachmentArchive)?.rawValue == attachmentArchive)
+        #expect(ContentDisposition(rawValue: attachmentPNG)?.rawValue == attachmentPNG)
+        #expect(ContentDisposition(rawValue: inline)?.rawValue == inline)
+        #expect(ContentDisposition(rawValue: "") == nil)
+    }
 }
+
+private let inlineJPEG: String = """
+    inline; filename="mime-part.jpg"; modification-date="31 10 77; 03:14:00 GMT"
+    """
+
+private let attachmentArchive: String = """
+    attachment; filename="mime-part.zip"; creation-date="01 01 70; 12:00:00 GMT"; modification-date="31 10 77; 03:14:00 GMT"
+    """
+
+private let attachmentPNG: String = """
+    attachment; filename="mime-part.png"
+    """
+
+private let inline: String = """
+    inline
+    """

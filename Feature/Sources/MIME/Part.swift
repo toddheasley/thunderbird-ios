@@ -2,9 +2,13 @@ import Foundation
 
 /// Body part described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.5)
 public struct Part: CustomStringConvertible, RawRepresentable {
+
+    /// Instruct mail client to display decoded body part inline, in message, or link as an attachment. Optionally include file name and other metadata for source file.
     public let contentDisposition: ContentDisposition
     public let contentTransferEncoding: ContentTransferEncoding
     public let contentType: ContentType
+
+    /// The actual part content, encoded as an ASCII string using the transfer encoding specified in the part header; typically base64 or quoted-printable
     public let data: Data
 
     public var headers: [String: String] {
@@ -15,6 +19,7 @@ public struct Part: CustomStringConvertible, RawRepresentable {
         ]
     }
 
+    /// Read headers and decode body part from raw ASCII blob.
     public init(_ description: String) throws {
         let components: [String] = description.replacingOccurrences(of: crlf, with: "\n").components(separatedBy: "\n")
         guard let index: Int = components.firstIndex(of: "") else {
@@ -24,7 +29,7 @@ public struct Part: CustomStringConvertible, RawRepresentable {
         var contentTransferEncoding: ContentTransferEncoding?
         var contentType: ContentType?
         for header in components[0..<index] {
-            let header: [String] = header.components(separatedBy: ":").map { $0.trimmed() }
+            let header: [String] = header.components(separatedBy: ": ").map { $0.trimmed() }
             guard header.count == 2 else { continue }
             switch header[0] {
             case "Content-Disposition":
@@ -43,15 +48,23 @@ public struct Part: CustomStringConvertible, RawRepresentable {
             throw MIMEError.dataNotFound
         }
         self.init(
-            data,
+            data: data,
             contentDisposition: contentDisposition,
             contentTransferEncoding: contentTransferEncoding,
             contentType: contentType
         )
     }
 
+    public init(_ description: Data) throws {
+        guard let description: String = String(data: description, encoding: .ascii) else {
+            throw MIMEError.dataNotDecoded(description, encoding: .ascii)
+        }
+        try self.init(description)
+    }
+
+    /// Use memberwise initializer to encode new parts.
     public init(
-        _ data: Data,
+        data: Data,
         contentDisposition: ContentDisposition,
         contentTransferEncoding: ContentTransferEncoding,
         contentType: ContentType
@@ -78,6 +91,6 @@ public struct Part: CustomStringConvertible, RawRepresentable {
     }
 
     public init?(rawValue: Data) {
-        try? self.init(String(data: rawValue, encoding: .ascii) ?? "")
+        try? self.init(rawValue)
     }
 }

@@ -1,10 +1,10 @@
 import Foundation
 
 extension Bundle {
-    func data(forResource name: String?, withExtension ext: String? = nil) -> Data? {
+    func data(forResource name: String?, withExtension ext: String? = nil) throws -> Data {
         guard let url: URL = Bundle.module.url(forResource: name, withExtension: ext) else {
-            return nil
+            throw URLError(.fileDoesNotExist)
         }
-        return try? Data(contentsOf: url)
+        return try Data(contentsOf: url)
     }
 }

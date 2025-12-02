@@ -3,7 +3,8 @@ import Foundation
 public enum MIMEError: Error, CustomStringConvertible, Equatable {
     case boundaryLength(Int)
     case boundaryNotASCII
-    case dataNotDecoded(Data)
+    case characterSetNotFound
+    case dataNotDecoded(Data, encoding: String.Encoding? = nil)
     case dataNotFound
     case dataNotQuotedPrintable
 
@@ -12,7 +13,8 @@ public enum MIMEError: Error, CustomStringConvertible, Equatable {
         switch self {
         case .boundaryLength(let length): "Multipart data boundary length \(length) outside of bounds \(Boundary.bounds)"
         case .boundaryNotASCII: "Multipart data boundary not ASCII"
-        case .dataNotDecoded(let data): "Multipart data not decodable: \(String(data: data, encoding: .ascii) ?? "")"
+        case .characterSetNotFound: "Multipart character set not found"
+        case .dataNotDecoded(let data, _): "Multipart data not decoded: \(String(data: data, encoding: .ascii) ?? "�")"
         case .dataNotFound: "Multipart data not found"
         case .dataNotQuotedPrintable: "Multipart data not quoted-printable"
         }
