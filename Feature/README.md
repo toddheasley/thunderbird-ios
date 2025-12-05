@@ -2,7 +2,7 @@
 
 ## `Autoconfiguration`
 
-[Thunderbird Autoconfiguration](https://www.bucksch.org/1/projects/thunderbird/autoconfiguration), often just "autoconfig," is an XML syndication format where email service providers advertise public mail server settings.
+[Thunderbird Autoconfiguration](https://wiki.mozilla.org/Thunderbird:Autoconfiguration), often just "autoconfig," is an XML syndication format where email service providers advertise public mail server settings.
 
 ### Library
 
@@ -18,7 +18,7 @@ let example: (config: ClientConfig, source: Source) = try await URLSession.share
 Taking the default arguments, the above returns mail server settings for almost every email address in existence. Here's how it works:
 
 1. Query all sources using the domain name from the given email address. If more than one client configuration is found, prefer the provider-provided configuration over the [Thunderbird "ISPDB" autoconfig database.](https://github.com/thunderbird/autoconfig)
-2. If no configuration is found, the given email address is probably using a custom domain. Query [MX records](https://en.wikipedia.org/wiki/MX_record) for an underlying domain name, then re-query all sources using the underlying domain name.
+2. If no configuration is found, the given email address is probably using a custom domain. Query [MX records](https://wikipedia.org/wiki/MX_record) for an underlying domain name, then re-query all sources using the underlying domain name.
 
 MX records can be queried directly:
 
@@ -42,7 +42,7 @@ print(domain)  // "example.com"
 
 #### Autodiscover(y)
 
-`Autoconfiguration` supports [DNS service autodiscovery]((https://en.wikipedia.org/wiki/SRV_record)) for protocols like [JMAP](https://jmap.io) that don't use autoconfig:
+`Autoconfiguration` supports [DNS service autodiscovery]((https://wikipedia.org/wiki/SRV_record)) for protocols like [JMAP](https://jmap.io) that don't use autoconfig:
 
 ```swift
 import Autoconfiguration
@@ -71,14 +71,12 @@ Email address is a required argument, plus two flags:
 
 ## `IMAP` and `SMTP`
 
-Thunderbird supports sending and receiving email for most email providers through [Internet Message Access Protocol](https://wikipedia.org/wiki/Internet_Message_Access_Protocol) (IMAP) and [Simple Mail Transfer Protocol](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) (SMTP).
+Thunderbird supports sending and receiving email for most email providers through [Internet Message Access Protocol](https://wikipedia.org/wiki/Internet_Message_Access_Protocol) (IMAP) and [Simple Mail Transfer Protocol](https://wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) (SMTP).
 
-Both protocols use [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) for transport, not HTTP; both libraries are built on top of [SwiftNIO.](https://opensource.apple.com/projects/swiftnio)
+Both protocols use [TCP](https://wikipedia.org/wiki/Transmission_Control_Protocol) for transport, not HTTP; both libraries are built on top of [SwiftNIO.](https://opensource.apple.com/projects/swiftnio)
 
 ### `IMAP` Library
 
-
-### `MIME` Library
 
 
 ### `SMTP` Library
@@ -112,3 +110,7 @@ try await SMTPClient(Server(
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.
 
 `JMAP` feature library is a _client_ implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird for iOS.](https://github.com/thunderbird/thunderbird-ios)
+
+## `MIME`
+
+[Multipurpose Internet Mail Extensions](https://wikipedia.org/wiki/MIME)

@@ -3,10 +3,10 @@ import Testing
 
 struct ContentTypeTests {
     @Test func subType() {
-        #expect(ContentType.application("zip").subType == "zip")
-        #expect(ContentType.image("png").subType == "png")
-        #expect(ContentType.multipart(.mixed).subType == "mixed")
-        #expect(ContentType.text("html").subType == "html")
+        #expect(ContentType.application("zip").subtype == "zip")
+        #expect(ContentType.image("png").subtype == "png")
+        #expect(ContentType.multipart(.mixed).subtype == "mixed")
+        #expect(ContentType.text("html").subtype == "html")
     }
 
     @Test func isMultipart() {

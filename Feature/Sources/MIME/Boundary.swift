@@ -1,5 +1,5 @@
 /// Multipart data boundary described in [RFC 2046](https://www.rfc-editor.org/rfc/rfc2046#section-5.1.1)
-public struct Boundary: CustomStringConvertible, Equatable, RawRepresentable {
+public struct Boundary: CustomStringConvertible, Equatable, RawRepresentable, Sendable {
     public static var bounds: ClosedRange<Int> { 1...70 }
 
     /// Valid boundary is 1-70 characters US-ASCII, no trailing white space.

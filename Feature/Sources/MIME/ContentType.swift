@@ -1,7 +1,7 @@
 import Foundation
 
 /// [Media content types](https://www.iana.org/assignments/media-types/media-types.xhtml) with base types enumerated
-public enum ContentType: CustomStringConvertible, Equatable, RawRepresentable {
+public enum ContentType: CustomStringConvertible, Equatable, RawRepresentable, Sendable {
     case application(String)
     case audio(String)
     case example(String)
@@ -14,20 +14,20 @@ public enum ContentType: CustomStringConvertible, Equatable, RawRepresentable {
     case text(String, CharacterSet? = nil)
     case video(String)
 
-    public var subType: String {
+    public var subtype: String {
         switch self {
-        case .application(let subType),
-            .audio(let subType),
-            .example(let subType),
-            .font(let subType),
-            .haptics(let subType),
-            .image(let subType),
-            .message(let subType),
-            .model(let subType),
-            .multipart(let subType, _),
-            .text(let subType, _),
-            .video(let subType):
-            subType
+        case .application(let subtype),
+            .audio(let subtype),
+            .example(let subtype),
+            .font(let subtype),
+            .haptics(let subtype),
+            .image(let subtype),
+            .message(let subtype),
+            .model(let subtype),
+            .multipart(let subtype, _),
+            .text(let subtype, _),
+            .video(let subtype):
+            subtype
         }
     }
 
@@ -40,7 +40,7 @@ public enum ContentType: CustomStringConvertible, Equatable, RawRepresentable {
 
     var parameters: [String] {
         var parameters: [String] = [
-            "\(value)/\(subType)"
+            "\(value)/\(subtype)"
         ]
         if let boundary {
             parameters.append("boundary=\"\(boundary)\"")
@@ -138,7 +138,13 @@ public enum ContentType: CustomStringConvertible, Equatable, RawRepresentable {
 }
 
 extension String {
+
+    // Standard multipart subtypes
     public static var alternative: Self { "alternative" }
     public static var mixed: Self { "mixed" }
     public static var related: Self { "related" }
+
+    // Standard text subtypes
+    public static var plain: Self { "plain" }
+    public static var html: Self { "html" }
 }
