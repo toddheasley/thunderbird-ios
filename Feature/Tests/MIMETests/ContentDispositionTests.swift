@@ -20,14 +20,14 @@ struct ContentDispositionTests {
                 ContentDisposition.File(
                     filename: "filename.jpeg",
                     creationDate: Date(timeIntervalSince1970: 0.0),
-                    modificationDate: Date(timeIntervalSince1970: 247158840.0),
+                    modificationDate: Date(timeIntervalSince1970: 247115640.0),
                     readDate: Date(timeIntervalSince1970: 1763912400.0),
                     size: 4096
                 ).parameters == [
                     "filename=\"filename.jpeg\"",
-                    "creation-date=\"01 01 70; 12:00:00 GMT\"",
+                    "creation-date=\"01 01 70; 00:00:00 GMT\"",
                     "modification-date=\"31 10 77; 03:14:00 GMT\"",
-                    "read-date=\"23 11 25; 03:40:00 GMT\"",
+                    "read-date=\"23 11 25; 15:40:00 GMT\"",
                     "size=4096"
                 ])
         }
@@ -43,14 +43,14 @@ struct ContentDispositionTests {
             ContentDisposition.attachment(file).parameters == [
                 "attachment",
                 "filename=\"filename.pdf\"",
-                "modification-date=\"23 11 25; 03:40:00 GMT\"",
+                "modification-date=\"23 11 25; 15:40:00 GMT\"",
                 "size=1024"
             ])
         #expect(
             ContentDisposition.inline(file).parameters == [
                 "inline",
                 "filename=\"filename.pdf\"",
-                "modification-date=\"23 11 25; 03:40:00 GMT\"",
+                "modification-date=\"23 11 25; 15:40:00 GMT\"",
                 "size=1024"
             ])
     }
