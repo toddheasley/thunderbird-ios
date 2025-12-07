@@ -17,6 +17,20 @@ extension String {
         return Self(data: data, encoding: .ascii)
     }
 
+    /// Break email header value string into parameter keys and values.
+    public var parameters: [Self: Self] {
+        var parameters: [Self: Self] = [:]
+        for parameter in components(separatedBy: ";") {
+            guard let index: String.Index = parameter.firstIndex(of: "=") else {
+                continue
+            }
+            let key: String = "\(parameter.prefix(upTo: index))".lowercased().trimmed()
+            let value: String = "\(parameter.trimmed().dropFirst(key.count + 1))".removing(.quotes).trimmed()
+            parameters[key] = value
+        }
+        return parameters
+    }
+
     /// Decode quoted-printable data to given `String.Encoding`.
     public init(quotedPrintable data: Data, encoding: Encoding = .utf8) throws {
         guard

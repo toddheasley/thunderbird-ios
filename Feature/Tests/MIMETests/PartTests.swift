@@ -12,7 +12,7 @@ struct PartTests {
             ])
         #expect(
             Part.jpeg.headers == [
-                "Content-Disposition": "inline; filename=\"mime-part.jpg\"; modification-date=\"31 10 77; 15:14:00 GMT\"",
+                "Content-Disposition": "inline; filename=\"mime-part.jpg\"; modification-date=\"Mon, 31 Oct 1977 15:14:00 +0000\"",
                 "Content-Transfer-Encoding": "base64",
                 "Content-Type": "image/jpeg"
             ])
@@ -30,7 +30,7 @@ struct PartTests {
             ])
         #expect(
             Part.zip.headers == [
-                "Content-Disposition": "attachment; filename=\"mime-part.zip\"; creation-date=\"01 01 70; 00:00:00 GMT\"; modification-date=\"31 10 77; 15:14:00 GMT\"",
+                "Content-Disposition": "attachment; filename=\"mime-part.zip\"; creation-date=\"Thu, 01 Jan 1970 00:00:00 +0000\"; modification-date=\"Mon, 31 Oct 1977 15:14:00 +0000\"",
                 "Content-Transfer-Encoding": "base64",
                 "Content-Type": "application/zip"
             ])
@@ -144,7 +144,7 @@ Content-Type: text/html; charset="UTF-8"\r
 
 // swift-format-ignore
 private let base64EncodedJPEGImage: String = """
-Content-Disposition: inline; filename="mime-part.jpg"; modification-date="31 10 77; 15:14:00 GMT"\r
+Content-Disposition: inline; filename="mime-part.jpg"; modification-date="Mon, 31 Oct 1977 15:14:00 +0000 (GMT)"\r
 Content-Transfer-Encoding: base64\r
 Content-Type: image/jpeg\r
 \r
@@ -176,7 +176,7 @@ https://www.thunderbird.net/donate/mobile/?form=tfi
 
 // swift-format-ignore
 private let base64EncodedArchive: String = """
-Content-Disposition: attachment; filename="mime-part.zip"; creation-date="01 01 70; 00:00:00 GMT"; modification-date="31 10 77; 15:14:00 GMT"\r
+Content-Disposition: attachment; filename="mime-part.zip"; creation-date="Thu, 01 Jan 1970 00:00:00+0000"; modification-date="Mon, 31 Oct 1977 15:14:00 +0000 (GMT)"\r
 Content-Transfer-Encoding: base64\r
 Content-Type: application/zip\r
 \r

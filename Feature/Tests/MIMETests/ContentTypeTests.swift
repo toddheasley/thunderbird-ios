@@ -18,13 +18,28 @@ struct ContentTypeTests {
         #expect(ContentType.multipart(.mixed).boundary?.description.count == 36)  // UUID string default
         #expect(ContentType.multipart(.mixed).boundary?.description.components(separatedBy: "-").count == 5)
         #expect(ContentType.text("html", .ascii).boundary == nil)
-
     }
 
     @Test func charset() {
         #expect(ContentType.text("html", .utf8).charset == .utf8)
         #expect(ContentType.text("plain", .ascii).charset == .ascii)
         #expect(ContentType.image("tiff").charset == nil)
+    }
+
+    @Test func descriptionInit() throws {
+        #expect(try ContentType("application/zip") == .application("zip"))
+        #expect(try ContentType("multipart/alternative; boundary=\"_----------=_17617196041979919223967\"") == .multipart(.alternative, try! Boundary("_----------=_17617196041979919223967")))
+        #expect(try ContentType("multipart/mixed;\nboundary=\"----=_Part_15950895_843396275.1764942606546\"") == .multipart(.mixed, try! Boundary("----=_Part_15950895_843396275.1764942606546")))
+        #expect(try ContentType("multipart/related;\nboundary=\"b1_dd99cd789bcc10ebb82bcc39304a9664\"") == .multipart(.related, try! Boundary("b1_dd99cd789bcc10ebb82bcc39304a9664")))
+        #expect(throws: MIMEError.self) {
+            try ContentType("multipart/related")
+        }
+        #expect(try ContentType("text/plain; charset=utf-8; charset=\"utf-8\"") == .text("plain", try! CharacterSet("utf-8")))
+        #expect(try ContentType("TEXT/HTML; CHARSET=ISO-8859-1") == .text("html", try! CharacterSet("ISO-8859-1")))
+        #expect(try ContentType("text/plain") == .text("plain"))
+        #expect(throws: MIMEError.self) {
+            try ContentType("text; charset=ISO-8859-1")
+        }
     }
 
     @Test func value() {
@@ -48,20 +63,5 @@ struct ContentTypeTests {
         #expect(ContentType.multipart(.mixed, try! Boundary("5A8AE6FB")).rawValue == "multipart/mixed; boundary=\"5A8AE6FB\"")
         #expect(ContentType.text("plain", .ascii).rawValue == "text/plain; charset=\"US-ASCII\"")
         #expect(ContentType.text("html").rawValue == "text/html")
-    }
-
-    @Test func rawValueInit() {
-        #expect(ContentType(rawValue: "application/zip") == .application("zip"))
-        #expect(ContentType(rawValue: "audio/aac") == .audio("aac"))
-        #expect(ContentType(rawValue: "example/foo ") == .example("foo"))
-        #expect(ContentType(rawValue: "font/otf") == .font("otf"))
-        #expect(ContentType(rawValue: "haptics/FOO") == .haptics("FOO"))
-        #expect(ContentType(rawValue: "image/png") == .image("png"))
-        #expect(ContentType(rawValue: "message/ex") == .message("ex"))
-        #expect(ContentType(rawValue: "MODEL/EX") == .model("EX"))
-        #expect(ContentType(rawValue: "multipart/mixed; boundary=\"5A8AE6FB\"") == .multipart(.mixed, try! Boundary("5A8AE6FB")))
-        #expect(ContentType(rawValue: "text/html; charset=\"UTF-8\"") == .text("html", .utf8))
-        #expect(ContentType(rawValue: "text/plain") == .text("plain"))
-        #expect(ContentType(rawValue: "video/mpeg") == .video("mpeg"))
     }
 }

@@ -3,8 +3,8 @@ import Foundation
 /// Multipart part content disposition and parameters described in [RFC 2183](https://www.rfc-editor.org/rfc/rfc2183)
 ///
 /// Instruct mail client to display decoded body part inline, in message, or link as an attachment. Optionally include metadata for source file.
-public enum ContentDisposition: CustomStringConvertible, Equatable, RawRepresentable {
-    public struct File {
+public enum ContentDisposition: CustomStringConvertible, Equatable, RawRepresentable, Sendable {
+    public struct File: CustomStringConvertible, RawRepresentable, Sendable {
 
         /// Suggested attachment filename and extension; expressed in ASCII characters
         public let filename: String?
@@ -14,6 +14,19 @@ public enum ContentDisposition: CustomStringConvertible, Equatable, RawRepresent
 
         /// Approximate attachment file size in bytes; i.e.,  `Data.count`
         public let size: Int?  // Bytes (`Data.count`)
+
+        /// Decode `File`from `ContentDisposition` parameter string.
+        public init(_ description: String) {
+            lazy var formatter: RFC822DateFormatter = RFC822DateFormatter()
+            let parameters: [String: String] = description.parameters
+            self.init(
+                filename: parameters[.filename],
+                creationDate: try? formatter.date(from: parameters[.creationDate] ?? ""),
+                modificationDate: try? formatter.date(from: parameters[.modificationDate] ?? ""),
+                readDate: try? formatter.date(from: parameters[.readDate] ?? ""),
+                size: Int(parameters[.size] ?? "")
+            )
+        }
 
         public init(
             filename: String? = nil,
@@ -29,62 +42,33 @@ public enum ContentDisposition: CustomStringConvertible, Equatable, RawRepresent
             self.size = (size ?? 0) > 0 ? size : nil  // Prevent zero-byte size
         }
 
-        /// Decode `File`from `ContentDisposition` parameter strings.
-        public init(_ parameters: [String]) {
-            lazy var formatter: DateFormatter = RFC822DateFormatter()
-            var filename: String? = nil
-            var date: (creation: Date?, modification: Date?, read: Date?) = (nil, nil, nil)
-            var size: Int? = nil
-            for parameter in parameters {
-                let parameter: [String] = parameter.components(separatedBy: "=").map {
-                    $0.trimmed().removing(.quotes)
-                }
-                guard parameter.count == 2, !parameter[1].isEmpty else {
-                    continue
-                }
-                switch parameter[0] {
-                case "filename":
-                    filename = parameter[1]
-                case "creation-date":
-                    date.creation = formatter.date(from: parameter[1])
-                case "modification-date":
-                    date.modification = formatter.date(from: parameter[1])
-                case "read-date":
-                    date.read = formatter.date(from: parameter[1])
-                case "size":
-                    size = Int(parameter[1])
-                default:
-                    continue
-                }
-            }
-            self.init(
-                filename: filename,
-                creationDate: date.creation,
-                modificationDate: date.modification,
-                readDate: date.read,
-                size: size
-            )
-        }
+        // MARK: CustomStringConvertible
+        public var description: String { rawValue }
 
-        var parameters: [String] {
-            lazy var formatter: DateFormatter = RFC822DateFormatter()
-            var parameters: [String] = []
+        // MARK: RawRepresentable
+        public var rawValue: String {
+            lazy var formatter: RFC822DateFormatter = RFC822DateFormatter()
+            var rawValue: [String] = []
             if let filename {
-                parameters.append("filename=\"\(filename)\"")
+                rawValue.append("\(String.filename)=\"\(filename)\"")
             }
             if let creationDate {
-                parameters.append("creation-date=\"\(formatter.string(from: creationDate))\"")
+                rawValue.append("\(String.creationDate)=\"\(formatter.string(from: creationDate))\"")
             }
             if let modificationDate {
-                parameters.append("modification-date=\"\(formatter.string(from: modificationDate))\"")
+                rawValue.append("\(String.modificationDate)=\"\(formatter.string(from: modificationDate))\"")
             }
             if let readDate {
-                parameters.append("read-date=\"\(formatter.string(from: readDate))\"")
+                rawValue.append("\(String.readDate)=\"\(formatter.string(from: readDate))\"")
             }
             if let size {
-                parameters.append("size=\(size)")
+                rawValue.append("\(String.size)=\"\(size)\"")
             }
-            return parameters
+            return rawValue.joined(separator: "; ")
+        }
+
+        public init?(rawValue: String) {
+            self.init(rawValue)
         }
     }
 
@@ -95,23 +79,16 @@ public enum ContentDisposition: CustomStringConvertible, Equatable, RawRepresent
     public static var attachment: Self { .attachment(File()) }
     public static var inline: Self { .inline(File()) }
 
-    public init?(_ parameters: [String]) {
-        switch parameters[0] {
-        case "attachment":
-            self = .attachment(File(Array(parameters.dropFirst())))
-        case "inline":
-            self = .inline(File(Array(parameters.dropFirst())))
-        case "extension-token":
+    public init(_ description: String) throws {
+        switch description.components(separatedBy: ";")[0].lowercased().trimmed() {
+        case Self.attachment.value:
+            self = .attachment(File(description))
+        case Self.inline.value:
+            self = .inline(File(description))
+        case Self.extensionToken.value:
             self = .extensionToken
         default:
-            return nil
-        }
-    }
-
-    public var parameters: [String] {
-        switch self {
-        case .attachment(let file), .inline(let file): [value] + file.parameters
-        case .extensionToken: [value]
+            throw MIMEError.contentDispositionNotFound
         }
     }
 
@@ -127,20 +104,24 @@ public enum ContentDisposition: CustomStringConvertible, Equatable, RawRepresent
     public var description: String { rawValue }
 
     // MARK: RawRepresentable
-    public var rawValue: String { parameters.joined(separator: "; ") }
+    public var rawValue: String {
+        switch self {
+        case .attachment(let file), .inline(let file):
+            !file.rawValue.isEmpty ? "\(value); \(file.rawValue)" : value
+        case .extensionToken:
+            value
+        }
+    }
 
     public init?(rawValue: String) {
-        var parameters: [String] = []
-        for (index, value) in rawValue.components(separatedBy: ";").enumerated() {
-            let last: Int = parameters.count - 1
-            if index == 0 || value.contains("=") {
-                parameters.append(value)
-            } else if parameters[last].contains("=") {
-                parameters[last] += ";\(value)"  // Repair RFC822 date-time split on semicolon
-            } else {
-                continue  // Skip unexpected parameters
-            }
-        }
-        self.init(parameters.map { $0.trimmed() })
+        try? self.init(rawValue)
     }
+}
+
+private extension String {
+    static var filename: Self { "filename" }
+    static var creationDate: Self { "creation-date" }
+    static var modificationDate: Self { "modification-date" }
+    static var readDate: Self { "read-date" }
+    static var size: Self { "size" }
 }

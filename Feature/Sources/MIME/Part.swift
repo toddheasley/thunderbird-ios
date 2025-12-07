@@ -56,6 +56,9 @@ public struct Part: CustomStringConvertible, RawRepresentable {
 
     /// Read headers and decode body part from raw ASCII blob.
     public init(_ description: String) throws {
+        let description: String =
+            description
+            .replacingOccurrences(of: "\(crlf)\t", with: "")
         let components: [String] = description.components(separatedBy: crlf)
         guard let index: Int = components.firstIndex(of: "") else {
             throw MIMEError.dataNotFound
@@ -63,8 +66,8 @@ public struct Part: CustomStringConvertible, RawRepresentable {
         var contentDisposition: ContentDisposition?
         var contentTransferEncoding: ContentTransferEncoding?
         var contentType: ContentType?
-        for header in components[0..<index] {
-            let header: [String] = header.components(separatedBy: ": ").map { $0.trimmed() }
+        for component in components[0..<index] {
+            let header: [String] = component.components(separatedBy: ": ").map { $0.trimmed() }
             guard header.count == 2 else { continue }
             switch header[0].lowercased() {  // MIME headers are case-sensitive, but no harm with fuzzy matching
             case "content-disposition":
@@ -77,9 +80,7 @@ public struct Part: CustomStringConvertible, RawRepresentable {
                 continue
             }
         }
-        guard let data: Data = components.dropFirst(index).joined(separator: "\n").trimmed().data(using: .ascii),
-            let contentDisposition, let contentTransferEncoding, let contentType
-        else {
+        guard let data: Data = components.dropFirst(index).joined(separator: crlf).trimmed().data(using: .ascii), let contentType else {
             throw MIMEError.dataNotDecoded(description.data(using: .ascii) ?? Data(), encoding: .ascii)
         }
         self.init(

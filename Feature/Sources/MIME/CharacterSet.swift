@@ -5,7 +5,7 @@ public struct CharacterSet: CustomStringConvertible, Equatable, RawRepresentable
     public static var ascii: Self { try! Self("US-ASCII") }  // Default character encoding
 
     public init(_ description: String = "US-ASCII") throws {
-        guard let description: String = description.ascii, !description.isEmpty else {
+        guard let description: String = description.ascii?.uppercased(), !description.isEmpty else {
             throw MIMEError.characterSetNotFound
         }
         rawValue = description
@@ -23,5 +23,6 @@ public struct CharacterSet: CustomStringConvertible, Equatable, RawRepresentable
 }
 
 extension CharacterSet {
+    public static var iso8859: Self { try! Self("ISO-8859-1") }
     public static var utf8: Self { try! Self("UTF-8") }
 }

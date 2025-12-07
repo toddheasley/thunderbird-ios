@@ -8,6 +8,15 @@ public enum ContentTransferEncoding: String, CaseIterable, CustomStringConvertib
 
     public static var `default`: Self { .ascii }
 
-    // CustomStringConvertible
+    // MARK: CustomStringConvertible
     public var description: String { rawValue }
+
+    // MARK: RawRepresentable
+    public init?(rawValue: String) {
+        let rawValue: String = rawValue.lowercased().trimmed()
+        guard let encoding: Self = Self.allCases.filter({ $0.rawValue == rawValue }).first else {
+            return nil
+        }
+        self = encoding
+    }
 }

@@ -9,6 +9,7 @@ struct CharacterSetTests {
     @Test func descriptionInit() throws {
         #expect(try CharacterSet("ISO-8859-1").rawValue == "ISO-8859-1")
         #expect(try CharacterSet().rawValue == "US-ASCII")
+        #expect(try CharacterSet("utf-8").rawValue == "UTF-8")
         #expect(throws: MIMEError.self) {
             try CharacterSet("UTF-16🌐")
         }
@@ -16,6 +17,10 @@ struct CharacterSetTests {
 }
 
 extension CharacterSetTests {
+    @Test func iso8859() {
+        #expect(CharacterSet.iso8859.rawValue == "ISO-8859-1")
+    }
+
     @Test func utf8() {
         #expect(CharacterSet.utf8.rawValue == "UTF-8")
     }

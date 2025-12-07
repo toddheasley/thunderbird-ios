@@ -1,23 +1,48 @@
 import Foundation
 
 /// A formatter that converts between `Date` and  [RFC 822](https://www.rfc-editor.org/rfc/rfc822#section-5.1) `date-time` string representation
-public func RFC822DateFormatter(_ timeZone: TimeZone = .gmt) -> DateFormatter {
-    let formatter: DateFormatter = DateFormatter()
-    formatter.dateFormat = "dd MM yy; HH:mm:ss zzz"  // RFC 822 "date-time" format
-    formatter.timeZone = timeZone
-    return formatter
+public struct RFC822DateFormatter {
+    public var dateFormat: String { formatter.dateFormat }
+
+    public func string(from date: Date, _ timeZone: TimeZone = .gmt) -> String {
+        formatter.timeZone = timeZone
+        return formatter.string(from: date)
+    }
+
+    public func date(from string: String) throws -> Date {
+        let string: String =
+            string
+            .replacingOccurrences(of: "+", with: " +")
+            .replacingOccurrences(of: "-", with: " -")
+            .replacingOccurrences(of: "  ", with: " ")
+            .components(separatedBy: "(")[0]
+            .trimmed()
+        guard let date: Date = formatter.date(from: string) else {
+            throw MIMEError.dateNotDecoded(string)
+        }
+        return date
+    }
+
+    public init() {
+        formatter = DateFormatter()
+        formatter.dateFormat = .rfc822Format
+        formatter.timeZone = .gmt
+    }
+
+    private let formatter: DateFormatter
 }
 
 /// Multipart "date-time" format described in [RFC 822](https://www.rfc-editor.org/rfc/rfc822#section-5.1)
 extension Date {
     public func rfc822Format(_ timeZone: TimeZone = .gmt) -> String {
-        RFC822DateFormatter(timeZone).string(from: self)
+        RFC822DateFormatter().string(from: self, timeZone)
     }
 
     public init(rfc822Format string: String) throws {
-        guard let date: Date = RFC822DateFormatter().date(from: string) else {
-            throw MIMEError.dateNotDecoded(string)
-        }
-        self = date
+        self = try RFC822DateFormatter().date(from: string)
     }
+}
+
+extension String {
+    static var rfc822Format: Self { "EEE, dd MMM yyyy HH:mm:ss Z" }  // RFC 822 date-time format
 }

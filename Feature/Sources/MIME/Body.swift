@@ -2,6 +2,7 @@ import Foundation
 
 /// Multipart body element described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.6)
 public struct Body: CustomStringConvertible, RawRepresentable {
+    public let contentTransferEncoding: ContentTransferEncoding?
     public let contentType: ContentType  // Body encoding is always ASCII
     public let parts: [Part]
 
@@ -10,20 +11,25 @@ public struct Body: CustomStringConvertible, RawRepresentable {
         if contentType.isMultipart {
             headers["MIME-Version"] = "1.0"
         }
+        if let contentTransferEncoding {
+            headers["Content-Transfer-Encoding"] = contentTransferEncoding.description
+        }
         headers["Content-Type"] = contentType.description
         return headers
     }
 
-    public init(parts: [Part], contentType: ContentType = .multipart(.mixed)) throws {
+    public init(parts: [Part], contentType: ContentType = .multipart(.mixed), encoding: ContentTransferEncoding? = nil) throws {
         guard !parts.isEmpty else {
             throw MIMEError.dataNotFound
         }
         if parts.count == 1, parts[0].contentType == .text(.plain, .ascii) {
+            contentTransferEncoding = parts[0].contentTransferEncoding
             self.contentType = .text(.plain, .ascii)
-        } else if !contentType.isMultipart {
-            throw MIMEError.contentTypeNotPossible(contentType)
-        } else {
+        } else if contentType.isMultipart {
+            contentTransferEncoding = encoding
             self.contentType = contentType
+        } else {
+            throw MIMEError.contentTypeNotPossible(contentType)
         }
         self.parts = parts
     }
@@ -34,7 +40,7 @@ public struct Body: CustomStringConvertible, RawRepresentable {
         switch part.contentType {
         case .multipart:
             let parts: [Part] = try part.parts
-            try self.init(parts: parts, contentType: part.contentType)
+            try self.init(parts: parts, contentType: part.contentType, encoding: part.contentTransferEncoding)
         case .text(let subtype, let charset):
             guard subtype == .plain, charset == .ascii else {
                 throw MIMEError.contentTypeNotPossible(part.contentType)
