@@ -4,13 +4,21 @@ import SwiftUI
 @main
 struct App: SwiftUI.App {
     @State private var accounts: Accounts = Accounts()
+    @State private var showAlert = false
     @State private var featureFlags: FeatureFlags = FeatureFlags(distribution: .current)
 
     // MARK: App
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(accounts).environment(featureFlags)
+            ZStack {
+                ContentView()
+                    .environment(accounts).environment(featureFlags)
+                if showAlert {
+                    FeatureNotImplementedView()
+                }
+            }
+        }.onChange(of: AlertManager.shared.showAlert) {
+            showAlert = AlertManager.shared.showAlert
         }
         #if os(macOS)
         .defaultSize(width: 768.0, height: 512.0)

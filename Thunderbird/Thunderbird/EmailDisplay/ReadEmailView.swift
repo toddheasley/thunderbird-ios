@@ -45,32 +45,44 @@ struct SenderView: View {
     }
     private var sender: String
     private var date: Date
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                HStack {
-                    Text(sender).font(.headline)
-                    Text(date, style: .date)
-                        .font(.caption)
+    @State private var showingAlert = false
+    @State private var unimplementedFeatureName: String = ""
 
-                }
-                Text("to me")
-                    .font(.caption)
-            }
-            Spacer()
+    var body: some View {
+        ZStack {
             HStack {
-                Button(action: {
-                    //Reply
-                }) {
-                    Image(systemName: "arrowshape.turn.up.left")
-                        .foregroundStyle(.foreground)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(sender).font(.headline)
+                        Text(date, style: .date)
+                            .font(.caption)
+
+                    }
+                    Text("to me")
+                        .font(.caption)
                 }
-                Button(action: {
-                    //Options
-                }) {
-                    Image(systemName: "ellipsis")
-                        .foregroundStyle(.foreground)
+                Spacer()
+                HStack {
+                    Button(action: {
+                        //Reply
+                        AlertManager.shared.showAlert = true
+                        AlertManager.shared.alertTitle = "Reply"
+                    }) {
+                        Image(systemName: "arrowshape.turn.up.left")
+                            .foregroundStyle(.foreground)
+                    }
+                    Button(action: {
+                        //Options
+                        AlertManager.shared.showAlert = true
+                        AlertManager.shared.alertTitle = "More Options"
+                        //                        showingAlert = true
+                        //                        unimplementedFeatureName = "More Options"
+                    }) {
+                        Image(systemName: "ellipsis")
+                            .foregroundStyle(.foreground)
+                    }
                 }
+
             }
         }
     }
