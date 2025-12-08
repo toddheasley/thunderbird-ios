@@ -126,7 +126,7 @@ try await SMTPClient(Server(
 Modeled types adopt Swift [`RawRepresentable`](https://developer.apple.com/documentation/swift/RawRepresentable) to serialize and deserialize raw ASCII data representations. Each `Part` consists of a blob of ASCII [`Data`](https://developer.apple.com/documentation/foundation/data) and headers describing the data:
 
 * `ContentType` specifies what the data blob _is_, e.g., `image/png` or `text/html; charset="utf-8"`.
-* `ContentTransferEncoding` labels how the data is ASCII-encoded for transit, typically [base64](https://wikipedia.org/wiki/Base64) or [quoted-printable](https://wikipedia.org/wiki/Quoted-printable). (Unencoded 7bit/ASCII is assumed when header is omitted.)
+* `ContentTransferEncoding` labels how the data is ASCII-encoded for transit, typically [base64](https://wikipedia.org/wiki/Base64) or [quoted-printable](https://wikipedia.org/wiki/Quoted-printable).
 * `ContentDisposition` suggests whether the decoded data blob should appear inline as part of the message body or linked as an attachment.
 
 Each `Part` can, itself, be multipart, allowing content to be grouped and nested. Multipart content types include a `Boundary` of 1-70 ASCII characters used to join and separate individual parts.
@@ -142,7 +142,6 @@ guard let url: URL = Bundle.module.url(forResource: "email-example", withExtensi
 }
 let data: Data = try Data(contentsOf: url)
 let body: Body = try Body(data)
-
 print(body.contentType)  // multipart/alternative; boundary="_----------=_176171960423967"
 print(body.contentTransferEncoding)  // Optional(8bit)
 print(body.parts.count)  // 2
@@ -151,10 +150,10 @@ print(body.parts.count)  // 2
 `Body` drops the `ContentDisposition` header and includes the MIME version header when encoded. Prepend the required SMTP headers and send:
 
 ```swift
-guard let rawValue: String = String(data: body.rawValue, encoding: .ascii) else {
+guard let string: String = String(data: body.rawValue, encoding: .ascii) else {
     throw MIMEError.dataNotDecoded(body.rawValue, encoding: .ascii)
 }
-print(rawValue)
+print(string)
 // MIME-Version: 1.0
 // Content-Type: multipart/alternative; boundary="_----------=_176171960423967"
 // 
@@ -169,7 +168,7 @@ print(rawValue)
 
 #### Date Formatting
 
-`MIME` includes a formatter that converts between [`Date`](https://developer.apple.com/documentation/foundation/date) and [RFC 822](https://www.rfc-editor.org/rfc/rfc822#section-5.1) `date-time` string representation.
+`MIME` includes a formatter that converts between [`Date`](https://developer.apple.com/documentation/foundation/date) and [RFC 822](https://www.rfc-editor.org/rfc/rfc822#section-5) `date-time` string representation.
 
 ```swift
 import Foundation
