@@ -20,6 +20,11 @@ struct BodyTests {
                 "MIME-Version": "1.0",
                 "Content-Type": "multipart/alternative; boundary=\"b1_dd99cd789bcc10ebb82bcc39304a9664\""
             ])
+        #expect(
+            try Body(.posteo).headers == [
+                "MIME-Version": "1.0",
+                "Content-Type": "multipart/alternative; boundary=\"MULTIPART-MIXED-BOUNDARY\""
+            ])
     }
 
     @Test func descriptionInit() throws {
@@ -38,13 +43,19 @@ struct BodyTests {
         #expect(outlook.contentTransferEncoding == nil)
         #expect(outlook.parts.first?.contentType == .text(.plain, .utf8))
         #expect(outlook.parts.count == 2)
+        let posteo: Body = try Body(.posteo)
+        #expect(posteo.contentType == .multipart(.alternative, try! Boundary("MULTIPART-MIXED-BOUNDARY")))
+        #expect(posteo.contentTransferEncoding == nil)
+        #expect(posteo.parts.first?.contentType == .text(.html, .utf8))
+        #expect(posteo.parts.count == 2)
     }
 
     // MARK: RawRepresentable
     @Test func rawValue() throws {
-        #expect(try Body(.fastmail).rawValue.count == 21119)
-        #expect(try Body(.icloud).rawValue.count == 9025)
-        #expect(try Body(.outlook).rawValue.count == 70957)
+        #expect(try Body(.fastmail).rawValue.count == 20530)
+        #expect(try Body(.icloud).rawValue.count == 8807)
+        #expect(try Body(.outlook).rawValue.count == 69560)
+        #expect(try Body(.posteo).rawValue.count == 89894)
     }
 }
 
@@ -52,4 +63,5 @@ private extension Data {
     static var fastmail: Self { try! Bundle.module.data(forResource: "mime-body-fastmail.eml") }
     static var icloud: Self { try! Bundle.module.data(forResource: "mime-body-icloud.eml") }
     static var outlook: Self { try! Bundle.module.data(forResource: "mime-body-outlook.eml") }
+    static var posteo: Self { try! Bundle.module.data(forResource: "mime-body-posteo.eml") }
 }

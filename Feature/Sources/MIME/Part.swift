@@ -58,8 +58,9 @@ public struct Part: CustomStringConvertible, RawRepresentable {
     public init(_ description: String) throws {
         let description: String =
             description
-            .replacingOccurrences(of: "\(crlf)\t", with: "")
-        let components: [String] = description.components(separatedBy: crlf)
+            .replacingOccurrences(of: crlf, with: "\n")
+            .replacingOccurrences(of: "\n\t", with: "")
+        let components: [String] = description.components(separatedBy: "\n")
         guard let index: Int = components.firstIndex(of: "") else {
             throw MIMEError.dataNotFound
         }
@@ -80,7 +81,7 @@ public struct Part: CustomStringConvertible, RawRepresentable {
                 continue
             }
         }
-        guard let data: Data = components.dropFirst(index).joined(separator: crlf).trimmed().data(using: .ascii), let contentType else {
+        guard let data: Data = components.dropFirst(index).joined(separator: "\n").trimmed().data(using: .ascii), let contentType else {
             throw MIMEError.dataNotDecoded(description.data(using: .ascii) ?? Data(), encoding: .ascii)
         }
         self.init(
