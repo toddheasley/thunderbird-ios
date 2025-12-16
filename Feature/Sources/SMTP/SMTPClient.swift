@@ -1,3 +1,4 @@
+import EmailAddress
 import Network
 import NIOCore
 import NIOExtras

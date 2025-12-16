@@ -26,6 +26,11 @@ let package: Package = Package(
                 "Autoconfiguration"
             ]),
         .library(
+            name: "EmailAddress",
+            targets: [
+                "EmailAddress"
+            ]),
+        .library(
             name: "IMAP",
             targets: [
                 "IMAP"
@@ -53,8 +58,7 @@ let package: Package = Package(
         .package(url: "https://github.com/apple/swift-nio-extras", branch: "main"),
         .package(url: "https://github.com/apple/swift-nio-imap", branch: "main"),
         .package(url: "https://github.com/apple/swift-nio-ssl", branch: "main"),
-        .package(url: "https://github.com/apple/swift-nio-transport-services", branch: "main"),
-        .package(name: "Core", path: "../Core")
+        .package(url: "https://github.com/apple/swift-nio-transport-services", branch: "main")
     ],
     targets: [
         .target(name: "Account"),
@@ -79,10 +83,17 @@ let package: Package = Package(
             dependencies: [
                 "Autoconfiguration"
             ]),
+        .target(name: "EmailAddress"),
+        .testTarget(
+            name: "EmailAddressTests",
+            dependencies: [
+                "EmailAddress"
+            ]),
         .target(
             name: "IMAP",
             dependencies: [
                 .product(name: "NIOIMAP", package: "swift-nio-imap"),
+                "EmailAddress",
                 "MIME"
             ]),
         .testTarget(
@@ -93,7 +104,7 @@ let package: Package = Package(
         .target(
             name: "JMAP",
             dependencies: [
-                "Core"
+                "EmailAddress"
             ]),
         .testTarget(
             name: "JMAPTests",
@@ -118,6 +129,7 @@ let package: Package = Package(
                 .product(name: "NIOExtras", package: "swift-nio-extras"),
                 .product(name: "NIOSSL", package: "swift-nio-ssl"),
                 .product(name: "NIOTransportServices", package: "swift-nio-transport-services"),
+                "EmailAddress",
                 "MIME"
             ]),
         .testTarget(
