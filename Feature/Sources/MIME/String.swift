@@ -83,8 +83,8 @@ extension String {
     }
 }
 
+public var crlf: String { .crlf }
+
 extension [Character] {
     static var quotes: Self { ["\"", "'"] }
 }
-
-var crlf: String { .crlf }

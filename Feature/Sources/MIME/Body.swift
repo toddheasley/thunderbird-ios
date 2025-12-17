@@ -1,7 +1,7 @@
 import Foundation
 
 /// Multipart body element described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.6)
-public struct Body: CustomStringConvertible, RawRepresentable {
+public struct Body: CustomStringConvertible, RawRepresentable, Sendable {
     public let contentTransferEncoding: ContentTransferEncoding?
     public let contentType: ContentType  // Body encoding is always ASCII
     public let parts: [Part]
@@ -83,5 +83,14 @@ public struct Body: CustomStringConvertible, RawRepresentable {
 
     public init?(rawValue: Data) {
         try? self.init(rawValue)
+    }
+}
+
+extension Body {
+    public static var empty: Self {
+        try! Self(
+            parts: [
+                try! Part(data: "".data(using: .ascii)!, contentType: .text(.plain, .ascii))
+            ], contentType: .text(.plain, .ascii))
     }
 }

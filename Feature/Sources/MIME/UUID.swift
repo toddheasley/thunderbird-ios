@@ -6,7 +6,7 @@ extension UUID {
         try! Boundary("\(prefix?.ascii ?? "")\(uuidString(segments, separator: separator))\(suffix?.ascii ?? "")")
     }
 
-    func uuidString(_ segments: Int, separator: String = .separator) -> String {
+    public func uuidString(_ segments: Int, separator: String = .separator) -> String {
         uuidString
             .components(separatedBy: String.separator)
             .prefix(max(segments, 1))
