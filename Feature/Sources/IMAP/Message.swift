@@ -1,4 +1,5 @@
 import Foundation
+import MIME
 
 /// [IMAP message attributes](https://www.ietf.org/rfc/rfc9051.html#section-2.3)
 public struct Message {

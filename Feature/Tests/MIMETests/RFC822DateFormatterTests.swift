@@ -1,0 +1,30 @@
+import Foundation
+@testable import MIME
+import Testing
+
+struct RFC822DateFormatterTests {
+    @Test func dateFormat() {
+        #expect(RFC822DateFormatter().dateFormat == "EEE, dd MMM yyyy HH:mm:ss Z")
+    }
+
+    @Test func string() {
+        let formatter: RFC822DateFormatter = RFC822DateFormatter()
+        #expect(formatter.string(from: Date(timeIntervalSince1970: 247133640.0), TimeZone(secondsFromGMT: -5 * 3600)!) == "Mon, 31 Oct 1977 03:14:00 -0500")
+        #expect(formatter.string(from: Date(timeIntervalSince1970: 247133640.0)) == "Mon, 31 Oct 1977 08:14:00 +0000")
+    }
+
+    @Test func date() throws {
+        let formatter: RFC822DateFormatter = RFC822DateFormatter()
+        #expect(try formatter.date(from: "Mon, 31 Oct 1977 03:14:00-0500") == Date(timeIntervalSince1970: 247133640.0))
+        #expect(try formatter.date(from: "Mon, 31 Oct 1977 08:14:00 +0000 (GMT)") == Date(timeIntervalSince1970: 247133640.0))
+        #expect(throws: MIMEError.self) {
+            try formatter.date(from: "31 10 77; 03:14:00 GMT")
+        }
+    }
+}
+
+extension StringTests {
+    @Test func rfc822Format() {
+        #expect(String.rfc822Format == "EEE, dd MMM yyyy HH:mm:ss Z")
+    }
+}

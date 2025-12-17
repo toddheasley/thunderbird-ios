@@ -36,6 +36,11 @@ let package: Package = Package(
                 "JMAP"
             ]),
         .library(
+            name: "MIME",
+            targets: [
+                "MIME"
+            ]),
+        .library(
             name: "SMTP",
             targets: [
                 "SMTP"
@@ -77,7 +82,8 @@ let package: Package = Package(
         .target(
             name: "IMAP",
             dependencies: [
-                .product(name: "NIOIMAP", package: "swift-nio-imap")
+                .product(name: "NIOIMAP", package: "swift-nio-imap"),
+                "MIME"
             ]),
         .testTarget(
             name: "IMAPTests",
@@ -95,12 +101,24 @@ let package: Package = Package(
                 "JMAP"
             ]),
         .target(
+            name: "MIME",
+            dependencies: []),
+        .testTarget(
+            name: "MIMETests",
+            dependencies: [
+                "MIME"
+            ],
+            resources: [
+                .process("Resources")
+            ]),
+        .target(
             name: "SMTP",
             dependencies: [
                 .product(name: "NIO", package: "swift-nio"),
                 .product(name: "NIOExtras", package: "swift-nio-extras"),
                 .product(name: "NIOSSL", package: "swift-nio-ssl"),
-                .product(name: "NIOTransportServices", package: "swift-nio-transport-services")
+                .product(name: "NIOTransportServices", package: "swift-nio-transport-services"),
+                "MIME"
             ]),
         .testTarget(
             name: "SMTPTests",

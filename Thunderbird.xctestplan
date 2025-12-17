@@ -14,16 +14,16 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:Thunderbird.xcodeproj",
-        "identifier" : "1521D8232D9C4D6300C4DFDF",
-        "name" : "ThunderbirdTests"
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "SMTPTests",
+        "name" : "SMTPTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
-        "identifier" : "AccountTests",
-        "name" : "AccountTests"
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "BoltUITests",
+        "name" : "BoltUITests"
       }
     },
     {
@@ -54,6 +54,20 @@
       }
     },
     {
+      "target" : {
+        "containerPath" : "container:Thunderbird.xcodeproj",
+        "identifier" : "1521D8232D9C4D6300C4DFDF",
+        "name" : "ThunderbirdTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
+      }
+    },
+    {
       "skippedTests" : {
         "suites" : [
           {
@@ -69,16 +83,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "BoltUITests",
-        "name" : "BoltUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "EditorTests",
-        "name" : "EditorTests"
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "MIMETests",
+        "name" : "MIMETests"
       }
     },
     {
@@ -86,6 +93,13 @@
         "containerPath" : "container:..\/Core",
         "identifier" : "LogTests",
         "name" : "LogTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "EditorTests",
+        "name" : "EditorTests"
       }
     }
   ],
