@@ -1,5 +1,6 @@
 import EmailAddress
 import Foundation
+import MIME
 import NIOCore
 
 enum Request {
@@ -37,18 +38,16 @@ struct RequestEncoder: MessageToByteEncoder {
         case .data:
             out.writeString("DATA")
         case .transferData(let email):
-            out.writeString("From: \(email.sender)\(line)")
-            out.writeString("To: \(email.recipients.map { $0.description }.joined(separator: " "))\(line)")
-            out.writeString("Date: \(email.iso8601Date)\(line)")  // "EEE, dd MMM yyyy HH:mm:ss Z"
-            out.writeString("Message-ID: \(email.messageID)\(line)")
-            out.writeString("Subject: \(email.subject)\(line)")
-            // out.writeString("MIME-Version: 1.0\(line)")
-            out.writeString("Content-Type: \(email.contentType)\(line)")
-            out.writeBytes(email.body)
-            out.writeString("\(line).")
+            out.writeString("From: \(email.sender)\(crlf)")
+            out.writeString("To: \(email.recipients.map { $0.description }.joined(separator: " "))\(crlf)")
+            out.writeString("Date: \(email.date.rfc822Format())\(crlf)")
+            out.writeString("Message-ID: \(email.messageID)\(crlf)")
+            out.writeString("Subject: \(email.subject)\(crlf)")
+            out.writeBytes(email.body.rawValue)
+            out.writeString("\(crlf).")
         case .quit:
             out.writeString("QUIT")
         }
-        out.writeString(line)
+        out.writeString(crlf)
     }
 }

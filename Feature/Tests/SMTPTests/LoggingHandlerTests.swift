@@ -1,4 +1,3 @@
-import Foundation
 import NIOCore
 @testable import SMTP
 import Testing

@@ -1,4 +1,5 @@
 import Foundation
+import MIME
 @testable import SMTP
 import Testing
 
@@ -30,9 +31,7 @@ private extension Email {
                 ""
             ],
             subject: "Example email subject",
-            body: [
-                "Body content parts can be plain text for now ;)".data(using: .utf8)!
-            ],
+            body: .empty,
             id: UUID(uuidString: "A51D5B17-CA61-4FF1-A4A8-C717289B8F9E")!
         )
     }

@@ -7,11 +7,11 @@ public struct Server: Equatable, Sendable {
     public let port: Int
 
     public init(
-        _ connectionSecurity: ConnectionSecurity = .startTLS,
+        _ connectionSecurity: ConnectionSecurity = .tls,
         hostname: String,
         username: String,
         password: String,
-        port: Int = 143  // 993
+        port: Int = 993
     ) {
         self.connectionSecurity = connectionSecurity
         self.hostname = hostname

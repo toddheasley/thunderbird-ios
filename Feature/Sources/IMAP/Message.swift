@@ -1,48 +1,45 @@
+import EmailAddress
 import Foundation
 import MIME
+import NIOIMAP
 
 /// [IMAP message attributes](https://www.ietf.org/rfc/rfc9051.html#section-2.3)
 public struct Message {
-    public enum Flag: String, CaseIterable, CustomStringConvertible, Sendable {
-        case seen = "\\Seen"
-        case answered = "\\Answered"
-        case flagged = "\\Flagged"
-        case deleted = "\\Deleted"
-        case draft = "\\Draft"
-        case forwarded = "$Forwarded"
-        case mdnSent = "$MDNSent"
-        case junk = "$Junk"
-        case notJunk = "$NotJunk"
-        case phishing = "$Phishing"
+    public typealias Flag = NIOIMAPCore.Flag
 
-        // MARK: CustomStringConvertible
-        public var description: String { rawValue }
-    }
-
-    public let isDeleted: Bool
-    public let folderID: Int
-    public let uid: String
-    public let subject: String
-    public let date: Date
+    public let body: Body
+    public let contentType: ContentType
     public let flags: [Flag]
-    public let senderList: String
-    public let toList: String
-    public let ccList: String
-    public let bccList: String
-    public let replyToList: String
-    public let attachmentCount: Int
-    public let internalDate: Date
+    public let folderID: Int
+    public let inReplyTo: String?
     public let messageID: String
-    public let previewType: String
-    public let preview: String
-    public let mimeType: String
-    public let normalizedSubjectHash: Int
-    public let isEmpty: Bool
-    public let isRead: Bool
-    public let isFlagged: Bool
-    public let isAnswered: Bool
-    public let isForwarded: Bool
-    public let messagePartID: Int
-    public let encryptionType: String
-    public let isNewMessage: Bool
+    public let replyTo: String?
+    public let size: Int
+    public let subject: String
+    public let uid: UID
+
+    public var isAnswered: Bool { flags.isAnswered }
+    public var isDeleted: Bool { flags.isDeleted }
+    public var isDraft: Bool { flags.isDraft }
+    public var isEmpty: Bool { body.isEmpty }
+    public var isFlagged: Bool { flags.isFlagged }
+    public var isForwarded: Bool { flags.isForwarded }
+    public var isSeen: Bool { flags.isSeen }
+}
+
+extension Message.Flag: @retroactive CustomStringConvertible {
+
+    // MARK: CustomStringConvertible
+    public var description: String { debugDescription }
+}
+
+public typealias UID = NIOIMAP.UID
+
+private extension [Message.Flag] {
+    var isAnswered: Bool { contains(.answered) }
+    var isDeleted: Bool { contains(.deleted) }
+    var isDraft: Bool { contains(.draft) }
+    var isFlagged: Bool { contains(.flagged) }
+    var isForwarded: Bool { contains(.keyword(.forwarded)) }
+    var isSeen: Bool { contains(.seen) }
 }
