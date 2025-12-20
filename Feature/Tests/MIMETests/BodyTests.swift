@@ -59,6 +59,22 @@ struct BodyTests {
     }
 }
 
+extension BodyTests {
+    @Test func empty() {
+        #expect(Body.empty.parts.first?.data == "".data(using: .ascii)!)
+        #expect(Body.empty.parts.first?.contentType == .text(.plain, .ascii))
+        #expect(Body.empty.contentType == .text(.plain, .ascii))
+    }
+
+    @Test func isEmpty() throws {
+        #expect(try Body(.fastmail).isEmpty == false)
+        #expect(try Body(.icloud).isEmpty == false)
+        #expect(try Body(.outlook).isEmpty == false)
+        #expect(try Body(.posteo).isEmpty == false)
+        #expect(Body.empty.isEmpty == true)
+    }
+}
+
 private extension Data {
     static var fastmail: Self { try! Bundle.module.data(forResource: "mime-body-fastmail.eml") }
     static var icloud: Self { try! Bundle.module.data(forResource: "mime-body-icloud.eml") }

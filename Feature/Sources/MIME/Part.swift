@@ -1,7 +1,7 @@
 import Foundation
 
 /// MIME part described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.5)
-public struct Part: CustomStringConvertible, RawRepresentable {
+public struct Part: CustomStringConvertible, RawRepresentable, Sendable {
 
     /// Instruct mail client to display decoded body part inline, in message, or link as an attachment. Optionally include file name and other metadata for source file.
     public let contentDisposition: ContentDisposition?
