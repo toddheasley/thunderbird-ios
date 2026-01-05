@@ -19,7 +19,6 @@ struct DNSResolverTests {
     @Test func queryMX() async throws {
         let thunderbird: [MXRecord] = try await DNSResolver.queryMX("uname@thunderbird.net")
         #expect(thunderbird.count > 0)
-        print(thunderbird)
         let fastmail: [MXRecord] = try await DNSResolver.queryMX("user@fastmail.com")
         #expect(fastmail.count > 0)
         let google: [MXRecord] = try await DNSResolver.queryMX("user.name@gmail.com")

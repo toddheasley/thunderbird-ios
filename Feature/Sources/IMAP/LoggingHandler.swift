@@ -15,13 +15,11 @@ final class LoggingHandler: ChannelDuplexHandler, @unchecked Sendable {
 
     func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
         logger?.debug("\(self.unwrapOutboundIn(data).stringValue)")
-        print("\(self.unwrapOutboundIn(data).stringValue)")
         context.write(data, promise: promise)  // Handler only observes; pass unmodified data to next handler
     }
 
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         logger?.debug("\(self.unwrapInboundIn(data).stringValue)")
-        print("\(self.unwrapInboundIn(data).stringValue)")
         context.fireChannelRead(data)  // Pass unmodified data to next handler
     }
 }
