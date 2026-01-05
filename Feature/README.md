@@ -37,7 +37,7 @@ import Autoconfiguration
 import Foundation
 
 let domain: String = try await URLSession.shared.domain(host: "smtp01.mail.example.com")
-print(domain)  // "example.com"
+print(domain)  // example.com
 ```
 
 #### Autodiscover(y)
@@ -59,7 +59,7 @@ let records: [SRVRecord] = try await DNSResolver.querySRV("example@thundermail.c
 `autoconfig` is a bundled CLI demo of `Autoconfiguration` library:
 
 ```zsh
-./autoconfig toddheasley@aol.com -so
+./autoconfig name@example.com -so
 ```
 
 Email address is a required argument, plus two flags:
@@ -68,6 +68,25 @@ Email address is a required argument, plus two flags:
 * `--open`: Open all config URLs in a browser; if saving, show files in Finder.
 
 ![](docs/autoconfig.png)
+
+## `EmailAddress`
+
+An [email address](https://wikipedia.org/wiki/Email_address) is a string with parts, formatted one of two specific ways: `Example Name <name@example.com>` or just `name@example.com`.
+
+### Library
+
+`EmailAddress` provides a shared model with conveniences for encoding and decoding addresses, as well as accessing the component parts:
+
+```swift
+import EmailAddress
+
+let example: EmailAddress = "Example Name <name@example.com>"
+print(example)  // Example Name <name@example.com>
+print(example.value)  // name@example.com
+print(example.label)  // Example Name
+print(example.local)  // name
+print(example.host)  // example.com
+```
 
 ## `IMAP` and `SMTP`
 

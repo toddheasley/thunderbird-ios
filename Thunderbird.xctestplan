@@ -14,9 +14,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
-        "identifier" : "SMTPTests",
-        "name" : "SMTPTests"
+        "containerPath" : "container:Thunderbird.xcodeproj",
+        "identifier" : "1521D8232D9C4D6300C4DFDF",
+        "name" : "ThunderbirdTests"
       }
     },
     {
@@ -24,6 +24,27 @@
         "containerPath" : "container:..\/Bolt",
         "identifier" : "BoltUITests",
         "name" : "BoltUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Bolt",
+        "identifier" : "EditorTests",
+        "name" : "EditorTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Core",
+        "identifier" : "LogTests",
+        "name" : "LogTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
       }
     },
     {
@@ -49,22 +70,15 @@
     {
       "target" : {
         "containerPath" : "container:..\/Feature",
-        "identifier" : "IMAPTests",
-        "name" : "IMAPTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Thunderbird.xcodeproj",
-        "identifier" : "1521D8232D9C4D6300C4DFDF",
-        "name" : "ThunderbirdTests"
+        "identifier" : "EmailAddressTests",
+        "name" : "EmailAddressTests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:..\/Feature",
-        "identifier" : "AccountTests",
-        "name" : "AccountTests"
+        "identifier" : "IMAPTests",
+        "name" : "IMAPTests"
       }
     },
     {
@@ -90,16 +104,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "LogTests",
-        "name" : "LogTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Bolt",
-        "identifier" : "EditorTests",
-        "name" : "EditorTests"
+        "containerPath" : "container:..\/Feature",
+        "identifier" : "SMTPTests",
+        "name" : "SMTPTests"
       }
     }
   ],
