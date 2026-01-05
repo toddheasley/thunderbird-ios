@@ -11,6 +11,7 @@ import Account
 struct EmailListView: View {
     @Environment(Accounts.self) private var accounts: Accounts
     @Environment(\.openURL) private var openURL
+    let tempEmails = TempEmail.sampleData
 
     //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
@@ -25,42 +26,88 @@ struct EmailListView: View {
             """.utf8),
         options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil
     )
+
+    func sortEmails() {
+        //Not yet implemented
+        AlertManager.shared.showAlert = true
+        AlertManager.shared.alertTitle = "Sort Emails"
+    }
+
     var body: some View {
-        NavigationView {
-            List(0..<10) { _ in
-                NavigationLink {
-                    ReadEmailView(
-                        attributedString ?? NSMutableAttributedString(""),
-                        "emailSender@email.org",
-                        "This is the subject of the email",
-                        Date()
-                    )
-                } label: {
-                    EmailCellView()
-                }
-            }
-            .navigationTitle("Inbox")
-            .toolbar {
-                ToolbarItem(id: "navBar", placement: .automatic) {
-                    Menu {
-                        Button(
-                            "account_sign_out_button",
-                            action: {
-                                accounts.deleteAccounts()
-                            })
-                        Button(
-                            "donation_support",
-                            action: {
-                                guard let url = URL(string: "https://www.thunderbird.net/en-US/donate/") else { return }
-                                openURL(url)
-                            })
-                    } label: {
-                        Label("Options", systemImage: "ellipsis", )
+        NavigationStack {
+            ZStack(alignment: .bottomTrailing) {
+                //Eventually will be a list of the email objects
+                List(tempEmails) { email in
+                    EmailCellView(email: email)
+                        .listRowSeparator(.hidden)
+                        .background {
+                            NavigationLink(value: email) {
+                                EmptyView()
+                            }.opacity(0)
+                        }
+                }.listStyle(.plain)
+                    .navigationDestination(for: TempEmail.self) { tempEmail in
+                        //Eventually will pass the email object
+                        ReadEmailView(
+                            tempEmail
+                        )
                     }
+                    .navigationTitle("Inbox")
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Menu {
+                                Button(
+                                    "Date",
+                                    action: {
+                                        sortEmails()
+                                    })
+                                Button(
+                                    "Read/unread",
+                                    action: {
+                                        sortEmails()
+                                    })
+                                Button(
+                                    "Attachments",
+                                    action: {
+                                        sortEmails()
+                                    })
+                            } label: {
+                                Label("Sort", systemImage: "line.3.horizontal.decrease", )
+                            }
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Menu {
+                                Button(
+                                    "account_sign_out_button",
+                                    action: {
+                                        accounts.deleteAccounts()
+                                    })
+                                Button(
+                                    "donation_support",
+                                    action: {
+                                        guard let url = URL(string: "https://www.thunderbird.net/en-US/donate/") else { return }
+                                        openURL(url)
+                                    })
+                            } label: {
+                                Label("Options", systemImage: "ellipsis", )
+                            }
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink("Settings", destination: FeatureFlagDebugView())
+                        }
+                    }.scrollContentBackground(.hidden)
+                Button {
+                    // Action
+                } label: {
+                    Image(systemName: "pencil.circle")
+                        .font(.title.weight(.regular))
+                        .padding()
+                        .background(Color(white: 0.9))
+                        .foregroundColor(.gray)
+                        .clipShape(Circle())
                 }
-                ToolbarItem(placement: .automatic) {
-                    NavigationLink("Settings", destination: FeatureFlagDebugView())
-                }
+                .background(.clear)
+                .padding()
             }
         }
 
