@@ -12,7 +12,7 @@ public class IMAPClient {
     public var isConnected: Bool { channel != nil && channel!.isActive }
 
     public func connect() async throws {
-        logger?.info("Client connecting to \(self.server)")
+        logger?.info("Connecting to \(self.server)…")
         resetInactiveChannel()
         guard channel == nil else {
             logger?.error("\(IMAPError.alreadyConnected)")
@@ -24,8 +24,8 @@ public class IMAPClient {
                 .bootstrap(server: server, logger: logger, group: group)
                 .connect(host: server.hostname, port: server.port)
                 .get()
-            logger?.info("Client connected to \(self.server)")
-            // TODO: Greeting
+            logger?.info("Connected to \(self.server)")
+            try await refreshCapabilities()
         } catch {
             logger?.error("\(error)")
             throw IMAPError(error)
@@ -37,7 +37,6 @@ public class IMAPClient {
     }
 
     public func login(username: String, password: String) async throws {
-
         guard let channel, channel.isActive else {
             throw IMAPError.notConnected
         }
@@ -75,9 +74,8 @@ public class IMAPClient {
 
     func execute<T: IMAPCommand>(command: T) async throws -> T.Result {
         let logger: Logger? = logger
-        logger?.info("Client executing \(command.description)")
+        logger?.info("Executing \(command)…")
         if !isConnected {  // Reconnect automagically
-            logger?.info("")
             try await connect()
         }
         guard let channel, channel.isActive else {
@@ -86,10 +84,11 @@ public class IMAPClient {
         let promise: EventLoopPromise<T.Result> = channel.eventLoop.makePromise(of: T.Result.self)
         let tag: String = tag()  // Hold onto specific auto-generated tag
         let handler: T.Handler = T.Handler(tag: tag, promise: promise)
-        let timeout: Int64 = min(Int64(command.timeout), 1)
-        let task: Scheduled = group.next().scheduleTask(in: .seconds(timeout)) {
-            logger?.error("Client...")
-            promise.fail(IMAPError.notConnected)
+        let seconds: Int64 = max(command.timeout, 1)
+        let task: Scheduled = group.next().scheduleTask(in: .seconds(seconds)) {
+            let error: IMAPError = .timedOut(seconds: seconds)
+            logger?.error("\(error)")
+            promise.fail(error)
         }
         defer {
             task.cancel()
@@ -98,11 +97,21 @@ public class IMAPClient {
             try await channel.pipeline.addHandler(handler).get()
             let message: IMAPClientHandler.Message = IMAPClientHandler.OutboundIn.part(.tagged(command.tagged(tag)))
             try await channel.writeAndFlush(message).get()
-            return try await promise.futureResult.get()
+            let result: T.Result = try await promise.futureResult.get()
+            if let clientBug = handler.clientBug {
+                logger?.debug("CLIENTBUG: \(clientBug)")
+            }
+            logger?.debug("")
+
+            return result
         } catch {
             promise.fail(error)
-            throw error
+            throw IMAPError.commandFailed(command.description)
         }
+    }
+
+    func refreshCapabilities() async throws {
+        capabilities = Set(try await execute(command: CapabilityCommand()))
     }
 
     func resetInactiveChannel() {
