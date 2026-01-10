@@ -6,9 +6,9 @@ import OSLog
 
 /// Configure `IMAPClient` with a single ``Server``.
 public class IMAPClient {
-    public var capabilities: Set<NIOIMAPCore.Capability> = []
     public let server: Server
 
+    public var capabilities: Set<Capability> = []
     public var isConnected: Bool { channel != nil && channel!.isActive }
 
     public func connect() async throws {
@@ -37,12 +37,20 @@ public class IMAPClient {
     }
 
     public func login(username: String, password: String) async throws {
-        guard let channel, channel.isActive else {
-            throw IMAPError.notConnected
+        logger?.info("Logging in \(username)…")
+        let capabilities: [Capability] = try await execute(command: LoginCommand(username: username, password: password))
+        if !capabilities.isEmpty {
+            logger?.info("Mergina capabilities…")
+            for capability in capabilities {
+                self.capabilities.insert(capability)
+            }
+            logger?.info("Capabilities: \(self.capabilities)")
         }
-        let command: TaggedCommand = TaggedCommand(tag: "a001", command: .login(username: username, password: password))
-        let part: CommandStreamPart = .tagged(command)
-        try await channel.writeAndFlush(IMAPClientHandler.OutboundIn.part(part)).get()
+    }
+
+    public func logout() async throws {
+        logger?.info("Logging out…")
+        try await execute(command: LogoutCommand())
     }
 
     public func disconnect() throws {
@@ -74,11 +82,12 @@ public class IMAPClient {
 
     func execute<T: IMAPCommand>(command: T) async throws -> T.Result {
         let logger: Logger? = logger
-        logger?.info("Executing \(command)…")
+        logger?.debug("Executing \(command)…")
         if !isConnected {  // Reconnect automagically
             try await connect()
         }
         guard let channel, channel.isActive else {
+            logger?.error("\(IMAPError.notConnected)")
             throw IMAPError.notConnected
         }
         let promise: EventLoopPromise<T.Result> = channel.eventLoop.makePromise(of: T.Result.self)
@@ -91,6 +100,7 @@ public class IMAPClient {
             promise.fail(error)
         }
         defer {
+            channel.pipeline.removeHandler(handler, promise: nil)
             task.cancel()
         }
         do {
@@ -98,25 +108,28 @@ public class IMAPClient {
             let message: IMAPClientHandler.Message = IMAPClientHandler.OutboundIn.part(.tagged(command.tagged(tag)))
             try await channel.writeAndFlush(message).get()
             let result: T.Result = try await promise.futureResult.get()
+            logger?.debug("\(command.description.capitalized(.sentence)) succeeded")
             if let clientBug = handler.clientBug {
                 logger?.debug("CLIENTBUG: \(clientBug)")
             }
-            logger?.debug("")
-
             return result
         } catch {
             promise.fail(error)
+            logger?.error("\(error)")
             throw IMAPError.commandFailed(command.description)
         }
     }
 
     func refreshCapabilities() async throws {
+        logger?.info("Refreshing capabilities…")
         capabilities = Set(try await execute(command: CapabilityCommand()))
+        logger?.info("Capabilities: \(self.capabilities)")
     }
 
     func resetInactiveChannel() {
         guard let channel, !channel.isActive else { return }
         self.channel = nil
+        logger?.info("Channel reset; ready to connect")
     }
 
     private var channel: Channel?

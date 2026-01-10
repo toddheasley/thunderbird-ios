@@ -1,5 +1,6 @@
 import Foundation
 import NIOCore
+import NIOIMAPCore
 import OSLog
 
 final class LoggingHandler: ChannelDuplexHandler, @unchecked Sendable {
@@ -27,7 +28,10 @@ final class LoggingHandler: ChannelDuplexHandler, @unchecked Sendable {
 private extension ByteBuffer {
     var stringValue: String {
         let string: String = String(decoding: readableBytesView, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
-        // TODO: Redact IMAP credential
+        #if DEBUG
         return string
+        #else
+        return ""  // TODO: Redact IMAP credential when rendering logging; see: NIOIMAPCore.Response.descriptionWithoutPII(responses: Sequence<Response>)
+        #endif
     }
 }

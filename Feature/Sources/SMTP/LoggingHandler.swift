@@ -27,12 +27,14 @@ final class LoggingHandler: ChannelDuplexHandler, @unchecked Sendable {
 extension ByteBuffer {
     var stringValue: String {
         let string: String = String(decoding: readableBytesView, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
-        // Deocde base64-encoded credentials
-        guard let data: Data = Data(base64Encoded: string),
+        guard let data: Data = Data(base64Encoded: string),  // Deocde base64-encoded string
             let string: String = String(data: data, encoding: .utf8)
-        else {
+        else {  // Not base64-encoded; OK to log unmodified
             return string
         }
+        // SMTP base64-encodes auth credentials; decoding base64-encoded strings
+        // logs human-readable credentials when debugging and redacts credentials
+        // when not debugging
         #if DEBUG
         return string
         #else

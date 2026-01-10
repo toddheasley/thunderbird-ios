@@ -1,21 +1,24 @@
 import Foundation
-import NIOIMAP
+import MIME
 import NIOCore
+import NIOIMAP
 
 protocol IMAPCommand: CustomStringConvertible, Equatable where Result: Sendable {
     associatedtype Result
     associatedtype Handler: IMAPCommandHandler where Handler.Result == Result
+    static var name: String { get }
     var timeout: Int64 { get }  // Seconds
-    func tagged(_ tag: String) -> TaggedCommand
+    func tagged(_ tag: String) -> TaggedCommand  // NIOIMAP command
 }
 
 extension IMAPCommand {
+    var name: String { Self.name }
 
     // MARK: IMAPCommand
-    var timeout: Int64 { 10 }  // Practical default
+    var timeout: Int64 { 30 }  // Practical default
 
     // MARK: CustomStringConvertible
-    var description: String { fatalError("description has not been implemented") }
+    var description: String { "\(name) command" }
 }
 
 protocol IMAPCommandHandler: ChannelInboundHandler, RemovableChannelHandler, Sendable where Result: Sendable {
@@ -24,33 +27,6 @@ protocol IMAPCommandHandler: ChannelInboundHandler, RemovableChannelHandler, Sen
     var promise: EventLoopPromise<Result> { get }
     var tag: String { get }
     var clientBug: String? { get set }
-}
-
-extension IMAPCommandHandler where InboundIn == Response {
-
-}
-
-// Default implementation for void-result commands
-extension IMAPCommandHandler where InboundIn == Response, Result == Void {
-
-    // MARK: IMAPCommandHandler
-    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
-        let response: Response = unwrapInboundIn(data)
-        clientBug = response.clientBug
-        switch response {
-        case .tagged(let taggedResponse):
-            switch taggedResponse.state {
-            case .ok:
-                promise.succeed(())
-            case .bad(let text), .no(let text):
-                promise.fail(IMAPError.underlying(text.text))
-            }
-        default:
-            promise.fail(IMAPError.underlying("Unexpected response"))
-        }
-        context.pipeline.removeHandler(self, promise: nil)
-        context.fireChannelRead(data)
-    }
 }
 
 extension IMAPCommandHandler {
@@ -63,6 +39,53 @@ extension IMAPCommandHandler {
     }
 }
 
+// Default succeed/fail handler implementation for void-result commands
+extension IMAPCommandHandler where InboundIn == Response, Result == Void {
+
+    // MARK: IMAPCommandHandler
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+        let response: Response = unwrapInboundIn(data)
+        clientBug = response.clientBug
+        switch response {
+        case .tagged(let taggedResponse):
+            switch taggedResponse.state {
+            case .bad(let text), .no(let text):
+                promise.fail(IMAPError.unexpectedResponse(text))
+            case .ok:
+                promise.succeed(())
+            }
+        case .untagged(let payload):
+            switch payload {
+            case .conditionalState(let status):
+                switch status {
+                case .bad(let text), .no(let text):
+                    promise.fail(IMAPError.unexpectedResponse(text))
+                default:
+                    promise.succeed()
+                }
+            default:
+                promise.fail(IMAPError.unexpectedResponse(response.debugDescription))
+            }
+        default:
+            promise.fail(IMAPError.unexpectedResponse(response.debugDescription))
+        }
+        context.pipeline.removeHandler(self, promise: nil)
+        context.fireChannelRead(data)
+    }
+}
+
+// IMAP [CLIENTBUG] is an error code mail servers include in responses to
+// indicate that a client-sent command was understood, but malformed somehow,
+// anything from byte order to, typically, whitespace formatting.
+//
+// Most IMAP client implementations (including NIOIMAP, used here to wire-encode
+// commands) just format commands one way that empirically works everywhere, and
+// ignore [CLIENTBUG] warnings completely.
+//
+// Only manually retrieving [CLIENTBUG] warnings here for debug logging, because
+// I'm new to IMAP, and I'm not sure what's important and not yet.
+//
+// TODO: Delete once NIOIMAP handling of [CLIENTBUG] benchmarked and confirmed
 extension Response {
     var clientBug: String? {
         switch self {

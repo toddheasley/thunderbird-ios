@@ -1,0 +1,24 @@
+import NIOCore
+import NIOIMAP
+
+struct LoginCommand: IMAPCommand {
+    let username: String
+    let password: String
+
+    init(username: String, password: String) {
+        self.username = username
+        self.password = password
+    }
+
+    // MARK: IMAPCommand
+    typealias Result = [Capability]
+    typealias Handler = LoginHandler
+
+    static var name: String { "login" }
+
+    func tagged(_ tag: String) -> NIOIMAPCore.TaggedCommand {
+        TaggedCommand(tag: tag, command: .login(username: username, password: password))
+    }
+}
+
+typealias LoginHandler = CapabilityHandler

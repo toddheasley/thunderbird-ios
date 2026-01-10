@@ -1,5 +1,5 @@
-import NIOIMAP
 import NIOCore
+import NIOIMAP
 
 struct CapabilityCommand: IMAPCommand {
 
@@ -7,7 +7,7 @@ struct CapabilityCommand: IMAPCommand {
     typealias Result = [Capability]
     typealias Handler = CapabilityHandler
 
-    let description: String = "Capability command"
+    static var name: String { "capability" }
 
     func tagged(_ tag: String) -> NIOIMAPCore.TaggedCommand {
         TaggedCommand(tag: tag, command: .capability)
@@ -38,11 +38,10 @@ class CapabilityHandler: IMAPCommandHandler, @unchecked Sendable {
         case .tagged(let taggedResponse):
             switch taggedResponse.state {
             case .bad(let text), .no(let text):
-                promise.fail(IMAPError.underlying("\(text)"))
+                promise.fail(IMAPError.commandFailed(text.text))
             case .ok:
                 promise.succeed(capabilities)
             }
-            context.pipeline.removeHandler(self, promise: nil)
         case .untagged(let payload):
             switch payload {
             case .capabilityData(let capabilities):

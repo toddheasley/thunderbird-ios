@@ -19,6 +19,14 @@ struct IMAPClientTests {
         try await client.login()
     }
 
+    @Test(.disabled(if: Server.server.password.isEmpty)) func logout() async throws {
+        let client: IMAPClient = IMAPClient(.server)
+        try await client.connect()
+        #expect(client.isConnected == true)
+        try await client.login()
+        try await client.logout()
+    }
+
     @Test(.disabled(if: Server.server.password.isEmpty)) func disconnect() async throws {
         let client: IMAPClient = IMAPClient(.server)
         #expect(throws: IMAPError.notConnected) {
@@ -57,7 +65,7 @@ private extension Server {
             .tls,
             hostname: "imap.mail.me.com",
             username: "toddheasley@icloud.com",
-            password: "nnxh-fnye-dyvl-qhpe",
+            password: "",
             port: 993
         )
     }
