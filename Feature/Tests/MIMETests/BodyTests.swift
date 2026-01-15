@@ -65,6 +65,14 @@ extension BodyTests {
         #expect(Body.empty.parts.first?.contentType == .text(.plain, .ascii))
         #expect(Body.empty.contentType == .text(.plain, .ascii))
     }
+
+    @Test func isEmpty() throws {
+        #expect(try Body(.fastmail).isEmpty == false)
+        #expect(try Body(.icloud).isEmpty == false)
+        #expect(try Body(.outlook).isEmpty == false)
+        #expect(try Body(.posteo).isEmpty == false)
+        #expect(Body.empty.isEmpty == true)
+    }
 }
 
 private extension Data {

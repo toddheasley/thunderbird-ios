@@ -1,5 +1,3 @@
-import Foundation
-
 /// Character encoding described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.2)
 public struct CharacterSet: CustomStringConvertible, Equatable, RawRepresentable, Sendable {
     public static var ascii: Self { try! Self("US-ASCII") }  // Default character encoding

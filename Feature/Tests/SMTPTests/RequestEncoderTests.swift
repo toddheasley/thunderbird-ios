@@ -1,4 +1,4 @@
-import Foundation
+import MIME
 import NIOCore
 @testable import SMTP
 import Testing
@@ -22,41 +22,24 @@ struct RequestEncoderTests {
         #expect(buffer.readString(length: buffer.readableBytes) == "RCPT TO:<recipient@example.com>\r\n")
         try RequestEncoder().encode(data: .data, out: &buffer)
         #expect(buffer.readString(length: buffer.readableBytes) == "DATA\r\n")
-        try RequestEncoder().encode(data: .transferData(.email), out: &buffer)
-        #expect(buffer.readString(length: buffer.readableBytes) == "\(emailBody.replacingOccurrences(of: "\n", with: "\r\n"))\r\n")
+        try RequestEncoder().encode(data: .transferData(.example), out: &buffer)
+        #expect(buffer.readString(length: buffer.readableBytes) == example)
         try RequestEncoder().encode(data: .quit, out: &buffer)
         #expect(buffer.readString(length: buffer.readableBytes) == "QUIT\r\n")
     }
 }
 
-private extension Email {
-    static var email: Self {
-        Self(
-            sender: "Sender Name <sender@example.com>",
-            recipients: [
-                "Recipient Name <recipient@example.com>",
-                "no.name@exmaple.com"
-            ],
-            subject: "Example email subject",
-            date: Date(timeIntervalSince1970: 1762463150.82521),
-            body: [
-                "Body content parts can be plain text for now ;)".data(using: .utf8)!
-            ],
-            id: UUID(uuidString: "A51D5B17-CA61-4FF1-A4A8-C717289B8F9E")!
-        )
-    }
-}
-
 // swift-format-ignore
-private let emailBody: String = """
-From: Sender Name <sender@example.com>
-To: Recipient Name <recipient@example.com> no.name@exmaple.com
-Date: 2025-11-06T21:05:50Z
-Message-ID: <1762463150.A51D5B17@example.com>
-Subject: Example email subject
-Content-Type: text/plain; charset="UTF-8"
+private let example: String = """
+From: Sender Name <sender@example.com>\r
+To: Recipient Name <recipient@example.com> no.name@exmaple.com\r
+Date: Thu, 06 Nov 2025 21:05:50 +0000\r
+Message-ID: <1762463150.A51D5B17@example.com>\r
+Subject: Example email subject\r
+Content-Type: text/plain; charset="US-ASCII"\r
+\r
+Plain text body content (using only US-ASCII characters)\r
+\r
+.\r
 
-Body content parts can be plain text for now ;)
-
-.
 """

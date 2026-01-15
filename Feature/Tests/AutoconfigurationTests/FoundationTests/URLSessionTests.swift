@@ -114,6 +114,6 @@ extension URLSessionTests {
 
     @Test func suffixList() async throws {
         let suffixList: [String] = try await URLSession.shared.suffixList()
-        print(suffixList)
+        #expect(suffixList.count > 10000)
     }
 }

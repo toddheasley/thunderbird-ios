@@ -14,25 +14,29 @@ final class LoggingHandler: ChannelDuplexHandler, @unchecked Sendable {
     typealias OutboundIn = ByteBuffer
 
     func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
-        logger?.debug("\(self.unwrapOutboundIn(data).readableLogView(redactBase64Encoded: true))")
-        context.write(data, promise: promise)
+        logger?.debug("\(self.unwrapOutboundIn(data).stringValue)")
+        context.write(data, promise: promise)  // Handler only observes; pass unmodified data to next handler
     }
 
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
-        logger?.debug("\(self.unwrapInboundIn(data).readableLogView())")
-        context.fireChannelRead(data)
+        logger?.debug("\(self.unwrapInboundIn(data).stringValue)")
+        context.fireChannelRead(data)  // Pass unmodified data to next handler
     }
 }
 
 extension ByteBuffer {
-    // Format bytes as debug description; optionally redact user names and passwords
-    func readableLogView(redactBase64Encoded: Bool = false) -> String {
+    var stringValue: String {
         let string: String = String(decoding: readableBytesView, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+        // Deocde base64-encoded credentials
         guard let data: Data = Data(base64Encoded: string),
             let string: String = String(data: data, encoding: .utf8)
         else {
-            return string  // String not base64-encoded; return as is
+            return string
         }
-        return redactBase64Encoded ? "[redacted]" : string
+        #if DEBUG
+        return string
+        #else
+        return String(repeating: "•", count: string.count)  // Redact decoded SMTP credential
+        #endif
     }
 }

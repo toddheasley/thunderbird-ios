@@ -93,4 +93,8 @@ extension Body {
                 try! Part(data: "".data(using: .ascii)!, contentType: .text(.plain, .ascii))
             ], contentType: .text(.plain, .ascii))
     }
+
+    public var isEmpty: Bool {
+        parts.count == 1 && (String(data: parts[0].data, encoding: .ascii) ?? "").isEmpty
+    }
 }

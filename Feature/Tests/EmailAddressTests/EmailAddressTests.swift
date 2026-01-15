@@ -36,7 +36,6 @@ struct EmailAddressTests {
             "\"Example Name <name@example.com>\"".data(using: .utf8)!,
             "\"name@example.com\"".data(using: .utf8)!
         ]
-        print(try JSONDecoder().decode(EmailAddress.self, from: data[0]).value)
         #expect(try JSONDecoder().decode(EmailAddress.self, from: data[0]).value == "name@example.com")
         #expect(try JSONDecoder().decode(EmailAddress.self, from: data[0]).label == "Example Name")
         #expect(try JSONDecoder().decode(EmailAddress.self, from: data[1]).value == "name@example.com")

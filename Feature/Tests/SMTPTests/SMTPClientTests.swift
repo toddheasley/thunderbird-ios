@@ -1,38 +1,29 @@
 import Foundation
+import MIME
 @testable import SMTP
 import Testing
 
 struct SMTPClientTests {
     @Test(.disabled(if: Server.server.password.isEmpty)) func send() async throws {
-        let client: SMTPClient = SMTPClient(.server)
-        do {
-            try await client.send(.email)
-        } catch {
-            print(error)
-        }
+        try await SMTPClient(.server).send(.email)
     }
 
     @Test(.disabled(if: Server.server.password.isEmpty)) func sendToRecipient() async throws {
-        let client: SMTPClient = SMTPClient(.server)
-        do {
-            try await client.send(.email, to: "")
-        } catch {
-            print(error)
-        }
+        try await SMTPClient(.server).send(.email, to: "recipient@example.com")
     }
 }
 
 private extension Email {
     static var email: Self {
         Self(
-            sender: "",
+            sender: "sender@example.com",
             recipients: [
-                ""
+                "recipient@example.com"
             ],
             subject: "Example email subject",
-            body: [
-                "Body content parts can be plain text for now ;)".data(using: .utf8)!
-            ],
+            body: try! Body(parts: [
+                Part(data: "For a brief period of time, email body contents were made of plain, ASCII text only :)".data(using: .ascii)!, contentType: .text(.plain, .ascii))
+            ]),
             id: UUID(uuidString: "A51D5B17-CA61-4FF1-A4A8-C717289B8F9E")!
         )
     }
