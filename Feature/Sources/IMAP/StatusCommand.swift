@@ -65,6 +65,19 @@ class StatusHandler: IMAPCommandHandler, @unchecked Sendable {
 }
 
 extension [MailboxAttribute] {
+    static func extended(_ capabilities: Set<Capability>) -> Self {
+        Array(Set(capabilities.flatMap { extended($0) }))
+    }
+
+    static func extended(_ capability: Capability) -> Self {
+        switch capability {
+        case .objectID: [.mailboxID]
+        case .uidPlus: [.uidNext, .uidValidity]
+        case .status(.size): [.size]
+        default: []
+        }
+    }
+
     static var standard: Self {
         [
             .messageCount,

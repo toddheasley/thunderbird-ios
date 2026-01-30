@@ -102,7 +102,7 @@ public class IMAPClient {
     /// Fetch the current status for a mailbox.
     public func status(mailbox: Mailbox) async throws -> Mailbox.Status {
         logger?.info("Refreshing mailbox \(mailbox.path.name) status…")
-        return try await execute(command: StatusCommand(mailbox.path.name))
+        return try await execute(command: StatusCommand(mailbox.path.name, attributes: .standard + .extended(capabilities)))
     }
 
     /// Expunge messages flagged as deleted in current working mailbox.
