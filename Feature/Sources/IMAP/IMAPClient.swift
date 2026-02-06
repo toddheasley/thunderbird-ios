@@ -153,6 +153,20 @@ public class IMAPClient {
         try await execute(command: VoidCommand(.close))
     }
 
+    /// Fetch messages by UID.
+    public func fetch(_ uids: [UID], attributes: [FetchAttribute]) async throws {
+        logger?.info("Fetching messages by UID…")
+        let _ = try await execute(command: UIDFetchCommand(.all, attributes: attributes.filtered(capabilities)))
+    }
+
+    /// Fetch messages ~~by mailbox sequence number~~.
+    public func fetch(attributes: [FetchAttribute]) async throws {
+        logger?.info("Fetching messages by mailbox sequence number…")
+        print("*** server: \(server.hostname)")
+        print("*** attributes: \(attributes.filtered(capabilities))")
+        let _ = try await execute(command: FetchCommand(.all, attributes: attributes.filtered(capabilities)))
+    }
+
     public init(
         _ server: Server,
         logger: Logger? = Logger(subsystem: "net.thunderbird", category: "IMAP")
@@ -164,11 +178,8 @@ public class IMAPClient {
 
     // Run IMAP command through NIO `IMAPClientHandler` in channel and handle results
     func execute<T: IMAPCommand>(command: T) async throws -> T.Result {
-        let logger: Logger? = logger
+        let logger: Logger? = logger  // Copy logger instead of capturing
         logger?.debug("Executing \(command)…")
-        if !isConnected {  // Reconnect automagically
-            try await connect()
-        }
         guard let channel, channel.isActive else {
             logger?.error("\(IMAPError.notConnected)")
             throw IMAPError.notConnected
