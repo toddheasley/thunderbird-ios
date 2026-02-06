@@ -12,7 +12,7 @@ struct UIDFetchCommand: IMAPCommand {
     }
 
     // MARK: IMAPCommand
-    typealias Result = [MailboxInfo]
+    typealias Result = [Message.Component]
     typealias Handler = FetchHandler
 
     var name: String { "fetch" }

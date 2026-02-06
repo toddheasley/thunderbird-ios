@@ -13,7 +13,7 @@ struct FetchCommand: IMAPCommand {
     }
 
     // MARK: IMAPCommand
-    typealias Result = [MailboxInfo]
+    typealias Result = [Message.Component]
     typealias Handler = FetchHandler
 
     var name: String { "fetch" }
@@ -24,15 +24,17 @@ struct FetchCommand: IMAPCommand {
 }
 
 class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
+    var components: Result = []
+    var isStreaming: Bool { streaming != nil }
+
+    private var streaming: (kind: StreamingKind, data: Data, byteCount: Int)?
+    private var sequenceNumber: SequenceNumber?
 
     // MARK: IMAPCommandHandler
     typealias InboundIn = Response
     typealias InboundOut = Response
-    typealias Result = [MailboxInfo]
+    typealias Result = [Message.Component]
 
-    var mailboxes: Result = []
-
-    var sequenceNumber: SequenceNumber?
     var clientBug: String? = nil
     let promise: EventLoopPromise<Result>
     let tag: String
@@ -51,7 +53,7 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
             case .bad(let text), .no(let text):
                 promise.fail(IMAPError.commandFailed(text.text))
             case .ok:
-                promise.succeed(mailboxes)
+                promise.succeed(components)
             }
         case .fetch(let response):
             switch response {
@@ -59,24 +61,48 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
                 self.sequenceNumber = sequenceNumber
             case .simpleAttribute(let attribute):
                 switch attribute {
+                case .body(let structure, let hasExtensionData):
+                    components.append(.bodyStructure(structure, hasExtensionData))
                 case .emailID(let emailID):
-                    print("*** emailID: \(String(emailID))")
+                    components.append(.emailID(String(emailID)))
                 case .envelope(let envelope):
-                    print("*** envelope: \(Envelope(envelope))")
+                    components.append(.envelope(Envelope(envelope)))
                 case .flags(let flags):
-                    print("*** flags:")
-                    for flag in flags {
-                        print("***   \(flag)")
-                    }
+                    components.append(.flags(Set(flags)))
+                case .gmailLabels(let labels):
+                    components.append(.gmailLabels(labels))
+                case .gmailMessageID(let id):
+                    components.append(.gmailMessageID(id))
+                case .gmailThreadID(let id):
+                    components.append(.gmailThreadID(id))
                 case .internalDate(let serverMessageDate):
-                    print("*** internalDate: \((try? Date(serverMessageDate: serverMessageDate))?.serverMessageDateFormat() ?? "nil")")
+                    if let date: Date = try? Date(serverMessageDate: serverMessageDate) {
+                        components.append(.internalDate(date))
+                    }
                 case .threadID(let threadID):
-                    print("*** threadID: \(String(threadID: threadID) ?? "nil")")
+                    if let threadID: String = String(threadID: threadID) {
+                        components.append(.threadID(threadID))
+                    }
                 case .uid(let uid):
-                    print("*** UID: \(uid)")
+                    components.append(.uid(uid))
                 default:
                     break
                 }
+            case .streamingBegin(let kind, let byteCount):
+                streaming = (kind, Data(), byteCount)
+            case .streamingBytes(let bytes):
+                streaming?.data.append(Data(bytes.readableBytesView))
+            case .streamingEnd:
+                if let streaming {
+                    switch streaming.kind {
+                    case .body(let section, _):
+                        guard streaming.data.count == streaming.byteCount else { break }
+                        components.append(.bodyPart(section, streaming.data))
+                    default:
+                        break
+                    }
+                }
+                streaming = nil
             case .finish:
                 sequenceNumber = nil
             default:

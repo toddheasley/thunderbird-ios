@@ -16,11 +16,11 @@ struct InternetMessageDateTests {
 
 struct RFC822DateFormatterTests {
     @Test func string() {
-        #expect(try RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1701190543.0), timeZone: TimeZone(secondsFromGMT: -8 * 3600)!)) == "Tue, 28 Nov 2023 08:55:43 -0800")
-        #expect(try RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1769174627.0), timeZone: .gmt)) == "Fri, 23 Jan 2026 13:23:47 +0000")
-        #expect(try RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1701179743.0), timeZone: TimeZone(secondsFromGMT: -5 * 3600)!)) == "Tue, 28 Nov 2023 08:55:43 -0500")
-        #expect(try RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1701136543.0), timeZone: TimeZone(secondsFromGMT: 7 * 3600)!)) == "Tue, 28 Nov 2023 08:55:43 +0700")
-        #expect(try RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1769336509.0), timeZone: .gmt)) == "Sun, 25 Jan 2026 10:21:49 +0000")
+        #expect(RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1701190543.0), timeZone: TimeZone(secondsFromGMT: -8 * 3600)!)) == "Tue, 28 Nov 2023 08:55:43 -0800")
+        #expect(RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1769174627.0), timeZone: .gmt)) == "Fri, 23 Jan 2026 13:23:47 +0000")
+        #expect(RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1701179743.0), timeZone: TimeZone(secondsFromGMT: -5 * 3600)!)) == "Tue, 28 Nov 2023 08:55:43 -0500")
+        #expect(RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1701136543.0), timeZone: TimeZone(secondsFromGMT: 7 * 3600)!)) == "Tue, 28 Nov 2023 08:55:43 +0700")
+        #expect(RFC822DateFormatter().string(from: InternetMessageDate(Date(timeIntervalSince1970: 1769336509.0), timeZone: .gmt)) == "Sun, 25 Jan 2026 10:21:49 +0000")
     }
 
     @Test func internetMessageDate() throws {
@@ -34,10 +34,10 @@ struct RFC822DateFormatterTests {
 
 struct TimeZoneTests {
     @Test func internetMessageDateInit() throws {
-        #expect(try TimeZone(internetMessageDate: "Tue, 28 Nov 2023 08:55:43 -0800") == TimeZone(secondsFromGMT: -800))
+        #expect(try TimeZone(internetMessageDate: "Tue, 28 Nov 2023 08:55:43 -0800") == TimeZone(secondsFromGMT: -8 * 3600))
         #expect(try TimeZone(internetMessageDate: "Fri, 23 Jan 2026 13:23:47 +0000 (UTC)") == .gmt)
-        #expect(try TimeZone(internetMessageDate: "Tue, 28 Nov 2023 08:55:43-0500") == TimeZone(secondsFromGMT: -500))
-        #expect(try TimeZone(internetMessageDate: "Tue, 28 Nov 2023 08:55:43+0700") == TimeZone(secondsFromGMT: 700))
+        #expect(try TimeZone(internetMessageDate: "Tue, 28 Nov 2023 08:55:43-0500") == TimeZone(secondsFromGMT: -5 * 3600))
+        #expect(try TimeZone(internetMessageDate: "Tue, 28 Nov 2023 08:55:43+0700") == TimeZone(secondsFromGMT: 7 * 3600))
         #expect(try TimeZone(internetMessageDate: "Sun, 25 Jan 2026 10:21:49 GMT") == .gmt)
     }
 }

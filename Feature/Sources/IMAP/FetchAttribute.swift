@@ -3,10 +3,13 @@ import NIOIMAPCore
 public typealias FetchAttribute = NIOIMAPCore.FetchAttribute
 
 extension [FetchAttribute] {
+
+    // Add supported fetch attributes according to set of server capabilities
     static func extended(_ capabilities: Set<Capability>) -> Self {
         Array(Set(capabilities.flatMap { extended($0) }))
     }
 
+    // Add supported fetch attributes according to server capability
     static func extended(_ capability: Capability) -> Self {
         switch capability {
         case .gmailExtensions:
@@ -20,14 +23,11 @@ extension [FetchAttribute] {
                 .emailID,
                 .threadID
             ]
-        case .preview:
-            [
-                .preview(lazy: true)
-            ]
         default: []
         }
     }
 
+    // Standard set of fetch attributes supported by all IMAP4 servers
     static var standard: Self {
         [
             .envelope,
@@ -36,6 +36,7 @@ extension [FetchAttribute] {
         ]
     }
 
+    // Filter unsupported attributes according to server capabilities
     func filtered(_ capabilities: Set<Capability>) -> Self {
         filter { attribute in
             switch attribute {
