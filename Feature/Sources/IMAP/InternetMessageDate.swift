@@ -2,7 +2,7 @@ import Foundation
 import MIME
 import NIOIMAPCore
 
-public struct InternetMessageDate: Sendable {
+public struct InternetMessageDate: CustomStringConvertible, Equatable, Sendable {
     public let date: Date
     public let timeZone: TimeZone
 
@@ -15,16 +15,26 @@ public struct InternetMessageDate: Sendable {
         guard let internetMessageDate else {
             throw MIMEError.dateNotDecoded("nil")
         }
-        date = try RFC822DateFormatter().date(from: String(internetMessageDate))
-        timeZone = try TimeZone(internetMessageDate: internetMessageDate)
+        self = try RFC822DateFormatter().internetMessageDate(from: String(internetMessageDate))
+    }
+
+    // MARK: CustomStringConvertible
+    public var description: String { RFC822DateFormatter().string(from: self) }
+}
+
+extension RFC822DateFormatter {
+    public func string(from internetMessageDate: InternetMessageDate) -> String {
+        string(from: internetMessageDate.date, internetMessageDate.timeZone)
+    }
+
+    public func internetMessageDate(from string: String) throws -> InternetMessageDate {
+        let date: Date = try self.date(from: string)
+        let timeZone: TimeZone = try TimeZone(internetMessageDate: string)
+        return InternetMessageDate(date, timeZone: timeZone)
     }
 }
 
 extension TimeZone {
-    init(internetMessageDate: NIOIMAPCore.InternetMessageDate) throws {
-        self = try Self(internetMessageDate: String(internetMessageDate))
-    }
-
     init(internetMessageDate string: String) throws {
         let string: String =
             string
@@ -35,18 +45,15 @@ extension TimeZone {
             .components(separatedBy: " ")
             .last!
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        if string.hasPrefix("+") || string.hasPrefix("-"), let secondsFromGMT: Int = Int(string) {
-            guard let timeZone: Self = Self(secondsFromGMT: secondsFromGMT) else {
-                throw MIMEError.dateNotDecoded(string)
-            }
-            print(timeZone)
-            self = timeZone
+        if string.hasPrefix("+") || string.hasPrefix("-"),
+            let offset: Int = Int(string),
+            let timeZone: Self = Self(secondsFromGMT: offset * 36)
+        {
+            self = timeZone  // Time zone from GMT offset; examples: -0800, +0000
+        } else if let timeZone: Self = Self(abbreviation: string) {
+            self = timeZone  // Time zone from 3-character abbreviation; examples: PDT, GMT
         } else {
-            guard let timeZone: Self = Self(abbreviation: string) else {
-                throw MIMEError.dateNotDecoded(string)
-            }
-            print(timeZone)
-            self = timeZone
+            throw MIMEError.dateNotDecoded(string)
         }
     }
 }
