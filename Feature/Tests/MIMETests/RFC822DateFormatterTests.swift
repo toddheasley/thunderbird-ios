@@ -17,6 +17,7 @@ struct RFC822DateFormatterTests {
         let formatter: RFC822DateFormatter = RFC822DateFormatter()
         #expect(try formatter.date(from: "Mon, 31 Oct 1977 03:14:00-0500") == Date(timeIntervalSince1970: 247133640.0))
         #expect(try formatter.date(from: "Mon, 31 Oct 1977 08:14:00 +0000 (GMT)") == Date(timeIntervalSince1970: 247133640.0))
+        #expect(try formatter.date(from: "Mon, 31 Oct 1977 08:14:00 GMT") == Date(timeIntervalSince1970: 247133640.0))
         #expect(throws: MIMEError.self) {
             try formatter.date(from: "31 10 77; 03:14:00 GMT")
         }

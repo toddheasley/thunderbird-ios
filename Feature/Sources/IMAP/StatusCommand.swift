@@ -73,6 +73,8 @@ extension [MailboxAttribute] {
         switch capability {
         case .objectID: [.mailboxID]
         case .uidPlus: [.uidNext, .uidValidity]
+        case .mailboxSpecificAppendLimit: [.appendLimit]
+        case .condStore: [.highestModificationSequence]
         case .status(.size): [.size]
         default: []
         }
