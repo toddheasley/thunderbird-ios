@@ -1,9 +1,13 @@
 import Foundation
 import NIOIMAPCore
 
+public typealias BodyStructure = NIOIMAPCore.BodyStructure
+public typealias SequenceNumber = NIOIMAPCore.SequenceNumber
+public typealias SequenceSet = NIOIMAPCore.MessageIdentifierSetNonEmpty<SequenceNumber>
 public typealias UID = NIOIMAPCore.UID
+public typealias UIDSet = NIOIMAPCore.UIDSetNonEmpty
 
-public struct Message {
+public struct Message: Sendable {
     public enum Component: CustomStringConvertible, Equatable, Identifiable, Sendable {
         case bodyPart(SectionSpecifier, Data)
         case bodyStructure(BodyStructure, _ hasExtensionData: Bool = false)
@@ -62,5 +66,30 @@ public struct Message {
 
     public init(components: [Component]) {
         self.components = components
+    }
+}
+
+public typealias MessageSet = [SequenceNumber: Message]
+
+extension MessageSet {
+
+    /// Array of ``Message`` ordered by ascending ``SequenceNumber``
+    public var messages: [Message] {
+        var messages: [Message] = []
+        for key in keys.sorted() {
+            messages.append(self[key]!)
+        }
+        return messages
+    }
+}
+
+extension [Message.Component] {
+    var uid: UID? {
+        compactMap { component in
+            switch component {
+            case .uid(let uid): uid
+            default: nil
+            }
+        }.first
     }
 }

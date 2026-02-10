@@ -2,15 +2,12 @@ import Foundation
 import NIOCore
 import NIOIMAPCore
 
-// Avoid republishing the entire (cluttered) NIOIMAP public interface with @_exported; instead
-// Add specific NIOIMAP types to public interface as needed
-
-public typealias Mailbox = MailboxInfo
+public typealias Mailbox = NIOIMAPCore.MailboxInfo
 
 extension Mailbox {
-    public typealias Attribute = MailboxInfo.Attribute
-    public typealias Name = MailboxName
-    public typealias Status = MailboxStatus
+    public typealias Attribute = NIOIMAPCore.MailboxInfo.Attribute
+    public typealias Name = NIOIMAPCore.MailboxName
+    public typealias Status = NIOIMAPCore.MailboxStatus
 }
 
 extension MailboxName: @retroactive CustomStringConvertible {

@@ -3,16 +3,16 @@ import NIOIMAP
 
 // Fetch messages by UID
 struct UIDFetchCommand: IMAPCommand {
-    let identifiers: MessageIdentifierSetNonEmpty<UID>
+    let identifiers: UIDSetNonEmpty
     let attributes: [FetchAttribute]
 
-    init(_ identifiers: MessageIdentifierSetNonEmpty<UID>, attributes: [FetchAttribute]) {
+    init(_ identifiers: UIDSetNonEmpty, attributes: [FetchAttribute]) {
         self.identifiers = identifiers
         self.attributes = attributes
     }
 
     // MARK: IMAPCommand
-    typealias Result = [Message.Component]
+    typealias Result = [SequenceNumber: Message]
     typealias Handler = FetchHandler
 
     var name: String { "fetch" }

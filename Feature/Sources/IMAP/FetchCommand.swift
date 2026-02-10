@@ -13,7 +13,7 @@ struct FetchCommand: IMAPCommand {
     }
 
     // MARK: IMAPCommand
-    typealias Result = [Message.Component]
+    typealias Result = [SequenceNumber: Message]
     typealias Handler = FetchHandler
 
     var name: String { "fetch" }
@@ -24,16 +24,17 @@ struct FetchCommand: IMAPCommand {
 }
 
 class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
-    var components: Result = []
+    var messages: Result = [:]
     var isStreaming: Bool { streaming != nil }
 
     private var streaming: (kind: StreamingKind, data: Data, byteCount: Int)?
+    private var components: [Message.Component] = []
     private var sequenceNumber: SequenceNumber?
 
     // MARK: IMAPCommandHandler
     typealias InboundIn = Response
     typealias InboundOut = Response
-    typealias Result = [Message.Component]
+    typealias Result = [SequenceNumber: Message]
 
     var clientBug: String? = nil
     let promise: EventLoopPromise<Result>
@@ -53,7 +54,7 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
             case .bad(let text), .no(let text):
                 promise.fail(IMAPError.commandFailed(text.text))
             case .ok:
-                promise.succeed(components)
+                promise.succeed(messages)
             }
         case .fetch(let response):
             switch response {
@@ -104,7 +105,9 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
                 }
                 streaming = nil
             case .finish:
+                messages[sequenceNumber!] = Message(components: components)
                 sequenceNumber = nil
+                components = []
             default:
                 break
             }

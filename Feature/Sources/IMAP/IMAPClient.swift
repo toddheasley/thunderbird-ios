@@ -153,20 +153,16 @@ public class IMAPClient {
         try await execute(command: VoidCommand(.close))
     }
 
-    /// Fetch messages by UID.
-    public func fetch(_ uids: [UID], attributes: [FetchAttribute]) async throws {
-        logger?.info("Fetching messages by UID…")
-        let _: [Message.Component] = try await execute(
-            command: UIDFetchCommand(.all, attributes: attributes.filtered(capabilities))
-        )
+    /// Fetch messages by mailbox sequence number.
+    public func fetch(_ set: SequenceSet = .all, attributes: [FetchAttribute]) async throws -> MessageSet {
+        logger?.info("Fetching messages by mailbox sequence number…")
+        return try await execute(command: FetchCommand(set, attributes: attributes.filtered(capabilities)))
     }
 
-    /// Fetch messages ~~by mailbox sequence number~~.
-    public func fetch(attributes: [FetchAttribute]) async throws {
-        logger?.info("Fetching messages by mailbox sequence number…")
-        let _: [Message.Component] = try await execute(
-            command: FetchCommand(.all, attributes: attributes.filtered(capabilities))
-        )
+    /// Fetch messages by UID.
+    public func fetch(_ set: UIDSet, attributes: [FetchAttribute]) async throws -> MessageSet {
+        logger?.info("Fetching messages by UID…")
+        return try await execute(command: UIDFetchCommand(set, attributes: attributes.filtered(capabilities)))
     }
 
     public init(
