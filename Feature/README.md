@@ -98,15 +98,51 @@ Both protocols use [TCP](https://wikipedia.org/wiki/Transmission_Control_Protoco
 
 `IMAP` implementation glues NIOIMAP models and networking into an async/await interface.
 
+Configure `IMAPClient` with `Server`, connect and authenticate:
+
 ```swift
 import IMAP
 
-let client = IMAPClient(Server(
-    hostname: "imap.mail.example.com"
-))
-try await client.login(username: "user@example.com", password: "fake-appp-pass-word")
-print(client.capabilities)  // "SASL-IR", "IMAP4rev1", "AUTH=XOAUTH2"…
+let client: IMAPClient = IMAPClient(Server(hostname: "imap.example.com"))
+try await client.connect()
+try await client.login(username: "user@example.com", password: "fAK3-PASs-w0rD")
+...
 try await client.logout()
+try? client.disconnect()
+```
+
+List mailboxes and select inbox:
+
+```swift
+let mailboxes: [Mailbox] = try await client.list()
+guard let inbox: Mailbox = mailboxes.filter({ $0.path.name.isInbox }).first else {
+    throw IMAPError.unexpectedResponse("Inbox not found")
+}
+_ = try await client.select(mailbox: inbox)
+let status = try await client.status(mailbox: inbox)
+print(status.messageCount)  // 327
+print(status.unseenCount)  // 5
+```
+
+Fetch all inbox messages:
+
+```swift
+let messages: [SequenceNumber: Message] = try await client.fetch(attributes: [
+    .bodySection(peek: true, .header, nil),
+    .bodyStructure(extensions: true),
+    .emailID,
+    .envelope,
+    .flags,
+    .uid
+])
+print(messages.count)  // 327
+for sequenceNumber in messages.keys.sorted().reversed() {
+    print(sequenceNumber)  // 327...1
+    let message: Message = messages[sequenceNumber]!
+    for component in message.components {
+        print(component)
+    }
+}
 ```
 
 `IMAP` library depends on [Swift NIOIMAP.](https://github.com/apple/swift-nio-imap)
