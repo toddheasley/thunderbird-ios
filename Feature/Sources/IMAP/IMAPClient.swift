@@ -81,6 +81,22 @@ public class IMAPClient {
         return namespace
     }
 
+    public func idle() async throws {
+        logger?.info("Idle start…")
+        fatalError()
+    }
+
+    public func done() async throws {
+        logger?.info("Idle done…")
+        // try await execute(command: VoidCommand(.done))
+        fatalError()
+    }
+
+    public func noop() async throws -> [IdleEvent] {
+        logger?.info("Idle noop…")
+        return try await execute(command: NoopCommand())
+    }
+
     /// List all mailboxes on logged-in IMAP ``Server``.
     public func list(wildcard: Character = .wildcard) async throws -> [Mailbox] {
         logger?.info("Listing mailboxes…")

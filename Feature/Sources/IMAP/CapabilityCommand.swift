@@ -1,5 +1,5 @@
 import NIOCore
-import NIOIMAPCore
+import NIOIMAP
 
 public typealias Capability = NIOIMAPCore.Capability
 

@@ -61,34 +61,8 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
             case .start(let sequenceNumber):
                 self.sequenceNumber = sequenceNumber
             case .simpleAttribute(let attribute):
-                switch attribute {
-                case .body(let structure, let hasExtensionData):
-                    components.append(.bodyStructure(structure, hasExtensionData))
-                case .emailID(let emailID):
-                    components.append(.emailID(String(emailID)))
-                case .envelope(let envelope):
-                    components.append(.envelope(Envelope(envelope)))
-                case .flags(let flags):
-                    components.append(.flags(Set(flags)))
-                case .gmailLabels(let labels):
-                    components.append(.gmailLabels(labels))
-                case .gmailMessageID(let id):
-                    components.append(.gmailMessageID(id))
-                case .gmailThreadID(let id):
-                    components.append(.gmailThreadID(id))
-                case .internalDate(let serverMessageDate):
-                    if let date: Date = try? Date(serverMessageDate: serverMessageDate) {
-                        components.append(.internalDate(date))
-                    }
-                case .threadID(let threadID):
-                    if let threadID: String = String(threadID: threadID) {
-                        components.append(.threadID(threadID))
-                    }
-                case .uid(let uid):
-                    components.append(.uid(uid))
-                default:
-                    break
-                }
+                guard let component: Message.Component = Message.Component(attribute) else { break }
+                components.append(component)
             case .streamingBegin(let kind, let byteCount):
                 streaming = (kind, Data(), byteCount)
             case .streamingBytes(let bytes):
@@ -116,13 +90,5 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
         }
         context.fireChannelRead(data)
     }
-}
 
-private extension String {
-    init?(threadID: ThreadID?) {
-        guard let threadID else {
-            return nil
-        }
-        self = Self(threadID)
-    }
 }

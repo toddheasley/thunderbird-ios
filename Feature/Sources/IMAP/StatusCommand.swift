@@ -23,13 +23,13 @@ struct StatusCommand: IMAPCommand {
 }
 
 class StatusHandler: IMAPCommandHandler, @unchecked Sendable {
+    private(set) var status: MailboxStatus = MailboxStatus()
 
     // MARK: IMAPCommandHandler
     typealias InboundIn = Response
     typealias InboundOut = Response
     typealias Result = MailboxStatus
 
-    var status: MailboxStatus = MailboxStatus()
     var clientBug: String? = nil
     let promise: EventLoopPromise<Result>
     let tag: String
