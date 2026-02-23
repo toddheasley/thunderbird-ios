@@ -1,32 +1,23 @@
-import Foundation
 import NIOCore
 import NIOIMAP
 
-// Poll server for events
-struct NoopCommand: IMAPCommand {
+// Long-running handler streams pushed idle events
+class IdleHandler: IMAPCommandHandler, @unchecked Sendable {
+    typealias Continuation = AsyncStream<IdleEvent>.Continuation
+    private(set) var continuation: Continuation? = nil
 
-    // MARK: IMAPCommand
-    typealias Result = [IdleEvent]
-    typealias Handler = NoopHandler
-
-    var name: String { "noop" }
-
-    func tagged(_ tag: String) -> NIOIMAPCore.TaggedCommand {
-        TaggedCommand(tag: tag, command: .noop)
+    convenience init(tag: String, promise: EventLoopPromise<Void>, continuation: Continuation?) {
+        self.init(tag: tag, promise: promise)
+        self.continuation = continuation
     }
-}
-
-class NoopHandler: IMAPCommandHandler, @unchecked Sendable {
-    private(set) var events: [IdleEvent] = []
 
     private var components: [Message.Component] = []
     private var sequenceNumber: SequenceNumber?
-    private var status: MailboxStatus = MailboxStatus()
 
     // MARK: IMAPCommandHandler
     typealias InboundIn = Response
     typealias InboundOut = Response
-    typealias Result = [IdleEvent]
+    typealias Result = Void
 
     var clientBug: String? = nil
     let promise: EventLoopPromise<Result>
@@ -42,37 +33,37 @@ class NoopHandler: IMAPCommandHandler, @unchecked Sendable {
         clientBug = response.clientBug
         switch response {
         case .tagged(let taggedResponse):
+            continuation?.finish()
             switch taggedResponse.state {
             case .bad(let text), .no(let text):
                 promise.fail(IMAPError.commandFailed(text.text))
             case .ok:
-                if !status.isEmpty {
-                    events.append(.status(status))
-                }
-                promise.succeed(events)
+                promise.succeed()
             }
         case .untagged(let payload):
             switch payload {
             case .conditionalState(let status):
                 switch status {
                 case .bye(let text):
-                    events.append(.bye(text.text))
+                    continuation?.yield(.bye(text.text))
+                    continuation?.finish()
+                    promise.succeed()
                 default:
                     break
                 }
             case .mailboxData(let data):
                 switch data {
                 case .exists(let count):
-                    status.messageCount = count
+                    continuation?.yield(.status(MailboxStatus(messageCount: count)))
                 case .recent(let count):
-                    status.recentCount = count
+                    continuation?.yield(.status(MailboxStatus(recentCount: count)))
                 default:
                     break
                 }
             case .messageData(let data):
                 switch data {
                 case .expunge(let sequenceNumber):
-                    events.append(.expunge(sequenceNumber))
+                    continuation?.yield(.expunge(sequenceNumber))
                 default:
                     break
                 }
@@ -89,21 +80,19 @@ class NoopHandler: IMAPCommandHandler, @unchecked Sendable {
                 components.append(component)
             case .finish:
                 guard let sequenceNumber, !components.isEmpty else { break }
-                events.append(.fetch(sequenceNumber, components))
+                continuation?.yield(.fetch(sequenceNumber, components))
                 self.sequenceNumber = nil
                 components = []
             default:
                 break
             }
         case .fatal(let text):
-            events.append(.bye(text.text))
+            continuation?.yield(.bye(text.text))
+            continuation?.finish()
+            promise.succeed()
         default:
             break
         }
         context.fireChannelRead(data)
     }
-}
-
-private extension MailboxStatus {
-    var isEmpty: Bool { messageCount == nil && recentCount == nil }
 }

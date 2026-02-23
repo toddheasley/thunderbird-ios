@@ -11,9 +11,12 @@ public class IMAPClient {
 
     public private(set) var capabilities: Set<Capability> = []
     public var isConnected: Bool { channel != nil && channel!.isActive }
+    public var isIdling: Bool { idleHandler != nil }
 
-    public func isSupported(_ capability: Capability) -> Bool {
-        capabilities.contains(capability)
+    public func isSupported(_ capability: Capability) throws {
+        guard capabilities.contains(capability) else {
+            throw IMAPError.capabilityNotSupported(capability)
+        }
     }
 
     /// Bootstrap NIO channel, connect to the configured ``Server``.
@@ -81,19 +84,27 @@ public class IMAPClient {
         return namespace
     }
 
-    public func idle() async throws {
+    /// Start idle on connected ``Server``; handle ``IdleEvent`` pushes.
+    @discardableResult public func idle() async throws -> AsyncStream<IdleEvent> {
+        try isSupported(.idle)
         logger?.info("Idle start…")
-        fatalError()
+        return try await idleStart()
     }
 
+    /// Stop idling on connected ``Server``.
     public func done() async throws {
         logger?.info("Idle done…")
-        // try await execute(command: VoidCommand(.done))
-        fatalError()
+        try await idleDone()
     }
 
+    /// Poll ``Server`` for ``IdleEvent`` when not idling.
     public func noop() async throws -> [IdleEvent] {
-        logger?.info("Idle noop…")
+        logger?.info("Noop…")
+        guard !isIdling else {
+            // NIOIMAP automatically (1) keeps idle alive and (2) streams idle events
+            // Manual `noop` polling is blocked by NIOIMAP during idle
+            throw IMAPError.commandNotSupported("Noop during idle")
+        }
         return try await execute(command: NoopCommand())
     }
 
@@ -191,7 +202,7 @@ public class IMAPClient {
     }
 
     // Run IMAP command through NIO `IMAPClientHandler` in channel and handle results
-    func execute<T: IMAPCommand>(command: T) async throws -> T.Result {
+    private func execute<T: IMAPCommand>(command: T) async throws -> T.Result {
         let logger: Logger? = logger  // Copy logger instead of capturing
         logger?.debug("Executing \(command)…")
         guard let channel, channel.isActive else {
@@ -228,18 +239,68 @@ public class IMAPClient {
         }
     }
 
-    func refreshCapabilities() async throws {
+    // Start idle through NIO `IMAPClientHandler` and stream results from special, long-running handler
+    private func idleStart() async throws -> AsyncStream<IdleEvent> {
+        let logger: Logger? = logger  // Copy logger instead of capturing
+        logger?.debug("Executing idle start…")
+        guard !isIdling else {
+            throw IMAPError.commandFailed("Idle already started")
+        }
+        guard let channel, channel.isActive else {
+            logger?.error("\(IMAPError.notConnected)")
+            throw IMAPError.notConnected
+        }
+        var continuation: AsyncStream<IdleEvent>.Continuation?
+        let idleEvents: AsyncStream<IdleEvent> = AsyncStream { continuation = $0 }
+        let promise: EventLoopPromise<Void> = channel.eventLoop.makePromise(of: Void.self)
+        let tag: String = UUID().uuidString(1)  // Hold onto specific auto-generated tag
+        idleHandler = IdleHandler(tag: tag, promise: promise, continuation: continuation)
+        let seconds: Int64 = .timeout
+        let task: Scheduled = group.next().scheduleTask(in: .seconds(seconds)) {
+            let error: IMAPError = .timedOut(seconds: seconds)
+            logger?.error("\(error)")
+            promise.fail(error)
+        }
+        defer { task.cancel() }
+        do {
+            try await channel.pipeline.addHandler(idleHandler!).get()
+            let command: TaggedCommand = TaggedCommand(tag: tag, command: .idleStart)
+            let message: IMAPClientHandler.Message = IMAPClientHandler.OutboundIn.part(.tagged(command))
+            try await channel.writeAndFlush(message).get()
+            return idleEvents
+        } catch {
+            promise.fail(error)
+            logger?.error("\(error)")
+            idleHandler = nil
+            throw IMAPError.commandFailed("Idle start failed")
+        }
+    }
+
+    private func idleDone() async throws {
+        guard let channel, channel.isActive else {
+            logger?.error("\(IMAPError.notConnected)")
+            throw IMAPError.notConnected
+        }
+        guard let idleHandler else { return }
+        try? await channel.writeAndFlush(IMAPClientHandler.OutboundIn.part(.idleDone)).get()
+        logger?.info("Idle done")
+        defer { self.idleHandler = nil }
+        try await idleHandler.promise.futureResult.get()
+    }
+
+    private func refreshCapabilities() async throws {
         logger?.info("Refreshing capabilities…")
         capabilities = Set(try await execute(command: CapabilityCommand()))
         logger?.info("Capabilities: \(self.capabilities)")
     }
 
-    func resetInactiveChannel() {
+    private func resetInactiveChannel() {
         guard let channel, !channel.isActive else { return }
         self.channel = nil
         logger?.info("Channel reset; ready to connect")
     }
 
+    private var idleHandler: IdleHandler?
     private var channel: Channel?
     private var count: Int = 0
     private let group: EventLoopGroup

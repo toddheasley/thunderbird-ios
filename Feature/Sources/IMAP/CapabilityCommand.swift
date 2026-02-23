@@ -1,8 +1,6 @@
 import NIOCore
 import NIOIMAP
 
-public typealias Capability = NIOIMAPCore.Capability
-
 // Fetch advertised server capabilities
 // https://www.iana.org/assignments/imap-capabilities/imap-capabilities.xhtml
 struct CapabilityCommand: IMAPCommand {
