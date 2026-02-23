@@ -1,0 +1,57 @@
+name: Security - CodeQL
+
+on:
+  push:
+    branches: ["main", "codeql"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "15 4 * * 4"
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-26') || 'ubuntu-latest' }}
+    permissions:
+      security-events: write
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: ruby
+            build-mode: none
+          - language: swift
+            build-mode: manual
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Xcode Select Version
+        if: matrix.language == 'swift'
+        uses: mobiledevops/xcode-select-version-action@a58204ef24b6e61857940e51c0e11b0368065b94 # v1.0.0
+        with:
+          xcode-select-version: '26.0'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Build Thunderbird app
+        if: matrix.build-mode == 'manual'
+        shell: bash
+        run: |
+          xcodebuild clean build \
+            -workspace Thunderbird.xcworkspace \
+            -scheme Thunderbird \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 17"
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
+        with:
+          category: "/language:${{matrix.language}}"
