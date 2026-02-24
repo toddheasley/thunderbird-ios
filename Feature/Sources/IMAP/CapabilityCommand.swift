@@ -1,5 +1,7 @@
 import NIOCore
-import NIOIMAP
+import NIOIMAPCore
+
+public typealias Capability = NIOIMAPCore.Capability
 
 // Fetch advertised server capabilities
 // https://www.iana.org/assignments/imap-capabilities/imap-capabilities.xhtml
