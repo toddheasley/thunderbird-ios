@@ -115,7 +115,7 @@ public class IMAPClient {
     }
 
     /// Select current working mailbox in read/write mode.
-    public func select(mailbox: Mailbox) async throws -> Mailbox.Status {
+    @discardableResult public func select(mailbox: Mailbox) async throws -> Mailbox.Status {
         logger?.info("Selecting mailbox \(mailbox.path.name)…")
         return try await execute(command: SelectCommand(mailbox.path.name))
     }
@@ -276,6 +276,7 @@ public class IMAPClient {
         }
     }
 
+    // End idle and clean up
     private func idleDone() async throws {
         guard let channel, channel.isActive else {
             logger?.error("\(IMAPError.notConnected)")
@@ -284,7 +285,10 @@ public class IMAPClient {
         guard let idleHandler else { return }
         try? await channel.writeAndFlush(IMAPClientHandler.OutboundIn.part(.idleDone)).get()
         logger?.info("Idle done")
-        defer { self.idleHandler = nil }
+        defer {
+            channel.pipeline.removeHandler(idleHandler, promise: nil)
+            self.idleHandler = nil
+        }
         try await idleHandler.promise.futureResult.get()
     }
 

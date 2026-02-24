@@ -33,6 +33,7 @@ class IdleHandler: IMAPCommandHandler, @unchecked Sendable {
         clientBug = response.clientBug
         switch response {
         case .tagged(let taggedResponse):
+            // Always finish continuation first, then fulfill promise
             continuation?.finish()
             switch taggedResponse.state {
             case .bad(let text), .no(let text):

@@ -95,6 +95,8 @@ extension [Message.Component] {
 }
 
 extension Message.Component {
+    // Shared convenience decoder/mapper
+    // Used by `FetchHandler`, `IdleHandler` and `NoopHandler`
     init?(_ attribute: MessageAttribute) {
         switch attribute {
         case .body(let structure, let hasExtensionData):
