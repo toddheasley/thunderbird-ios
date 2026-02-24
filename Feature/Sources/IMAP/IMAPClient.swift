@@ -102,7 +102,7 @@ public class IMAPClient {
     /// Fetch the current status for a mailbox.
     public func status(mailbox: Mailbox) async throws -> Mailbox.Status {
         logger?.info("Refreshing mailbox \(mailbox.path.name) status…")
-        return try await execute(command: StatusCommand(mailbox.path.name))
+        return try await execute(command: StatusCommand(mailbox.path.name, attributes: .standard + .extended(capabilities)))
     }
 
     /// Expunge messages flagged as deleted in current working mailbox.
@@ -153,6 +153,18 @@ public class IMAPClient {
         try await execute(command: VoidCommand(.close))
     }
 
+    /// Fetch messages by mailbox sequence number.
+    public func fetch(_ set: SequenceSet = .all, attributes: [FetchAttribute]) async throws -> MessageSet {
+        logger?.info("Fetching messages by mailbox sequence number…")
+        return try await execute(command: FetchCommand(set, attributes: attributes.filtered(capabilities)))
+    }
+
+    /// Fetch messages by UID.
+    public func fetch(_ set: UIDSet, attributes: [FetchAttribute]) async throws -> MessageSet {
+        logger?.info("Fetching messages by UID…")
+        return try await execute(command: UIDFetchCommand(set, attributes: attributes.filtered(capabilities)))
+    }
+
     public init(
         _ server: Server,
         logger: Logger? = Logger(subsystem: "net.thunderbird", category: "IMAP")
@@ -164,11 +176,8 @@ public class IMAPClient {
 
     // Run IMAP command through NIO `IMAPClientHandler` in channel and handle results
     func execute<T: IMAPCommand>(command: T) async throws -> T.Result {
-        let logger: Logger? = logger
+        let logger: Logger? = logger  // Copy logger instead of capturing
         logger?.debug("Executing \(command)…")
-        if !isConnected {  // Reconnect automagically
-            try await connect()
-        }
         guard let channel, channel.isActive else {
             logger?.error("\(IMAPError.notConnected)")
             throw IMAPError.notConnected

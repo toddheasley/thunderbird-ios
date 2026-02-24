@@ -6,6 +6,9 @@ public struct Server: CustomStringConvertible, Equatable, Sendable {
     public let password: String?
     public let port: Int
 
+    /// `Server` can be configured with or without basic auth credentials.
+    ///
+    /// User name and password can be provided at `login`, or another mechanism can be used to `authenticate`.
     public init(
         _ connectionSecurity: ConnectionSecurity = .tls,
         hostname: String,

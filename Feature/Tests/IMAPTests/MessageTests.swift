@@ -1,4 +1,3 @@
-import Foundation
 @testable import IMAP
 import Testing
 
@@ -6,18 +5,15 @@ struct MessageTests {
 
 }
 
-extension MessageTests {
-    struct FlagTests {
-
-        // MARK: CustomStringConvertible
-        @Test func description() {
-            #expect(Message.Flag.answered.description == "\\Answered")
-            #expect(Message.Flag.deleted.description == "\\Deleted")
-            #expect(Message.Flag.draft.description == "\\Draft")
-            #expect(Message.Flag.flagged.description == "\\Flagged")
-            #expect(Message.Flag.seen.description == "\\Seen")
-            #expect(Message.Flag.extension("\\Example").description == "\\Example")
-            #expect(Message.Flag.keyword(.junk).description == "$Junk")
-        }
+struct MessageSetTests {
+    @Test func messages() {
+        let messageSet: MessageSet = [
+            4: Message(components: [.uid(9)]),
+            1: Message(components: [.uid(1)]),
+            5: Message(components: [.uid(2)]),
+            3: Message(components: [.uid(5)]),
+            2: Message(components: [.uid(3)])
+        ]
+        #expect(messageSet.messages.compactMap { $0.components.uid } == [1, 3, 5, 9, 2])
     }
 }

@@ -1,7 +1,11 @@
 import Foundation
 
+public protocol EmailAddressProtocol: Sendable {
+    var addresses: [EmailAddress] { get }
+}
+
 /// Shared email address model suitable for IMAP, JMAP and SMTP
-public struct EmailAddress: Codable, CustomStringConvertible, Equatable, ExpressibleByStringLiteral, Identifiable, Sendable {
+public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAddressProtocol, ExpressibleByStringLiteral, Identifiable {
     public let value: String
     public let label: String?
 
@@ -15,8 +19,8 @@ public struct EmailAddress: Codable, CustomStringConvertible, Equatable, Express
 
     public init(_ value: String, label: String? = nil) {
         let label: String = label?.trimmed() ?? ""
-        self.value = value.trimmed()
         self.label = !label.isEmpty ? label : nil
+        self.value = value.trimmed()
     }
 
     // MARK: Codable
@@ -33,6 +37,9 @@ public struct EmailAddress: Codable, CustomStringConvertible, Equatable, Express
 
     // MARK: CustomStringConvertible
     public var description: String { !(label ?? "").isEmpty ? "\(label!) <\(value)>" : value }
+
+    // MARK: EmailAddressProtocol
+    public var addresses: [Self] { [self] }
 
     // MARK: Equatable
     public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -53,6 +60,24 @@ public struct EmailAddress: Codable, CustomStringConvertible, Equatable, Express
 
     // MARK: Identifiable
     public var id: String { value }
+}
+
+extension EmailAddress {
+
+    /// Shared email address group/list model suitable for IMAP and JMAP
+    public struct Group: EmailAddressProtocol {
+        public let label: String?
+        public let email: [EmailAddressProtocol]
+
+        public init(_ email: [EmailAddressProtocol], label: String? = nil) {
+            let label: String = label?.trimmed() ?? ""
+            self.label = !label.isEmpty ? label : nil
+            self.email = email
+        }
+
+        // MARK: EmailAddressProtocol
+        public var addresses: [EmailAddress] { email.flatMap { $0.addresses } }
+    }
 }
 
 private extension String {
