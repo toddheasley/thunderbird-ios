@@ -48,7 +48,7 @@ struct EmailAccountTypeSelection: View {
             )
             .toggleStyle(FullToggleStyle())
             .listRowSeparator(.hidden)
-            VStack(alignment: HorizontalAlignment.leading){
+            VStack(alignment: HorizontalAlignment.leading) {
                 Text("account_setup_tips").bold()
                 Text("account_setup_imap_tip")
                 Text("account_setup_jmap_tip")

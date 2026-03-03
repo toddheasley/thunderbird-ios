@@ -114,7 +114,7 @@ struct ManualServerSetup: View {
                         .listRowSeparator(.hidden)
                 }
             }
-            VStack(alignment: HorizontalAlignment.leading){
+            VStack(alignment: HorizontalAlignment.leading) {
                 Text("account_setup_tips").bold()
                 Text("server_setup_contact")
                 Text("server_setup_incoming_tip")
