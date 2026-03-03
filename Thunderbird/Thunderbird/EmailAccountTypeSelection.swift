@@ -49,9 +49,9 @@ struct EmailAccountTypeSelection: View {
             .toggleStyle(FullToggleStyle())
             .listRowSeparator(.hidden)
             VStack(alignment: HorizontalAlignment.leading){
-                Text("Tips").bold()
-                Text("* IMAP keeps email synced across devices")
-                Text("* JMAP also syncs mail (and sometimes contacts and calendars) but needs an app that supports it")
+                Text("account_setup_tips").bold()
+                Text("account_setup_imap_tip")
+                Text("account_setup_jmap_tip")
             }
             .font(.caption)
             .padding()

@@ -115,10 +115,10 @@ struct ManualServerSetup: View {
                 }
             }
             VStack(alignment: HorizontalAlignment.leading){
-                Text("Tips").bold()
-                Text("* Contact your email provider for server settings")
-                Text("* Port 443 (JMAP) and Port 993 (IMAP) are common secure ports")
-                Text("* Port 465 and 587 (SMTP) are common secure ports")
+                Text("account_setup_tips").bold()
+                Text("server_setup_contact")
+                Text("server_setup_incoming_tip")
+                Text("server_setup_outgoing_tip")
             }
             .font(.caption)
             .padding()
