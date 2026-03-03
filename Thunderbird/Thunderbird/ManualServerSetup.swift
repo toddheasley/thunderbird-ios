@@ -114,6 +114,19 @@ struct ManualServerSetup: View {
                         .listRowSeparator(.hidden)
                 }
             }
+            VStack(alignment: HorizontalAlignment.leading){
+                Text("Tips").bold()
+                Text("* Contact your email provider for server settings")
+                Text("* Port 443 (JMAP) and Port 993 (IMAP) are common secure ports")
+                Text("* Port 465 and 587 (SMTP) are common secure ports")
+            }
+            .font(.caption)
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.buttonFillOn)
+                    .stroke(.gray, lineWidth: 1)
+            }
         }
         .safeAreaInset(edge: .bottom) {
             Button(
