@@ -35,6 +35,13 @@
 "account_server_settings_authentication_password_encrypted" = "Encrypted Password";
 "account_server_settings_authentication_client_oauth" = "OAuth 2.0";
 "account_server_settings_authentication_none" = "None";
+"account_setup_tips" = "Tips";
+"account_setup_imap_tip" = "* IMAP keeps email synced across devices";
+"account_setup_jmap_tip" = "* JMAP also syncs mail (and sometimes contacts and calendars) but needs an app that supports it";
+"server_setup_contact" = "* Contact your email provider for server settings";
+"server_setup_incoming_tip" = "* Port 443 (JMAP) and Port 993 (IMAP) are common secure ports";
+"server_setup_outgoing_tip" = "* Port 465 and 587 (SMTP) are common secure ports";
+
 
 //In development strings
 "feature_not_implemented" = "This feature has not been implemented yet";

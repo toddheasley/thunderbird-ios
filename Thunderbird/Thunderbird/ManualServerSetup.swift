@@ -114,6 +114,19 @@ struct ManualServerSetup: View {
                         .listRowSeparator(.hidden)
                 }
             }
+            VStack(alignment: HorizontalAlignment.leading) {
+                Text("account_setup_tips").bold()
+                Text("server_setup_contact")
+                Text("server_setup_incoming_tip")
+                Text("server_setup_outgoing_tip")
+            }
+            .font(.caption)
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.buttonFillOn)
+                    .stroke(.gray, lineWidth: 1)
+            }
         }
         .safeAreaInset(edge: .bottom) {
             Button(
