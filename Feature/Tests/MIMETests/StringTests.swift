@@ -64,8 +64,11 @@ struct StringTests {
     }
 
     @Test func headerDecoded() throws {
+        let subject: String = "=?UTF-8?Q?=F0=9F=91=8D=F0=9F=A4=96_S=C3=A4mpl=C3=A9_=C3=A6m?= =?UTF-8?Q?@il_$\\ubject=F0=9F=93=A6?="
+        #expect(try subject.headerDecoded() == "👍🤖 Sämplé æm@il $\\ubject📦")
         #expect(try "=?utf-8?B?4p2k77iP4p2k77iP4p2k77iPw6nDhvCfpJYiXOKdpO+4j+KdpO+4jw==?=".headerDecoded() == "❤️❤️❤️éÆ🤖\"\\❤️❤️")
         #expect(try "=?utf-8?Q?=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F=C3=A9=C3=86=F0=9F=A4=96\"\\=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F?=".headerDecoded() == "❤️❤️❤️éÆ🤖\"\\❤️❤️")
+        #expect(try "Your app password was used to sign in to a third-party app".headerDecoded() == "Your app password was used to sign in to a third-party app")
         #expect(try encodedQuotedPrintable.headerDecoded() == "❤️❤️❤️éÆ🤖\"\\❤️❤️")
         #expect(throws: MIMEError.self) {
             try "=?utf-8?B?4p2k77iP4p2k77iP4p2k77iPw6nDhvCfpJYi+4j+KdpO+4jw==?=".headerDecoded()
@@ -79,20 +82,14 @@ struct StringTests {
     }
 
     @Test func quotedPrintableInit() throws {
+        print(try! String(quotedPrintable: .quotedPrintable, encoding: .ascii) == decodedQuotedPrintable)
         #expect(try String(quotedPrintable: .quotedPrintable) == decodedQuotedPrintable)
-        #expect(throws: MIMEError.self) {
-            try String(quotedPrintable: .quotedPrintable, encoding: .ascii)
-        }
     }
 
     @Test func decodingQuotedPrintable() throws {
         let quotedPrintable: String = String(data: .quotedPrintable, encoding: .ascii)!
-            .replacingOccurrences(of: "=\r\n", with: "")
-            .replacingOccurrences(of: "=\n", with: "")
+        #expect(try quotedPrintable.decodingQuotedPrintable(to: .ascii) == decodedQuotedPrintable)
         #expect(try quotedPrintable.decodingQuotedPrintable() == decodedQuotedPrintable)
-        #expect(throws: MIMEError.self) {
-            try quotedPrintable.decodingQuotedPrintable(to: .ascii)
-        }
     }
 
     @Test func decodingBase64() throws {

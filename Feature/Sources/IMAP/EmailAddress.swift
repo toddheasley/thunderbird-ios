@@ -36,8 +36,7 @@ extension NIOIMAPCore.EmailAddress: @retroactive CustomStringConvertible {
             return ""
         }
         let description: String = "\(mailbox)@\(host)"
-        if let personName,
-            let personName: String = try? personName.readableBytesView.description.headerDecoded(),
+        if let personName: String = try? personName?.readableBytesView.description.headerDecoded(),
             !personName.isEmpty
         {
             return "\(personName) <\(description)>"
