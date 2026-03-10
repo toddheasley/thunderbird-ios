@@ -10,9 +10,11 @@ struct BodyTests {
                 "Content-Transfer-Encoding": "8bit",
                 "Content-Type": "multipart/alternative; boundary=\"_----------=_17617196041979919223967\""
             ])
+        print(try Body(.icloud).headers)
         #expect(
             try Body(.icloud).headers == [
                 "MIME-Version": "1.0",
+                "Content-Transfer-Encoding": "quoted-printable",
                 "Content-Type": "multipart/alternative; boundary=\"----=_Part_15950895_843396275.1764942606546\""
             ])
         #expect(
@@ -35,7 +37,7 @@ struct BodyTests {
         #expect(fastmail.parts.count == 2)
         let icloud: Body = try Body(.icloud)
         #expect(icloud.contentType == .multipart(.alternative, try! Boundary("----=_Part_15950895_843396275.1764942606546")))
-        #expect(icloud.contentTransferEncoding == nil)
+        #expect(icloud.contentTransferEncoding == .quotedPrintable)
         #expect(icloud.parts.first?.contentType == .text(.html, .iso8859))
         #expect(icloud.parts.count == 1)
         let outlook: Body = try Body(.outlook)
@@ -52,8 +54,9 @@ struct BodyTests {
 
     // MARK: RawRepresentable
     @Test func rawValue() throws {
+        print(try Body(.icloud).rawValue.count)
         #expect(try Body(.fastmail).rawValue.count == 20530)
-        #expect(try Body(.icloud).rawValue.count == 8807)
+        #expect(try Body(.icloud).rawValue.count == 8852)
         #expect(try Body(.outlook).rawValue.count == 69560)
         #expect(try Body(.posteo).rawValue.count == 89894)
     }

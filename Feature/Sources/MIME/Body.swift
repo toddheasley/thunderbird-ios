@@ -3,7 +3,7 @@ import Foundation
 /// Multipart body element described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.6)
 public struct Body: CustomStringConvertible, RawRepresentable, Sendable {
     public let contentTransferEncoding: ContentTransferEncoding?
-    public let contentType: ContentType  // Body encoding is always ASCII
+    public let contentType: ContentType
     public let parts: [Part]
 
     public var headers: [String: String] {
@@ -22,9 +22,14 @@ public struct Body: CustomStringConvertible, RawRepresentable, Sendable {
         guard !parts.isEmpty else {
             throw MIMEError.dataNotFound
         }
-        if parts.count == 1, parts[0].contentType == .text(.plain, .ascii) {
-            contentTransferEncoding = parts[0].contentTransferEncoding
-            self.contentType = .text(.plain, .ascii)
+        if parts.count == 1 {
+            switch parts[0].contentType {
+            case .text:
+                contentTransferEncoding = parts[0].contentTransferEncoding
+                self.contentType = contentType
+            default:
+                throw MIMEError.contentTypeNotPossible(contentType)
+            }
         } else if contentType.isMultipart {
             contentTransferEncoding = encoding
             self.contentType = contentType
@@ -42,10 +47,7 @@ public struct Body: CustomStringConvertible, RawRepresentable, Sendable {
             let parts: [Part] = try part.parts
             try self.init(parts: parts, contentType: part.contentType, encoding: part.contentTransferEncoding)
         case .text(let subtype, let charset):
-            guard subtype == .plain, charset == .ascii else {
-                throw MIMEError.contentTypeNotPossible(part.contentType)
-            }
-            try self.init(parts: [part], contentType: .text(.plain, .ascii))
+            try self.init(parts: [part], contentType: .text(subtype, charset))
         default:
             throw MIMEError.contentTypeNotPossible(part.contentType)
         }
