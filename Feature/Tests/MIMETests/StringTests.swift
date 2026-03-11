@@ -82,7 +82,7 @@ struct StringTests {
     }
 
     @Test func quotedPrintableInit() throws {
-        print(try! String(quotedPrintable: .quotedPrintable, encoding: .ascii) == decodedQuotedPrintable)
+        #expect(try! String(quotedPrintable: .quotedPrintable, encoding: .ascii) == decodedQuotedPrintable)
         #expect(try String(quotedPrintable: .quotedPrintable) == decodedQuotedPrintable)
     }
 

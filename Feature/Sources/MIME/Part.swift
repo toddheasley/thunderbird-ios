@@ -59,6 +59,8 @@ public struct Part: CustomStringConvertible, RawRepresentable, Sendable {
         let description: String =
             description
             .replacingOccurrences(of: crlf, with: "\n")
+            .replacingOccurrences(of: "\n b", with: " b")  // Handle soft wrap caused by long data boundary
+            .replacingOccurrences(of: "\n <", with: " <")  // Handle soft wrap caused by long email address label
             .replacingOccurrences(of: "\n\t", with: "")
         let components: [String] = description.components(separatedBy: "\n")
         guard let index: Int = components.firstIndex(of: "") else {
