@@ -31,8 +31,15 @@ struct ReadEmailView: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading, spacing: 20) {
-                Text(subject)
-                    .font(.title3)
+                HStack {
+                    Text(subject)
+                        .font(.title3)
+                    Spacer()
+                    if attachments != nil {
+                        Image(systemName: "paperclip").font(.caption)
+                    }
+                }
+
                 ScrollView {
                     VStack(alignment: .leading) {
                         SenderView(sender, sentDate, recipients)
