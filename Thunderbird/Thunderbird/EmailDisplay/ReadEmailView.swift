@@ -457,7 +457,8 @@ struct SenderView: View {
         unread: false,
         newEmail: false,
         attachments: [Data(), Data()],
-        isThread: false
+        isThread: false,
+        pinned: true
     )
     ReadEmailView(
         tempEmail
