@@ -7,10 +7,15 @@ on:
   pull_request_target:
     types: [review_requested]
 
+permissions:
+  contents: read
+
 jobs:
   assign-reviewer:
     runs-on: ubuntu-latest
     environment: botmobile
+    permissions:
+      pull-requests: write
     steps:
       - name: App token generate
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf  # v2.2.1

@@ -3,6 +3,9 @@ name: Beta Pipeline
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   call-shippable-builds:
     uses: thunderbird/thunderbird-ios/.github/workflows/shippable-builds.yml@beta
