@@ -3,10 +3,6 @@ import MIME
 import NIOIMAPCore
 
 public typealias MessageSet = [SequenceNumber: Message]
-public typealias SequenceNumber = NIOIMAPCore.SequenceNumber
-public typealias SequenceSet = NIOIMAPCore.MessageIdentifierSetNonEmpty<SequenceNumber>
-public typealias UID = NIOIMAPCore.UID
-public typealias UIDSet = NIOIMAPCore.UIDSetNonEmpty
 
 public struct Message: Sendable {
     public fileprivate(set) var body: Body?
@@ -182,18 +178,6 @@ extension MessageSet {
             messages.append(self[key]!)
         }
         return messages
-    }
-}
-
-extension SequenceSet {
-    init(_ sequenceNumber: SequenceNumber) {
-        self.init(range: MessageIdentifierRange(sequenceNumber))
-    }
-}
-
-extension UIDSet {
-    init(_ uid: UID) {
-        self.init(range: MessageIdentifierRange(uid))
     }
 }
 

@@ -20,33 +20,13 @@ struct IMAPClientTests {
         #expect(status.recentCount != nil && status.recentCount! >= 0)
         #expect(status.unseenCount != nil && status.unseenCount! >= 0)
 
-        // Fetch all inbox messages w/ all attributes
-        let messages: [SequenceNumber: Message] = try await client.fetch(attributes: [
-            .bodySection(peek: true, .header, nil),
-            .bodyStructure(extensions: true),
-            .emailID,
-            .envelope,
-            .flags,
-            .gmailLabels,
-            .gmailMessageID,
-            .gmailThreadID,
-            .internalDate,
-            .preview(lazy: false),
-            .threadID,
-            .uid
-        ])
+        let messages: MessageSet = try await client.fetch()
         #expect(messages.count > 0)
-        for sequenceNumber in messages.keys.sorted().reversed() {
-            let message: Message = messages[sequenceNumber]!
-            for component in message.components {
-                switch component {
-                case .envelope(let envelope):
-                    #expect(!envelope.from.isEmpty == true)
-                    #expect(!envelope.to.isEmpty == true)
-                default: break
-                }
-            }
+        guard let number: SequenceNumber = messages.keys.sorted().reversed().first else {
+            throw IMAPError.unexpectedResponse("Message not found")
         }
+        let message: Message = try await client.fetch(number)
+        #expect(message.body != nil)
 
         let mailbox: Mailbox.Name = Mailbox.Name(UUID().uuidString(2, separator: " "))  // Unique mailbox name w/ space
         let renamed: Mailbox.Name = Mailbox.Name(UUID().uuidString(1))
@@ -62,7 +42,10 @@ struct IMAPClientTests {
             try await Task.sleep(for: .seconds(5.0))  // Idle
             try await client.done()
         } catch {
-            print(error)
+            switch error {
+            case IMAPError.capabilityNotSupported: break
+            default: throw error
+            }
         }
 
         try await client.logout()
