@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 jobs:
   build:
@@ -21,7 +20,6 @@ jobs:
     environment: botmobile
     permissions:
       issues: write
-      pull-requests: write
     steps:
       - name: App token generate
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf  # v2.2.1
