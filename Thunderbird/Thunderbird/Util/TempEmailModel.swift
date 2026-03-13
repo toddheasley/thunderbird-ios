@@ -23,6 +23,7 @@ class TempEmail {
     var unread: Bool
     var newEmail: Bool
     var isThread: Bool
+    var pinned: Bool
 
     init(
         sender: String,
@@ -33,7 +34,8 @@ class TempEmail {
         unread: Bool,
         newEmail: Bool,
         attachments: [Data]!,
-        isThread: Bool
+        isThread: Bool,
+        pinned: Bool
     ) {
         self.senderText = sender
         self.headerText = headerText
@@ -45,6 +47,7 @@ class TempEmail {
         self.isThread = isThread
         self.uuid = UUID()
         self.recipients = recipients
+        self.pinned = pinned
     }
 
     @MainActor static let sampleData = [
@@ -57,7 +60,8 @@ class TempEmail {
             unread: true,
             newEmail: true,
             attachments: nil,
-            isThread: false
+            isThread: false,
+            pinned: false
         ),
         TempEmail(
             sender: "Sender1",
@@ -68,7 +72,8 @@ class TempEmail {
             unread: true,
             newEmail: false,
             attachments: nil,
-            isThread: false
+            isThread: false,
+            pinned: true
         ),
         TempEmail(
             sender: "Sender2",
@@ -79,7 +84,8 @@ class TempEmail {
             unread: false,
             newEmail: false,
             attachments: nil,
-            isThread: true
+            isThread: true,
+            pinned: false
         ),
         TempEmail(
             sender: "Sender5",
@@ -90,7 +96,8 @@ class TempEmail {
             unread: true,
             newEmail: false,
             attachments: nil,
-            isThread: true
+            isThread: true,
+            pinned: false
         ),
         TempEmail(
             sender: "Sender5",
@@ -101,7 +108,8 @@ class TempEmail {
             unread: false,
             newEmail: false,
             attachments: [Data()],
-            isThread: false
+            isThread: false,
+            pinned: false
         )
     ]
 
