@@ -4,6 +4,7 @@ import NIOIMAPCore
 /// ``IMAPClient`` throws `IMAPError`.
 public enum IMAPError: Error, CustomStringConvertible, Equatable {
     case alreadyConnected
+    case capabilityNotSupported(_ description: String)
     case commandFailed(_ description: String)
     case commandNotSupported(_ description: String)
     case notConnected
@@ -14,6 +15,10 @@ public enum IMAPError: Error, CustomStringConvertible, Equatable {
 
     init(_ error: Error) {
         self = error as? Self ?? .underlying(error)
+    }
+
+    static func capabilityNotSupported(_ capability: Capability) -> Self {
+        .capabilityNotSupported("\(capability)")
     }
 
     static func commandFailed(_ command: any IMAPCommand) -> Self {
@@ -32,8 +37,8 @@ public enum IMAPError: Error, CustomStringConvertible, Equatable {
     public var description: String {
         switch self {
         case .alreadyConnected: "Already connected"
+        case .capabilityNotSupported(let description), .commandNotSupported(let description): "\(description.capitalized(.sentence)) not supported"
         case .commandFailed(let description): "\(description.capitalized(.sentence))"
-        case .commandNotSupported(let description): "\(description.capitalized(.sentence)) not supported"
         case .notConnected: "Not connected"
         case .serverDisconnected: "Server disconnected"
         case .timedOut(let seconds): "Timed out after \(seconds) \(seconds == 1 ? "second" : "seconds")"
