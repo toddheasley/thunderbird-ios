@@ -93,3 +93,49 @@ extension [Message.Component] {
         }.first
     }
 }
+
+extension Message.Component {
+    // Shared convenience decoder/mapper
+    // Used by `FetchHandler`, `IdleHandler` and `NoopHandler`
+    init?(_ attribute: MessageAttribute) {
+        switch attribute {
+        case .body(let structure, let hasExtensionData):
+            self = .bodyStructure(structure, hasExtensionData)
+        case .emailID(let emailID):
+            self = .emailID(String(emailID))
+        case .envelope(let envelope):
+            self = .envelope(Envelope(envelope))
+        case .flags(let flags):
+            self = .flags(Set(flags))
+        case .gmailLabels(let labels):
+            self = .gmailLabels(labels)
+        case .gmailMessageID(let id):
+            self = .gmailMessageID(id)
+        case .gmailThreadID(let id):
+            self = .gmailThreadID(id)
+        case .internalDate(let serverMessageDate):
+            guard let date: Date = try? Date(serverMessageDate: serverMessageDate) else {
+                return nil
+            }
+            self = .internalDate(date)
+        case .threadID(let threadID):
+            guard let threadID: String = String(threadID: threadID) else {
+                return nil
+            }
+            self = .threadID(threadID)
+        case .uid(let uid):
+            self = .uid(uid)
+        default:
+            return nil
+        }
+    }
+}
+
+private extension String {
+    init?(threadID: ThreadID?) {
+        guard let threadID else {
+            return nil
+        }
+        self = Self(threadID)
+    }
+}
