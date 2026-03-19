@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct EmailCellView: View {
+    @Environment(\.editMode) private var editMode
+    let email: TempEmail
     let senderText: String
     let headerText: String
     let bodyText: String
@@ -30,6 +32,7 @@ struct EmailCellView: View {
         self.hasAttachment = email.attachments != nil
         self.isThread = email.isThread
         self.pinned = email.pinned
+        self.email = email
     }
 
     //Doesn't display times properly yes
@@ -47,64 +50,70 @@ struct EmailCellView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                if pinned {
-                    Image("icon.pin")
-                        .font(.system(size: 8))
-                }
-                Text(senderText)
-                    .lineLimit(1)
-                    .font(.headline)
-                    .fontWeight(unread ? .semibold : .regular)
-                Spacer()
-                Text(dateFormatter(date: dateSent))
-                    .lineLimit(1)
-                    .font(.footnote)
-                    .truncationMode(.tail)
-                    .foregroundColor(.muted)
-            }.padding(.leading, pinned ? 0 : 20)
-            HStack {
-                if newEmail {
-                    Image(systemName: "circle")
-                        .foregroundStyle(.accent)
-                        .font(.system(size: 8))
-                } else if unread {
-                    Image(systemName: "circle.fill")
-                        .foregroundStyle(.accent)
-                        .font(.system(size: 8))
-                }
-                Text(headerText)
-                    .lineLimit(1)
-                    .font(.subheadline)
-                    .fontWeight(unread ? .semibold : .regular)
-                Spacer()
-                if hasAttachment {
-                    Image(systemName: "paperclip")
+        return NavigationLink(
+            destination: ReadEmailView(
+                email
+            )
+        ) {
+            VStack(alignment: .leading) {
+                HStack {
+                    if pinned {
+                        Image("icon.pin")
+                            .font(.system(size: 8))
+                    }
+                    Text(senderText)
+                        .lineLimit(1)
+                        .font(.headline)
+                        .fontWeight(unread ? .semibold : .regular)
+                    Spacer()
+                    Text(dateFormatter(date: dateSent))
+                        .lineLimit(1)
+                        .font(.footnote)
+                        .truncationMode(.tail)
                         .foregroundColor(.muted)
-                }
-                if isThread {
-                    Text("99+")
-                        .font(.caption2)
-                        .padding(.horizontal, 5)
-                        .foregroundColor(.muted)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(lineWidth: 1)
-                                .foregroundColor(.muted)
-                        )
+                }.padding(.leading, pinned ? 0 : 20)
+                HStack {
+                    if newEmail {
+                        Image(systemName: "circle")
+                            .foregroundStyle(.accent)
+                            .font(.system(size: 8))
+                    } else if unread {
+                        Image(systemName: "circle.fill")
+                            .foregroundStyle(.accent)
+                            .font(.system(size: 8))
+                    }
+                    Text(headerText)
+                        .lineLimit(1)
+                        .font(.subheadline)
+                        .fontWeight(unread ? .semibold : .regular)
+                    Spacer()
+                    if hasAttachment {
+                        Image(systemName: "paperclip")
+                            .foregroundColor(.muted)
+                    }
+                    if isThread {
+                        Text("99+")
+                            .font(.caption2)
+                            .padding(.horizontal, 5)
+                            .foregroundColor(.muted)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .stroke(lineWidth: 1)
+                                    .foregroundColor(.muted)
+                            )
+
+                    }
 
                 }
+                .padding(.leading, newEmail || unread ? 0 : 20)
+                Text(bodyText)
+                    .lineLimit(1)
+                    .foregroundColor(.muted)
+                    .font(.footnote)
+                    .padding(.leading, 20)
 
             }
-            .padding(.leading, newEmail || unread ? 0 : 20)
-            Text(bodyText)
-                .lineLimit(1)
-                .foregroundColor(.muted)
-                .font(.footnote)
-                .padding(.leading, 20)
-
-        }
+        }.navigationLinkIndicatorVisibility(.hidden)
     }
 
 }

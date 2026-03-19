@@ -12,6 +12,8 @@ struct EmailListView: View {
     @Environment(Accounts.self) private var accounts: Accounts
     @Environment(\.openURL) private var openURL
     let tempEmails = TempEmail.sampleData
+    @State var editMode: EditMode = .inactive
+    @State private var selections = Set<String>()
 
     //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
@@ -43,7 +45,7 @@ struct EmailListView: View {
                         Text("new_messages_will_appear")
                             .padding(.bottom, 10)
                         Button {
-
+                            //Do Nothing
                         } label: {
                             Text("add_another_account")
                         }.buttonBorderShape(.capsule)
@@ -52,22 +54,17 @@ struct EmailListView: View {
                         Spacer()
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(tempEmails) { email in
+                    List(tempEmails, id: \.uuid, selection: $selections) { email in
                         EmailCellView(email: email)
                             .listRowSeparator(.hidden)
-                            .background {
-                                NavigationLink(value: email) {
-                                    EmptyView()
-                                }.opacity(0)
-                            }
-                    }.listStyle(.plain)
-                        .navigationDestination(for: TempEmail.self) { tempEmail in
-                            //Eventually will pass the email object
-                            ReadEmailView(
-                                tempEmail
-                            )
-                        }
-                        .scrollContentBackground(.hidden)
+                    }
+                    .listStyle(.plain)
+                    #if os(iOS)
+                    .toolbar {
+                        EditButton()
+                    }
+                    #endif
+                    .scrollContentBackground(.hidden)
                 }
                 Button {
                     // Action
@@ -82,6 +79,7 @@ struct EmailListView: View {
                 }
                 .background(.clear)
                 .padding()
+                .disabled(true)
             }
             .navigationTitle("inbox_header")
             .toolbar {
@@ -108,6 +106,16 @@ struct EmailListView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Button(
+                            "Select",
+                            action: {
+                                editMode = .active
+                            })
+                        Button(
+                            "Mark all read",
+                            action: {
+
+                            })
                         Button(
                             "account_sign_out_button",
                             action: {
