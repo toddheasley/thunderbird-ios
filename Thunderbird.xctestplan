@@ -35,7 +35,7 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
+        "containerPath" : "container:..\/Core",
         "identifier" : "AccountTests",
         "name" : "AccountTests"
       }
@@ -55,21 +55,21 @@
         ]
       },
       "target" : {
-        "containerPath" : "container:..\/Feature",
+        "containerPath" : "container:..\/Core",
         "identifier" : "AutoconfigurationTests",
         "name" : "AutoconfigurationTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
+        "containerPath" : "container:..\/Core",
         "identifier" : "EmailAddressTests",
         "name" : "EmailAddressTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
+        "containerPath" : "container:..\/Core",
         "identifier" : "IMAPTests",
         "name" : "IMAPTests"
       }
@@ -83,21 +83,21 @@
         ]
       },
       "target" : {
-        "containerPath" : "container:..\/Feature",
+        "containerPath" : "container:..\/Core",
         "identifier" : "JMAPTests",
         "name" : "JMAPTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
+        "containerPath" : "container:..\/Core",
         "identifier" : "MIMETests",
         "name" : "MIMETests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Feature",
+        "containerPath" : "container:..\/Core",
         "identifier" : "SMTPTests",
         "name" : "SMTPTests"
       }
