@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1560FEE22DDF60C100F6295C /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE12DDF60C100F6295C /* Core */; };
 		1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE72DDF611F00F6295C /* BoltUI */; };
 		158C47212E4376FA0035F732 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 158C47202E4376FA0035F732 /* Account */; };
 		158C47252E4376FA0035F732 /* JMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 158C47242E4376FA0035F732 /* JMAP */; };
@@ -75,7 +74,6 @@
 				158C47212E4376FA0035F732 /* Account in Frameworks */,
 				15B58B2D2EC374DF0061A707 /* SMTP in Frameworks */,
 				15E360BE2E71C1D300B31753 /* Autoconfiguration in Frameworks */,
-				1560FEE22DDF60C100F6295C /* Core in Frameworks */,
 				1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */,
 				15B58B2B2EC374DF0061A707 /* IMAP in Frameworks */,
 			);
@@ -137,7 +135,6 @@
 			);
 			name = Thunderbird;
 			packageProductDependencies = (
-				1560FEE12DDF60C100F6295C /* Core */,
 				1560FEE72DDF611F00F6295C /* BoltUI */,
 				158C47202E4376FA0035F732 /* Account */,
 				158C47242E4376FA0035F732 /* JMAP */,
@@ -269,7 +266,6 @@
 			mainGroup = 1521D80D2D9C4D6200C4DFDF;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				1560FEE02DDF60C100F6295C /* XCLocalSwiftPackageReference "../Core" */,
 				1560FEE32DDF60FA00F6295C /* XCLocalSwiftPackageReference "../Feature" */,
 				1560FEE62DDF611F00F6295C /* XCLocalSwiftPackageReference "../Bolt" */,
 			);
@@ -454,6 +450,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Thunderbird/Thunderbird.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -622,10 +619,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		1560FEE02DDF60C100F6295C /* XCLocalSwiftPackageReference "../Core" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Core;
-		};
 		1560FEE32DDF60FA00F6295C /* XCLocalSwiftPackageReference "../Feature" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Feature;
@@ -637,10 +630,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1560FEE12DDF60C100F6295C /* Core */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Core;
-		};
 		1560FEE72DDF611F00F6295C /* BoltUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BoltUI;

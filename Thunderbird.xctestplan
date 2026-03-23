@@ -35,13 +35,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Core",
-        "identifier" : "LogTests",
-        "name" : "LogTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/Feature",
         "identifier" : "AccountTests",
         "name" : "AccountTests"
