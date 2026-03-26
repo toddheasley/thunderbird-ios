@@ -17,6 +17,7 @@ struct EmailCellView: View {
     // For alignment, bool check likely not final
     let unread: Bool
     let newEmail: Bool
+    let pinned: Bool
     let hasAttachment: Bool
     let isThread: Bool
 
@@ -29,70 +30,68 @@ struct EmailCellView: View {
         self.newEmail = email.newEmail
         self.hasAttachment = email.attachments != nil
         self.isThread = email.isThread
+        self.pinned = email.pinned
     }
 
     var body: some View {
-        HStack {
-            if newEmail {
-                Image(systemName: "circle")
-                    .foregroundStyle(.accent)
-                    .font(.system(size: 8))
-            } else if unread {
-                Image(systemName: "circle.fill")
-                    .foregroundStyle(.accent)
-                    .font(.system(size: 8))
-            } else {
-                Spacer(minLength: 20)
-            }
-            VStack(alignment: .leading) {
-                HStack {
-                    Text(senderText)
-                        .lineLimit(1)
-                        .font(.headline)
-                        .fontWeight(unread ? .semibold : .regular)
-                    Spacer()
-                    Text(
-                        SmartDateFormatter()
-                            .dateFormatter(date: dateSent, isSmartDate: !flags.flagForKey(key: Flag.fullDate.rawValue))
-                    )
-                    .lineLimit(1)
-                    .font(.footnote)
-                    .truncationMode(.tail)
-                    .foregroundColor(.muted)
+        VStack(alignment: .leading) {
+            HStack {
+                if pinned {
+                    Image("icon.pin")
+                        .font(.system(size: 8))
                 }
-                HStack {
-                    Text(headerText)
-                        .lineLimit(1)
-                        .font(.subheadline)
-                        .fontWeight(unread ? .semibold : .regular)
-                    Spacer()
-                    if hasAttachment {
-                        Image(systemName: "paperclip")
-                            .foregroundColor(.muted)
-                    }
-                    if isThread {
-                        Text("99+")
-                            .font(.caption2)
-                            .padding(.horizontal, 5)
-                            .foregroundColor(.muted)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(lineWidth: 1)
-                                    .foregroundColor(.muted)
-                            )
-
-                    }
+                Text(senderText)
+                    .lineLimit(1)
+                    .font(.headline)
+                    .fontWeight(unread ? .semibold : .regular)
+                Spacer()
+                Text(SmartDateFormatter()
+                    .dateFormatter(date: dateSent, isSmartDate: !flags.flagForKey(key: Flag.fullDate.rawValue))
+)
+            }.padding(.leading, pinned ? 0 : 20)
+            HStack {
+                if newEmail {
+                    Image(systemName: "circle")
+                        .foregroundStyle(.accent)
+                        .font(.system(size: 8))
+                } else if unread {
+                    Image(systemName: "circle.fill")
+                        .foregroundStyle(.accent)
+                        .font(.system(size: 8))
+                }
+                Text(headerText)
+                    .lineLimit(1)
+                    .font(.subheadline)
+                    .fontWeight(unread ? .semibold : .regular)
+                Spacer()
+                if hasAttachment {
+                    Image(systemName: "paperclip")
+                        .foregroundColor(.muted)
+                }
+                if isThread {
+                    Text("99+")
+                        .font(.caption2)
+                        .padding(.horizontal, 5)
+                        .foregroundColor(.muted)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(lineWidth: 1)
+                                .foregroundColor(.muted)
+                        )
 
                 }
 
-                Text(bodyText)
-                    .lineLimit(1)
-                    .foregroundColor(.muted)
-                    .font(.footnote)
             }
+            .padding(.leading, newEmail || unread ? 0 : 20)
+            Text(bodyText)
+                .lineLimit(1)
+                .foregroundColor(.muted)
+                .font(.footnote)
+                .padding(.leading, 20)
+
         }
-
     }
+
 }
 
 #Preview("Email Cell") {
@@ -105,7 +104,8 @@ struct EmailCellView: View {
         unread: true,
         newEmail: false,
         attachments: nil,
-        isThread: true
+        isThread: true,
+        pinned: true
     )
     EmailCellView(email: tempEmail)
 

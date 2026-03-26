@@ -31,6 +31,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build_and_deploy_ios:
     if: github.repository == 'thunderbird/thunderbird-ios'
@@ -47,7 +50,7 @@ jobs:
           xcode-select-version: '26.0'
 
       - name: Setup Ruby and Fastlane
-        uses: ruby/setup-ruby@09a7688d3b55cf0e976497ff046b70949eeaccfd # v1.288.0
+        uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1.295.0
         with:
           ruby-version: '3.0'
           bundler-cache: true
@@ -168,7 +171,7 @@ jobs:
 
       - name: Upload build artifacts (if build fails)
         if: failure()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ios-build-logs-${{ github.run_id }}
           path: |

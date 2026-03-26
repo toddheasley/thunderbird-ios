@@ -15,7 +15,7 @@ protocol IMAPCommand: CustomStringConvertible, Equatable where Result: Sendable 
 extension IMAPCommand {
 
     // MARK: IMAPCommand
-    var timeout: Int64 { 30 }  // Practical default
+    var timeout: Int64 { .timeout }
     var description: String { "\(name) command" }
 }
 
@@ -71,6 +71,10 @@ extension IMAPCommandHandler where InboundIn == Response, Result == Void {
         context.pipeline.removeHandler(self, promise: nil)
         context.fireChannelRead(data)
     }
+}
+
+extension Int64 {
+    static let timeout: Self = 30  // Practical default
 }
 
 // IMAP [CLIENTBUG] is an error code mail servers include in responses to
