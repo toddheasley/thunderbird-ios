@@ -22,26 +22,26 @@ struct FeatureFlagTests {
     @MainActor @Test func flagForKeyTest() {
         FeatureFlags.resetFeatureFlags(distribution: .current)
         let flags: FeatureFlags = FeatureFlags(distribution: .current)
-        #expect(flags.flagForKey(key: .featureX) == false)  // Expected default
-        flags.setFlagForKey(key: .featureX, val: true)
-        #expect(flags.flagForKey(key: .featureX) == true)
+        #expect(flags.flagForKey(key: Flag.featureX.rawValue) == false)  // Expected default
+        flags.setFlagForKey(key: Flag.featureX.rawValue, val: true)
+        #expect(flags.flagForKey(key: Flag.featureX.rawValue) == true)
         FeatureFlags.resetFeatureFlags()
     }
 
     @MainActor @Test func setFlagForKeyTest() {
         FeatureFlags.resetFeatureFlags(distribution: .current)
         let flags: FeatureFlags = FeatureFlags(distribution: .current)
-        #expect(flags.flagForKey(key: .featureX) == false)  // Expected default
-        #expect(flags.flagForKey(key: .featureY) == false)  // Expected default
-        flags.setFlagForKey(key: .featureX, val: true)
-        #expect(flags.flagForKey(key: .featureX) == true)
-        #expect(flags.flagForKey(key: .featureY) == false)
-        flags.setFlagForKey(key: .featureY, val: true)
-        #expect(flags.flagForKey(key: .featureX) == true)
-        #expect(flags.flagForKey(key: .featureY) == true)
-        flags.setFlagForKey(key: .featureX, val: false)
-        #expect(flags.flagForKey(key: .featureX) == false)
-        #expect(flags.flagForKey(key: .featureY) == true)
+        #expect(flags.flagForKey(key: Flag.featureX.rawValue) == false)  // Expected default
+        #expect(flags.flagForKey(key: Flag.featureY.rawValue) == false)  // Expected default
+        flags.setFlagForKey(key: Flag.featureX.rawValue, val: true)
+        #expect(flags.flagForKey(key: Flag.featureX.rawValue) == true)
+        #expect(flags.flagForKey(key: Flag.featureY.rawValue) == false)
+        flags.setFlagForKey(key: Flag.featureY.rawValue, val: true)
+        #expect(flags.flagForKey(key: Flag.featureX.rawValue) == true)
+        #expect(flags.flagForKey(key: Flag.featureY.rawValue) == true)
+        flags.setFlagForKey(key: Flag.featureX.rawValue, val: false)
+        #expect(flags.flagForKey(key: Flag.featureX.rawValue) == false)
+        #expect(flags.flagForKey(key: Flag.featureY.rawValue) == true)
         FeatureFlags.resetFeatureFlags()
     }
 }
