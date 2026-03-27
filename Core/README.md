@@ -1,18 +1,23 @@
-# Feature Libraries
+# Core Libraries
 
-## `Autoconfiguration`
+
+* [`Autoconfiguration`](#autoconfig)
+* [`EmailAddress`](#email)
+* [`IMAP` and `SMTP`](#imap-smtp)
+* [`JMAP`](#jmap)
+* [`MIME`](#mime)
+
+## <a href="#autoconfig">`Autoconfiguration`</a>
 
 [Thunderbird Autoconfiguration](https://wiki.mozilla.org/Thunderbird:Autoconfiguration), often just "autoconfig," is an XML syndication format where email service providers advertise public mail server settings.
 
-### Library
-
-`Autoconfigruation` library is designed to support email account setup in its parent project, [Thunderbird for iOS](https://github.com/thunderbird/thunderbird-ios), via `URLSession` data task:
+`Autoconfigruation` library is designed to support email account setup in its parent project, [Thunderbird iOS](https://github.com/thunderbird/thunderbird-ios), via `URLSession` data task:
 
 ```swift
 import Autoconfiguration
 import Foundation
 
-let example: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user123@aol.com")
+let example: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig("user@example.com")
 ```
 
 Taking the default arguments, the above returns mail server settings for almost every email address in existence. Here's how it works:
@@ -25,7 +30,7 @@ MX records can be queried directly:
 ```swift
 import Autoconfiguration
 
-let records: [MXRecord] = try await DNSResolver.queryMX("thunderbird.net")
+let records: [MXRecord] = try await DNSResolver.queryMX("example.com")
 ```
 
 #### Domain Parsing
@@ -47,14 +52,14 @@ print(domain)  // example.com
 ```swift
 import Autoconfiguration
 
-let records: [SRVRecord] = try await DNSResolver.querySRV("example@thundermail.com")
+let records: [SRVRecord] = try await DNSResolver.querySRV("name@example.com")
 ```
 
 [Autodiscover for Exchange](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/autodiscover-for-exchange) is not supported at this time. Local and [MDM](https://support.apple.com/guide/deployment/welcome/web) configurations are not supported yet.
 
 `Autoconfiguration` library depends on the [Swift Asynchronous DNS Resolver.](https://github.com/apple/swift-async-dns-resolver)
 
-### Command-line interface
+#### Command-line interface
 
 `autoconfig` is a bundled CLI demo of `Autoconfiguration` library:
 
@@ -67,13 +72,9 @@ Email address is a required argument, plus two flags:
 * `--save`: Save original config XML and JSON files to app working directory.
 * `--open`: Open all config URLs in a browser; if saving, show files in Finder.
 
-![](docs/autoconfig.png)
-
-## `EmailAddress`
+## <a href="#email">`EmailAddress`</a>
 
 An [email address](https://wikipedia.org/wiki/Email_address) is a string with parts, formatted one of two specific ways: `Example Name <name@example.com>` or just `name@example.com`.
-
-### Library
 
 `EmailAddress` provides a shared model with conveniences for encoding and decoding addresses, as well as accessing the component parts:
 
@@ -84,77 +85,114 @@ let example: EmailAddress = "Example Name <name@example.com>"
 print(example)  // Example Name <name@example.com>
 print(example.value)  // name@example.com
 print(example.label)  // Example Name
-print(example.local)  // name
-print(example.host)  // example.com
 ```
 
-## `IMAP` and `SMTP`
+## <a href="#imap-smtp">`IMAP` and `SMTP`</a>
 
 Thunderbird supports sending and receiving email for most email providers through [Internet Message Access Protocol](https://wikipedia.org/wiki/Internet_Message_Access_Protocol) (IMAP) and [Simple Mail Transfer Protocol](https://wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) (SMTP).
 
-Both protocols use [TCP](https://wikipedia.org/wiki/Transmission_Control_Protocol) for transport, not HTTP; both libraries are built on top of [SwiftNIO.](https://opensource.apple.com/projects/swiftnio)
+Both protocols use [TCP](https://wikipedia.org/wiki/Transmission_Control_Protocol) for transport, not HTTP; both libraries depend on [SwiftNIO.](https://opensource.apple.com/projects/swiftnio)
 
-### `IMAP` Library
+### `IMAP`
 
-`IMAP` implementation glues NIOIMAP models and networking into an async/await interface.
+`IMAP` supports IMAP4rev1. The underlying implementation glues [NIOIMAP](https://github.com/apple/swift-nio-imap) models and networking into a coherent async/await interface.
 
-Configure `IMAPClient` with `Server`, connect and authenticate:
+For illustration, here's a common IMAP command sequence. Configure `IMAPClient` with `Server`, connect and authenticate:
 
 ```swift
 import IMAP
+import MIME
 
 let client: IMAPClient = IMAPClient(Server(hostname: "imap.example.com"))
 try await client.connect()
-try await client.login(username: "user@example.com", password: "fAK3-PASs-w0rD")
-...
-try await client.logout()
-try? client.disconnect()
+try await client.login(username: "name@example.com", password: "fAK3-PASs-w0rD")
 ```
 
-List mailboxes and select inbox:
+For the authenticated client, list mailboxes and select inbox:
 
 ```swift
-let mailboxes: [Mailbox] = try await client.list()
+let mailboxes: [Mailbox] = try await client.list()  // List mailboxes
 guard let inbox: Mailbox = mailboxes.filter({ $0.path.name.isInbox }).first else {
     throw IMAPError.unexpectedResponse("Inbox not found")
-}
-_ = try await client.select(mailbox: inbox)
+}  // Find inbox in mailbox list
+try await client.select(mailbox: inbox)  // Select inbox
 let status = try await client.status(mailbox: inbox)
 print(status.messageCount)  // 327
 print(status.unseenCount)  // 5
 ```
 
-Fetch all inbox messages:
+Fetch all headers and envelope metadata for selected mailbox:
 
 ```swift
-let messages: [SequenceNumber: Message] = try await client.fetch(attributes: [
-    .bodySection(peek: true, .header, nil),
-    .bodyStructure(extensions: true),
-    .emailID,
-    .envelope,
-    .flags,
-    .uid
-])
-print(messages.count)  // 327
+let messages: MessageSet = try await client.fetch()
 for sequenceNumber in messages.keys.sorted().reversed() {
-    print(sequenceNumber)  // 327...1
-    let message: Message = messages[sequenceNumber]!
-    for component in message.components {
-        print(component)
-    }
+    print(messages[sequenceNumber]?.envelope.subject)  // Decoded email subject line
+    print(messages[sequenceNumber]?.envelope.sender)  // sender@example.com
 }
 ```
 
-`IMAP` library depends on [Swift NIOIMAP.](https://github.com/apple/swift-nio-imap)
+Fetch complete email message for highest inbox sequence number (newest message):
 
-### `SMTP` Library
+```swift
+guard let sequenceNumber: SequenceNumber = messages.keys.sorted().reversed().first else {
+    throw IMAPError.unexpectedResponse("Message not found")
+}
+let message: Message = try await client.fetch(sequenceNumber)
+print(message.envelope.subject)  // Decoded email subject line
+print(message.envelope.sender)  // sender@example.com
+print(message.body)  // Decoded MIME parts, ready for display or additional assembly
+```
+
+Log out and disconnect:
+
+```swift
+try await client.logout()
+try? client.disconnect()  // BYE
+```
+
+#### Idle
+
+`IMAP` leverages [NIOIMAP](https://github.com/apple/swift-nio-imap) support for [IMAP4 `IDLE`.](https://www.rfc-editor.org/rfc/rfc2177)
+
+For the authenticated client with inbox still selected, idle connection and handle inbox events "pushed" from server:
+
+```swift
+do {
+    try client.isSupported(.idle)
+    let idleEvents: AsyncStream<IdleEvent> = try await client.idle()
+} catch {
+    switch error {
+    case IMAPError.capabilityNotSupported: break
+    default: throw error
+    }
+}
+try await client.done()  // Stop idling
+```
+
+Note: NIOIMAP keeps idling connection alive automatically; manual `NOOP` issued while idling throws.
+
+#### Incomplete IMAP4 Support
+
+Thunderbird intends to support every flavor of IMAP under the sun, as implemented. Building on top of NIOIMAP, `IMAP` library follows the same pragmatic approach, having a single implementation of each IMAP command or concept, with "fuzzy" handling for server implementation/configuration idiosyncrasies.
+
+IMAP commands were implemented in practical order, i.e., fetching messages requires a selected mailbox. Selecting a mailbox requires an authenticated server connection, and so on.
+
+[ ] `AUTHENTICATE`
+[ ] `APPEND`
+[ ] `SEARCH`
+
+
+`IMAP` library uses in-package [`MIME`](#mime) library for decoding and [Swift NIOIMAP](https://github.com/apple/swift-nio-imap) for IMAP commands, models and transport.
+
+### `SMTP`
 
 `SMTP` implementation is based on `NIOSMTP` example project included in the [SwiftNIO examples repository.](https://github.com/apple/swift-nio-examples)
 
-Configure `SMTPClient` with a `Server` to connect to; send one or more emails through the same server:
+Configure `SMTPClient` with a `Server`; send one or more emails through the same server:
 
 ```swift
 import Foundation
+import MIME
 import SMTP
 
 try await SMTPClient(Server(
@@ -167,25 +205,26 @@ try await SMTPClient(Server(
         "recipient@example.com"
     ],
     subject: "Example email subject",
-    body: [
-        "Body content parts can be plain text for now ;)".data(using: .utf8)!
-    ]
+    body: try! Body(parts: [
+        Part(
+            data: "Email body contents were made of plain, ASCII text at first.".data(using: .ascii)!,
+            contentType: .text(.plain, .ascii)
+        )
+    ])
 ))
 ```
 
-`SMTP` library depends on [SwiftNIO](https://github.com/apple/swift-nio) for transport.
+`SMTP` library uses in-package [`MIME`](#mime) library for encoding and [SwiftNIO](https://github.com/apple/swift-nio) for transport.
 
-## `JMAP`
+## <a href="#jmap">`JMAP`</a>
 
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.
 
-`JMAP` feature library is a _client_ implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird for iOS.](https://github.com/thunderbird/thunderbird-ios)
+`JMAP` feature library is a _client_ implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios)
 
-## `MIME`
+## <a href="#mime">`MIME`</a>
 
 [Multipurpose Internet Mail Extensions](https://wikipedia.org/wiki/MIME) (MIME), colloquially "multipart data," extends basic, ASCII-text email to support text with various character encodings and binary objects like images, audio and video.
-
-### Library
 
 `MIME` feature library is a multipart message encoder and decoder. It's useful for the following purposes:
 
@@ -201,7 +240,7 @@ Modeled types adopt Swift [`RawRepresentable`](https://developer.apple.com/docum
 
 Each `Part` can, itself, be multipart, allowing content to be grouped and nested. Multipart content types include a `Boundary` of 1-70 ASCII characters used to join and separate individual parts.
 
-Parts roll up to a special top-level part, `Body`, which is parsed like any `Part`, but only accepts one of the two possible message body types, plain text or multipart. Decode `Body` from raw email message source:
+Parts roll up to a special top-level part, `Body`, which is parsed like any `Part`, but only accepts possible message body types, text or multipart. Decode `Body` from raw email message source:
 
 ```swift
 import Foundation
@@ -236,6 +275,10 @@ print(string)
 // ...
 ```
 
+#### Header Decoding
+
+
+
 #### Date Formatting
 
 `MIME` includes a formatter that converts between [`Date`](https://developer.apple.com/documentation/foundation/date) and [RFC 822](https://www.rfc-editor.org/rfc/rfc822#section-5) `date-time` string representation.
@@ -245,7 +288,7 @@ import Foundation
 import MIME
 
 let formatter: RFC822DateFormatter = RFC822DateFormatter()
-let date: Date = try formatter.date(from: "Sat,  6 Dec 2025 01:00:00 -0500 (EST)")
+let date: Date = try formatter.date(from: "Sat, 06 Dec 2025 01:00:00 -0500 (EST)")
 print(date.timeIntervalSince1970)  // 1765000800.0
 let string: String = formatter.string(from: date, TimeZone(abbreviation: "EST")!)
 print(string)  // Sat, 06 Dec 2025 01:00:00 -0500
