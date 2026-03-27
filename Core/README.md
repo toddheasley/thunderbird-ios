@@ -7,7 +7,7 @@
 * [`JMAP`](#jmap)
 * [`MIME`](#mime)
 
-## <a href="#autoconfig">`Autoconfiguration`</a>
+## `Autoconfiguration` <a name="autoconfig"></a>
 
 [Thunderbird Autoconfiguration](https://wiki.mozilla.org/Thunderbird:Autoconfiguration), often just "autoconfig," is an XML syndication format where email service providers advertise public mail server settings.
 
@@ -71,8 +71,9 @@ Email address is a required argument, plus two flags:
 
 * `--save`: Save original config XML and JSON files to app working directory.
 * `--open`: Open all config URLs in a browser; if saving, show files in Finder.
+  
 
-## <a href="#email">`EmailAddress`</a>
+## `EmailAddress` <a name="email"></a>
 
 An [email address](https://wikipedia.org/wiki/Email_address) is a string with parts, formatted one of two specific ways: `Example Name <name@example.com>` or just `name@example.com`.
 
@@ -86,8 +87,9 @@ print(example)  // Example Name <name@example.com>
 print(example.value)  // name@example.com
 print(example.label)  // Example Name
 ```
+  
 
-## <a href="#imap-smtp">`IMAP` and `SMTP`</a>
+## `IMAP` and `SMTP` <a name="imap-smtp"></a>
 
 Thunderbird supports sending and receiving email for most email providers through [Internet Message Access Protocol](https://wikipedia.org/wiki/Internet_Message_Access_Protocol) (IMAP) and [Simple Mail Transfer Protocol](https://wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) (SMTP).
 
@@ -175,12 +177,11 @@ Note: NIOIMAP keeps idling connection alive automatically; manual `NOOP` issued 
 
 Thunderbird intends to support every flavor of IMAP under the sun, as implemented. Building on top of NIOIMAP, `IMAP` library follows the same pragmatic approach, having a single implementation of each IMAP command or concept, with "fuzzy" handling for server implementation/configuration idiosyncrasies.
 
-IMAP commands were implemented in practical order, i.e., fetching messages requires a selected mailbox. Selecting a mailbox requires an authenticated server connection, and so on.
+IMAP commands were implemented in practical order, i.e., fetching messages requires a selected mailbox. Selecting a mailbox requires an authenticated server connection, and so on. Only a few commands have not been implemented yet:
 
-[ ] `AUTHENTICATE`
-[ ] `APPEND`
-[ ] `SEARCH`
-
+* [-] `APPEND`: Add a message to a mailbox; used primarily to save new message drafts on server.
+* [ ] `AUTHENTICATE`: Authenticate IMAP connection with OAuth using [SASL](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer); preferred over `LOGIN` using app password.
+* [ ] `SEARCH`: Search a mailbox on the server using structured queries.
 
 `IMAP` library uses in-package [`MIME`](#mime) library for decoding and [Swift NIOIMAP](https://github.com/apple/swift-nio-imap) for IMAP commands, models and transport.
 
@@ -215,14 +216,16 @@ try await SMTPClient(Server(
 ```
 
 `SMTP` library uses in-package [`MIME`](#mime) library for encoding and [SwiftNIO](https://github.com/apple/swift-nio) for transport.
+  
 
-## <a href="#jmap">`JMAP`</a>
+## `JMAP` <a name="jmap"></a>
 
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.
 
 `JMAP` feature library is a _client_ implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios)
 
-## <a href="#mime">`MIME`</a>
+  
+## `MIME` <a name="mime"></a>
 
 [Multipurpose Internet Mail Extensions](https://wikipedia.org/wiki/MIME) (MIME), colloquially "multipart data," extends basic, ASCII-text email to support text with various character encodings and binary objects like images, audio and video.
 
