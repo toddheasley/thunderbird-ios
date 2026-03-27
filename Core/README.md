@@ -1,6 +1,5 @@
 # Core Libraries
 
-
 * [`Autoconfiguration`](#autoconfig)
 * [`EmailAddress`](#email)
 * [`IMAP` and `SMTP`](#imap-smtp)
@@ -71,7 +70,6 @@ Email address is a required argument, plus two flags:
 
 * `--save`: Save original config XML and JSON files to app working directory.
 * `--open`: Open all config URLs in a browser; if saving, show files in Finder.
-  
 
 ## `EmailAddress` <a name="email"></a>
 
@@ -87,7 +85,6 @@ print(example)  // Example Name <name@example.com>
 print(example.value)  // name@example.com
 print(example.label)  // Example Name
 ```
-  
 
 ## `IMAP` and `SMTP` <a name="imap-smtp"></a>
 
@@ -177,9 +174,9 @@ Note: NIOIMAP keeps idling connection alive automatically; manual `NOOP` issued 
 
 Thunderbird intends to support every flavor of IMAP under the sun, as implemented. Building on top of NIOIMAP, `IMAP` library follows the same pragmatic approach, having a single implementation of each IMAP command or concept, with "fuzzy" handling for server implementation/configuration idiosyncrasies.
 
-IMAP commands were implemented in practical order, i.e., fetching messages requires a selected mailbox. Selecting a mailbox requires an authenticated server connection, and so on. Only a few commands have not been implemented yet:
+IMAP commands were implemented in practical order, i.e., fetching messages requires a selected mailbox. Selecting a mailbox requires an authenticated server connection, and so on. A few commands have not been implemented yet:
 
-* [-] `APPEND`: Add a message to a mailbox; used primarily to save new message drafts on server.
+* [ ] `APPEND`: Add a message to a mailbox; used primarily to save new message drafts on server.
 * [ ] `AUTHENTICATE`: Authenticate IMAP connection with OAuth using [SASL](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer); preferred over `LOGIN` using app password.
 * [ ] `SEARCH`: Search a mailbox on the server using structured queries.
 
@@ -216,15 +213,15 @@ try await SMTPClient(Server(
 ```
 
 `SMTP` library uses in-package [`MIME`](#mime) library for encoding and [SwiftNIO](https://github.com/apple/swift-nio) for transport.
-  
 
 ## `JMAP` <a name="jmap"></a>
 
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.
 
-`JMAP` feature library is a _client_ implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios)
+`JMAP` feature library is a client implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios)
 
-  
+JMAP support is early and experimental.
+
 ## `MIME` <a name="mime"></a>
 
 [Multipurpose Internet Mail Extensions](https://wikipedia.org/wiki/MIME) (MIME), colloquially "multipart data," extends basic, ASCII-text email to support text with various character encodings and binary objects like images, audio and video.
@@ -255,7 +252,7 @@ guard let url: URL = Bundle.module.url(forResource: "email-example", withExtensi
 let data: Data = try Data(contentsOf: url)
 let body: Body = try Body(data)
 print(body.contentType)  // multipart/alternative; boundary="_----------=_176171960423967"
-print(body.contentTransferEncoding)  // Optional(8bit)
+print(body.contentTransferEncoding)  // 8bit
 print(body.parts.count)  // 2
 ```
 
@@ -280,7 +277,24 @@ print(string)
 
 #### Header Decoding
 
+`MIME` extends `String` to encode to and decode from raw IMAP headers. Because encoding creates significantly longer strings, headers can be encoded in multiple segments. Allows selecting the shortest encoding method for arbitrary chunks:
 
+```swift
+import MIME
+
+let subject: String = "=?UTF-8?Q?=F0=9F=91=8D=F0=9F=A4=96_S=C3=A4mpl=C3=A9_=C3=A6m?= =?UTF-8?Q?@il_$\\ubject=F0=9F=93=A6?="
+print(try subject.headerDecoded())  // "👍🤖 Sämplé æm@il $\\ubject📦"
+
+```
+
+Headers, unless already plain ASCII, are encoded into a single base64 chunk with UTF-8 character encoding:
+
+```swift
+import MIME
+
+print(try "❤️❤️❤️éÆ🤖\"\\❤️❤️".headerEncoded())  // "=?UTF-8?B?4p2k77iP4p2k77iP4p2k77iPw6nDhvCfpJYiXOKdpO+4j+KdpO+4jw==?="
+print(try "Plain ASCII string requiring 0/no encoding".headerEncoded())  // "Plain ASCII string requiring 0/no encoding"
+```
 
 #### Date Formatting
 
