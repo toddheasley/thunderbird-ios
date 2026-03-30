@@ -1,5 +1,7 @@
 # Core Libraries
 
+`Core` package contains a suite of libraries that power [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios) `Core` libraries are designed to share similar [async/await](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0296-async-await.md) interfaces and/or to seamlessly extend `Foundation` frameworks and types, e.g., adding [JMAP](#jmap)-specific `URLSession` data tasks.
+
 * [`Autoconfiguration`](#autoconfig)
 * [`EmailAddress`](#email)
 * [`IMAP` and `SMTP`](#imap-smtp)
@@ -218,7 +220,7 @@ try await SMTPClient(Server(
 
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.
 
-`JMAP` feature library is a client implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios)
+`JMAP` library is a client implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios)
 
 JMAP support is early and experimental.
 
@@ -226,7 +228,7 @@ JMAP support is early and experimental.
 
 [Multipurpose Internet Mail Extensions](https://wikipedia.org/wiki/MIME) (MIME), colloquially "multipart data," extends basic, ASCII-text email to support text with various character encodings and binary objects like images, audio and video.
 
-`MIME` feature library is a multipart message encoder and decoder. It's useful for the following purposes:
+`MIME` library is a multipart message encoder and decoder. It's useful for the following purposes:
 
 * Decoding IMAP- or POP-delivered email messages
 * Encoding email messages for SMTP sending
@@ -308,5 +310,5 @@ let formatter: RFC822DateFormatter = RFC822DateFormatter()
 let date: Date = try formatter.date(from: "Sat, 06 Dec 2025 01:00:00 -0500 (EST)")
 print(date.timeIntervalSince1970)  // 1765000800.0
 let string: String = formatter.string(from: date, TimeZone(abbreviation: "EST")!)
-print(string)  // Sat, 06 Dec 2025 01:00:00 -0500
+print(string)  // "Sat, 06 Dec 2025 01:00:00 -0500"
 ```
