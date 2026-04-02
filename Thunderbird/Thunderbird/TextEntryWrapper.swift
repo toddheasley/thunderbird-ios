@@ -29,7 +29,7 @@ struct TextEntryWrapper: View {
             .textFieldStyle(.plain)
             .autocorrectionDisabled()
             #if os(iOS)
-            .autocapitalization(.none)
+        .autocapitalization(.none)
             #endif
             .focusable()
 

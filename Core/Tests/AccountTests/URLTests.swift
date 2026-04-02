@@ -9,3 +9,9 @@ struct URLTests {
         #expect(URL.documents() == .temporaryDirectory)
     }
 }
+
+struct ProcessInfoTests {
+    @Test func isTestEnvironment() {
+        #expect(ProcessInfo.processInfo.isTestEnvironment == true)
+    }
+}

@@ -46,11 +46,3 @@ struct ServerTests {
         #expect(URLCredentialStorage.shared.authorization(for: server.user) == nil)
     }
 }
-
-var isKeychainAvailable: Bool {
-    #if os(macOS)
-    true  // Keychain only available (to non-hosted tests) on macOS
-    #else
-    false
-    #endif
-}
