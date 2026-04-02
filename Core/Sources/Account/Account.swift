@@ -1,5 +1,8 @@
 @_exported import EmailAddress
 import Foundation
+import IMAP
+
+public typealias ConnectionSecurity = IMAP.ConnectionSecurity
 
 public struct Account: Codable, Equatable, Hashable, Identifiable {
     public var name: String

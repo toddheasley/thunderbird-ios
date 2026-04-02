@@ -11,6 +11,6 @@ public struct Identity: Codable, CustomStringConvertible, Hashable {
 
     // MARK: CustomStringConvertible
     public var description: String {
-        (displayName ?? "").isEmpty ? "\(emailAddress)" : "\(displayName!) <\(emailAddress)>"
+        (displayName ?? "").isEmpty ? "\(emailAddress)" : "\(displayName!) <\(emailAddress.value)>"
     }
 }

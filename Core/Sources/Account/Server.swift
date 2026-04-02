@@ -1,15 +1,20 @@
 import Foundation
+import IMAP
+import JMAP
+import MIME
+import SMTP
 
+/// All supported server types enumerated.
 public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertible, Identifiable {
-    case jmap = "JMAP"
     case imap = "IMAP"
+    case jmap = "JMAP"
     case smtp = "SMTP"
 
     var defaultPort: Int {
         switch self {
-        case .jmap: 443
-        case .imap: 143
-        case .smtp: 26
+        case .imap: IMAP.Server(hostname: "").port
+        case .jmap: JMAP.Server(authorization: nil, host: "").port
+        case .smtp: SMTP.Server(hostname: "", username: "", password: "").port
         }
     }
 
@@ -20,6 +25,7 @@ public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertib
     public var id: String { rawValue }
 }
 
+/// General purpose server model for any supported `ServerProtocol`. Stores authorization credentials locally in the [Apple keychain.](https://developer.apple.com/documentation/security/storing-keys-in-the-keychain)
 public struct Server: Codable, Equatable, Hashable, Identifiable {
     public var serverProtocol: ServerProtocol
     public var connectionSecurity: ConnectionSecurity
@@ -28,6 +34,7 @@ public struct Server: Codable, Equatable, Hashable, Identifiable {
     public var hostname: String
     public var port: Int
 
+    /// Store server credentials locally in the [Apple keychain.](https://developer.apple.com/documentation/security/storing-keys-in-the-keychain)
     public var authorization: Authorization {
         set {  // Swap in keychain-specific user name
             let authorization: Authorization = Authorization(user: user, password: newValue.password)
@@ -60,7 +67,7 @@ public struct Server: Codable, Equatable, Hashable, Identifiable {
     }
 
     var user: String {  // Append unique suffix for keychain: "user@example.com IMAP:E621E1F8"
-        "\(username) \(serverProtocol):\(id.uuidString.components(separatedBy: "-")[0])"
+        "\(username) \(serverProtocol):\(id.uuidString(1))"
     }
 
     // MARK: Identifiable

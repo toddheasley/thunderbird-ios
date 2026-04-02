@@ -5,8 +5,8 @@ import Foundation
 struct ServerProtocolTests {
     @Test func defaultPort() {
         #expect(ServerProtocol.jmap.defaultPort == 443)
-        #expect(ServerProtocol.imap.defaultPort == 143)
-        #expect(ServerProtocol.smtp.defaultPort == 26)
+        #expect(ServerProtocol.imap.defaultPort == 993)
+        #expect(ServerProtocol.smtp.defaultPort == 587)
     }
 }
 
@@ -45,4 +45,12 @@ struct ServerTests {
         server.authorization = .none
         #expect(URLCredentialStorage.shared.authorization(for: server.user) == nil)
     }
+}
+
+var isKeychainAvailable: Bool {
+    #if os(macOS)
+    true  // Keychain only available (to non-hosted tests) on macOS
+    #else
+    false
+    #endif
 }
