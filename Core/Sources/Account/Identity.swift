@@ -1,3 +1,5 @@
+import EmailAddress
+
 public struct Identity: Codable, CustomStringConvertible, Hashable {
     public let emailAddress: EmailAddress
     public let displayName: String?

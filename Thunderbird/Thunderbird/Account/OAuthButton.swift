@@ -4,9 +4,9 @@ import Autoconfiguration
 import SwiftUI
 
 struct OAuthButton: View {
-    let emailAddress: EmailAddress
+    let emailAddress: String
 
-    init(_ emailAddress: EmailAddress = "", token: Binding<Token?>, error: Binding<Error?>) {
+    init(_ emailAddress: String = "", token: Binding<Token?>, error: Binding<Error?>) {
         self.emailAddress = emailAddress
         _token = token
         _error = error

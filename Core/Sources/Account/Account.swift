@@ -1,3 +1,4 @@
+@_exported import EmailAddress
 import Foundation
 
 public struct Account: Codable, Equatable, Hashable, Identifiable {

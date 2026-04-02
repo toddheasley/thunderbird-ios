@@ -5,7 +5,7 @@ public protocol EmailAddressProtocol: Sendable {
 }
 
 /// Shared email address model suitable for IMAP, JMAP and SMTP
-public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAddressProtocol, ExpressibleByStringLiteral, Identifiable {
+public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAddressProtocol, ExpressibleByStringLiteral, Hashable, Identifiable {
     public let value: String
     public let label: String?
 
