@@ -11,11 +11,14 @@
       location = "group:Thunderbird.xctestplan">
    </FileRef>
    <FileRef
-      location = "group:Bolt">
+      location = "group:CoreDemo/CoreDemo.xcodeproj">
    </FileRef>
    <FileRef
-         location = "group:Core">
-      </FileRef>
+      location = "group:Core">
+   </FileRef>
+   <FileRef
+      location = "group:Bolt">
+   </FileRef>
    <FileRef
       location = "group:docs">
    </FileRef>
