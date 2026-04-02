@@ -1,7 +1,9 @@
 import Foundation
 
+public typealias Accounts = AccountManager
+
 @Observable
-public class Accounts {
+public class AccountManager {
     public private(set) var allAccounts: [Account] = []
     public private(set) var error: Error?
 
@@ -58,8 +60,4 @@ public class Accounts {
             self.error = error
         }
     }
-}
-
-private extension URL {
-    static var accounts: Self { documents("Accounts.json") }
 }

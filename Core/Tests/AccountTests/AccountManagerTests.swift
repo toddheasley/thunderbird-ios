@@ -2,11 +2,11 @@
 import Testing
 import Foundation
 
-struct AccountsTests {
+struct AccountManagerTests {
     @Test func set() {
         lock.lock()
         defer { lock.unlock() }
-        let accounts: Accounts = Accounts()
+        let accounts: AccountManager = AccountManager()
         accounts.deleteAccounts()
         #expect(accounts.error == nil)
         let allAccounts: [Account] = [
@@ -38,7 +38,7 @@ struct AccountsTests {
     @Test func delete() {
         lock.lock()
         defer { lock.unlock() }
-        let accounts: Accounts = Accounts()
+        let accounts: AccountManager = AccountManager()
         accounts.deleteAccounts()
         #expect(accounts.error == nil)
         let allAccounts: [Account] = [

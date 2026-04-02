@@ -8,7 +8,7 @@ class XMLToJSONParser: NSObject, XMLParserDelegate {
     var data: Data {
         get throws {
             try JSONSerialization.data(
-                dictionary,
+                withJSONObject: dictionary,
                 options: [
                     .withoutEscapingSlashes,
                     .prettyPrinted,
