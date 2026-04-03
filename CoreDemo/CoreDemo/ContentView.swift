@@ -1,14 +1,15 @@
+import Account
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(AccountManager.self) private var accountManager: AccountManager
 
     // MARK: View
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            ForEach(accountManager.allAccounts) { account in
+                Text(account.name)
+            }
         }
         .padding()
     }
