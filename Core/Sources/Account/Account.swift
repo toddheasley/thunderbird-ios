@@ -1,22 +1,37 @@
+@_exported import Autoconfiguration
 @_exported import EmailAddress
 import Foundation
-import IMAP
-
-public typealias ConnectionSecurity = IMAP.ConnectionSecurity
 
 public struct Account: Codable, Equatable, Hashable, Identifiable {
     public var name: String
     public var deletePolicy: DeletePolicy
-    public var identities: [Identity]
+    public var identities: [EmailAddress]
     public var servers: [Server]
 
     public var incomingServer: Server? { server(.jmap) ?? server(.imap) ?? nil }
     public var outgoingServer: Server? { server(.jmap) ?? server(.smtp) ?? nil }
 
+    /// Configure an `Account` using ``Autoconfiguration.EmailProvider``.
+    public init(_ emailAddress: String, provider: EmailProvider? = nil) {
+        self.init(EmailAddress(emailAddress), provider: provider)
+    }
+
+    /// Configure an `Account` using ``Autoconfiguration.EmailProvider``.
+    public init(_ emailAddress: EmailAddress, provider: EmailProvider? = nil) {
+        self.init(
+            name: emailAddress.value,
+            identities: [
+                emailAddress
+            ],
+            servers: (provider?.servers ?? []).compactMap { Server($0) },
+        )
+    }
+
+    /// Configure an `Account` using memberwise initializer.
     public init(
         name: String,
         deletePolicy: DeletePolicy = .never,
-        identities: [Identity] = [],
+        identities: [EmailAddress] = [],
         servers: [Server] = [],
         id: UUID = UUID()
     ) {

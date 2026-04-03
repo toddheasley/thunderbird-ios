@@ -1,6 +1,6 @@
 import Foundation
 
-// Read and write accounts to JSON file on disk as stopgap for account persistence
+// Read and write accounts to JSON file on disk; stopgap for account persistence
 extension FileManager {
     func readAccounts(from url: URL) throws -> [Account] {
         lock.lock()

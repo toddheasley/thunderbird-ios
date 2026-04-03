@@ -18,9 +18,15 @@ public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAd
     }
 
     public init(_ value: String, label: String? = nil) {
-        let label: String = label?.trimmed() ?? ""
-        self.label = !label.isEmpty ? label : nil
-        self.value = value.trimmed()
+        let components: [String] = value.trimmed().components(separatedBy: "<")
+        if components.count == 2, components[1].hasSuffix(">") {  // "Example Name <name@example.com>"
+            self.value = "\(components[1].dropLast())"
+            self.label = label ?? components[0].trimmed()
+        } else {
+            let label: String = label?.trimmed() ?? ""
+            self.value = components[0].trimmed()
+            self.label = !label.isEmpty ? label : nil
+        }
     }
 
     // MARK: Codable
@@ -48,14 +54,7 @@ public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAd
 
     // MARK: ExpressibleByStringLiteral
     public init(stringLiteral value: StringLiteralType) {
-        let components: [String] = value.trimmed().components(separatedBy: "<")
-        if components.count == 2, components[1].hasSuffix(">") {
-            // "Example Name <name@example.com>"
-            self.init("\(components[1].dropLast())", label: components[0].trimmed())
-        } else {
-            // "name@example.com"
-            self.init(components[0].trimmed())
-        }
+        self.init(value)
     }
 
     // MARK: Identifiable

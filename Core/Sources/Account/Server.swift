@@ -1,3 +1,5 @@
+import Autoconfiguration
+import EmailAddress
 import Foundation
 import IMAP
 import JMAP
@@ -9,14 +11,6 @@ public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertib
     case imap = "IMAP"
     case jmap = "JMAP"
     case smtp = "SMTP"
-
-    var defaultPort: Int {
-        switch self {
-        case .imap: IMAP.Server(hostname: "").port
-        case .jmap: JMAP.Server(authorization: nil, host: "").port
-        case .smtp: SMTP.Server(hostname: "", username: "", password: "").port
-        }
-    }
 
     // MARK: CustomStringConvertible
     public var description: String { rawValue }
@@ -72,4 +66,41 @@ public struct Server: Codable, Equatable, Hashable, Identifiable {
 
     // MARK: Identifiable
     public let id: UUID
+}
+
+extension ServerProtocol {
+    var defaultPort: Int {
+        switch self {
+        case .imap: IMAP.Server(hostname: "").port
+        case .jmap: JMAP.Server(authorization: nil, host: "").port
+        case .smtp: SMTP.Server(hostname: "", username: "", password: "").port
+        }
+    }
+
+    init?(_ serverType: EmailProvider.Server.ServerType) {
+        switch serverType {
+        case .imap:
+            self = .imap
+        case .smtp:
+            self = .smtp
+        case .pop3:
+            return nil  // POP3 is not supported
+        }
+    }
+}
+
+extension Server {
+    init?(_ server: EmailProvider.Server) {
+        guard let serverProtocol: ServerProtocol = ServerProtocol(server.serverType) else {
+            return nil  // App only supports IMAP and SMTP
+        }
+        self.init(
+            serverProtocol,
+            connectionSecurity: ConnectionSecurity(server.socketType),
+            authenticationType: AuthenticationType(server.authentication),
+            username: server.username,
+            hostname: server.hostname,
+            port: server.port
+        )
+    }
 }
