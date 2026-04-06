@@ -13,7 +13,7 @@ struct FeatureFlagDebugView: View {
         VStack {
             Toggle("all_remote_feature_flags", isOn: $allowRemoteFlags).padding()
             List(flags.featureList, id: \.self) { string in
-                SettingRowView(string, flags.flagForKey(key: .featureX))
+                SettingRowView(string, flags.flagForKey(key: string))
             }
         }.onChange(of: allowRemoteFlags) {
             flags.setAllowRemoteFlags(allowRemote: allowRemoteFlags)
@@ -40,9 +40,8 @@ struct SettingRowView: View {
             Toggle(flagName, isOn: $isOn)
 
         }.onChange(of: isOn) {
-            flags.setFlagForKey(key: .featureX, val: isOn)
+            flags.setFlagForKey(key: flagName, val: isOn)
         }
-
     }
 }
 

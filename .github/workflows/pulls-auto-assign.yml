@@ -13,7 +13,9 @@ permissions:
 jobs:
   assign-reviewer:
     runs-on: ubuntu-latest
-    environment: botmobile
+    environment:
+      name: botmobile
+      deployment: false
     permissions:
       pull-requests: write
     steps:
