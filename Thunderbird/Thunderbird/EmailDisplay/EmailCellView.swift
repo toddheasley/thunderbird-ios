@@ -45,9 +45,10 @@ struct EmailCellView: View {
                     .font(.headline)
                     .fontWeight(unread ? .semibold : .regular)
                 Spacer()
-                Text(SmartDateFormatter()
-                    .dateFormatter(date: dateSent, isSmartDate: !flags.flagForKey(key: Flag.fullDate.rawValue))
-)
+                Text(
+                    SmartDateFormatter()
+                        .dateFormatter(date: dateSent, isSmartDate: !flags.flagForKey(key: Flag.fullDate.rawValue))
+                )
             }.padding(.leading, pinned ? 0 : 20)
             HStack {
                 if newEmail {

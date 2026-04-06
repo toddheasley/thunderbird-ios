@@ -63,20 +63,39 @@ struct StringTests {
         #expect("inline".parameters == [:])
     }
 
-    @Test func quotedPrintableInit() throws {
-        #expect(try String(quotedPrintable: .quotedPrintable) == decodedQuotedPrintable)
+    @Test func headerDecoded() throws {
+        let subject: String = "=?UTF-8?Q?=F0=9F=91=8D=F0=9F=A4=96_S=C3=A4mpl=C3=A9_=C3=A6m?= =?UTF-8?Q?@il_$\\ubject=F0=9F=93=A6?="
+        #expect(try subject.headerDecoded() == "👍🤖 Sämplé æm@il $\\ubject📦")
+        #expect(try "=?utf-8?B?4p2k77iP4p2k77iP4p2k77iPw6nDhvCfpJYiXOKdpO+4j+KdpO+4jw==?=".headerDecoded() == "❤️❤️❤️éÆ🤖\"\\❤️❤️")
+        #expect(try "=?utf-8?Q?=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F=C3=A9=C3=86=F0=9F=A4=96\"\\=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F?=".headerDecoded() == "❤️❤️❤️éÆ🤖\"\\❤️❤️")
+        #expect(try "Your app password was used to sign in to a third-party app".headerDecoded() == "Your app password was used to sign in to a third-party app")
+        #expect(try encodedQuotedPrintable.headerDecoded() == "❤️❤️❤️éÆ🤖\"\\❤️❤️")
         #expect(throws: MIMEError.self) {
-            try String(quotedPrintable: .quotedPrintable, encoding: .ascii)
+            try "=?utf-8?B?4p2k77iP4p2k77iP4p2k77iPw6nDhvCfpJYi+4j+KdpO+4jw==?=".headerDecoded()
         }
+    }
+
+    @Test func headerEncoded() throws {
+        #expect(try "❤️❤️❤️éÆ🤖\"\\❤️❤️".headerEncoded() == "=?UTF-8?B?4p2k77iP4p2k77iP4p2k77iPw6nDhvCfpJYiXOKdpO+4j+KdpO+4jw==?=")
+        #expect(try "Plain ASCII string requiring 0/no encoding".headerEncoded() == "Plain ASCII string requiring 0/no encoding")
+        #expect(try "".headerEncoded() == "")
+    }
+
+    @Test func quotedPrintableInit() throws {
+        #expect(try! String(quotedPrintable: .quotedPrintable, encoding: .ascii) == decodedQuotedPrintable)
+        #expect(try String(quotedPrintable: .quotedPrintable) == decodedQuotedPrintable)
     }
 
     @Test func decodingQuotedPrintable() throws {
         let quotedPrintable: String = String(data: .quotedPrintable, encoding: .ascii)!
-            .replacingOccurrences(of: "=\r\n", with: "")
-            .replacingOccurrences(of: "=\n", with: "")
+        #expect(try quotedPrintable.decodingQuotedPrintable(to: .ascii) == decodedQuotedPrintable)
         #expect(try quotedPrintable.decodingQuotedPrintable() == decodedQuotedPrintable)
+    }
+
+    @Test func decodingBase64() throws {
+        #expect(try "4p2k77iP4p2k77iP4p2k77iPw6nDhvCfpJYiXOKdpO+4j+KdpO+4jw==".decodingBase64() == "❤️❤️❤️éÆ🤖\"\\❤️❤️")
         #expect(throws: MIMEError.self) {
-            try quotedPrintable.decodingQuotedPrintable(to: .ascii)
+            try "4p2k77iP4p2k77iPw6nDhvCfpJYi4j+KdpO+4jw==".decodingBase64()
         }
     }
 }
@@ -98,4 +117,10 @@ private let decodedQuotedPrintable: String = """
 <p>HTML MIME part with local <a href="#anchor">⚓️ link</a>, <a href="https://www.thunderbird.net/donate/mobile/?form=tfi">remote link</a> and remote image</p>
 <p><img id="anchor" src="https://avatars.githubusercontent.com/u/15187237" alt="Thunderbird avatar"></p>
 
+"""
+
+// swift-format-ignore
+private let encodedQuotedPrintable: String = """
+=?utf-8?Q?=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F=C3=A9=C3=86=
+=F0=9F=A4=96"\\=E2=9D=A4=EF=B8=8F=E2=9D=A4=EF=B8=8F?=
 """
