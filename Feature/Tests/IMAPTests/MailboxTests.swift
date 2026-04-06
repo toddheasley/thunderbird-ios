@@ -9,8 +9,8 @@ struct MailboxNameTests {
 
     // MARK: CustomStringConvertible
     @Test func description() {
-        print(Mailbox.Name.inbox.description == "INBOX")
-        print(Mailbox.Name("Deleted Items").description == "Deleted Items")
-        print(Mailbox.Name("Sent").description == "Sent")
+        #expect(Mailbox.Name.inbox.description == "INBOX")
+        #expect(Mailbox.Name("Deleted Items").description == "Deleted Items")
+        #expect(Mailbox.Name("Sent").description == "Sent")
     }
 }

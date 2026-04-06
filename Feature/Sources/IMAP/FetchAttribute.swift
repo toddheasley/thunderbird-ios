@@ -4,37 +4,32 @@ public typealias FetchAttribute = NIOIMAPCore.FetchAttribute
 
 extension [FetchAttribute] {
 
-    // Add supported fetch attributes according to set of server capabilities
-    static func extended(_ capabilities: Set<Capability>) -> Self {
-        Array(Set(capabilities.flatMap { extended($0) }))
-    }
-
-    // Add supported fetch attributes according to server capability
-    static func extended(_ capability: Capability) -> Self {
-        switch capability {
-        case .gmailExtensions:
-            [
-                .gmailLabels,
-                .gmailMessageID,
-                .gmailThreadID
-            ]
-        case .objectID:
-            [
-                .emailID,
-                .threadID
-            ]
-        default: []
-        }
-    }
-
-    // Standard set of fetch attributes supported by all IMAP4 servers
-    static var standard: Self {
+    /// Fetch complete, raw message data in one blob.
+    public static let complete: Self =
         [
-            .envelope,
-            .flags,
-            .uid
-        ]
-    }
+            .bodySection(peek: true, .complete, nil)
+        ] + standard
+
+    /// Fetch all message headers and body structure map.
+    public static let header: Self =
+        [
+            .bodySection(peek: true, .header, nil),
+            .bodyStructure(extensions: true)
+        ] + standard
+
+    /// Fetch message envelope, IDs, flags and Gmail labels.
+    public static let standard: Self = [
+        .emailID,
+        .envelope,
+        .flags,
+        .gmailLabels,
+        .gmailMessageID,
+        .gmailThreadID,
+        .internalDate,
+        .preview(lazy: true),
+        .threadID,
+        .uid
+    ]
 
     // Filter unsupported attributes according to server capabilities
     func filtered(_ capabilities: Set<Capability>) -> Self {
