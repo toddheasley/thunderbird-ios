@@ -12,7 +12,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: botmobile
+    environment:
+      name: botmobile
+      deployment: false
     permissions:
       issues: write
     steps:
