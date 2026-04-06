@@ -17,6 +17,8 @@ public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAd
         value.contains("@") ? value.components(separatedBy: "@").dropLast().joined(separator: "@") : nil
     }
 
+    public var isEmailAddress: Bool { !(host ?? "").isEmpty && !(local ?? "").isEmpty }
+
     public init(_ value: String, label: String? = nil) {
         let components: [String] = value.trimmed().components(separatedBy: "<")
         if components.count == 2, components[1].hasSuffix(">") {  // "Example Name <name@example.com>"
@@ -76,11 +78,5 @@ extension EmailAddress {
 
         // MARK: EmailAddressProtocol
         public var addresses: [EmailAddress] { email.flatMap { $0.addresses } }
-    }
-}
-
-private extension String {
-    func trimmed() -> Self {
-        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

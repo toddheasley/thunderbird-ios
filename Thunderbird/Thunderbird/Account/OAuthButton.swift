@@ -21,7 +21,7 @@ struct OAuthButton: View {
         do {
             error = nil
             guard let request else { return }
-            let url: URL = try await webAuthenticationSession.authenticate(
+            let _: URL = try await webAuthenticationSession.authenticate(
                 using: request.authURL(hint: emailAddress),
                 callback: .customScheme("\(Bundle.main.schemes.first!)"),
                 additionalHeaderFields: [:])

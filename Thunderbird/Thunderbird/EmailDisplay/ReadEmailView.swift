@@ -232,7 +232,7 @@ struct SenderView: View {
 }
 
 #Preview {
-    var tempEmail = TempEmail(
+    let tempEmail = TempEmail(
         sender: "Sender@sender.com",
         recipients: ["Rhea Thunderbird", "Roc"],
         headerText: "This is the subject line of the email",

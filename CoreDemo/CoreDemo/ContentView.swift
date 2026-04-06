@@ -2,19 +2,25 @@ import Account
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(AccountManager.self) private var accountManager: AccountManager
 
     // MARK: View
     var body: some View {
-        VStack {
-            ForEach(accountManager.allAccounts) { account in
-                Text(account.name)
-            }
-        }
-        .padding()
+        NavigationSplitView(
+            sidebar: {
+                AccountListView()
+            },
+            content: {
+                Text("Content")
+            },
+            detail: {
+                Text("Detail")
+            })
     }
 }
 
 #Preview {
+    @Previewable @State var accountManager: AccountManager = AccountManager()
+
     ContentView()
+        .environment(accountManager)
 }
