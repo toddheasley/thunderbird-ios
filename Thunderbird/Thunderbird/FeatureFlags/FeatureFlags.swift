@@ -11,11 +11,12 @@ private let allowRemoteFlags = "allowRemoteFeatureFlags"
 public enum Flag: String {
     case featureX
     case featureY
+    case fullDate
 }
 
 @MainActor
 @Observable final public class FeatureFlags: Sendable {
-    public var featureList: [String] = ["featureX", "featureY"]
+    public var featureList: [String] = ["fullDate", "featureX", "featureY"]
     //False = feature is turned off
     private var featureSettings: [String: Bool] = [:]
     public var allowRemote: Bool = true
@@ -30,8 +31,8 @@ public enum Flag: String {
     private func setDefaultFlags(distribution: Distribution) {
         featureSettings = featureList.reduce(
             into: [:],
-            { (dict, number) in
-                dict[number] = false
+            { (dict, key) in
+                dict[key] = false
             })
         let storedSettings = (UserDefaults.standard.dictionary(forKey: defaultsKey) ?? [:]) as! [String: Bool]
         featureSettings.merge(storedSettings) { (current, new) in new }
@@ -46,11 +47,12 @@ public enum Flag: String {
 
     }
 
-    public func flagForKey(key: Flag) -> Bool {
-        return featureSettings[key.rawValue] ?? false
+    public func flagForKey(key: String) -> Bool {
+        return featureSettings[key] ?? false
     }
-    public func setFlagForKey(key: Flag, val: Bool) {
-        featureSettings[key.rawValue] = val
+    public func setFlagForKey(key: String, val: Bool) {
+        featureSettings[key] = val
+        UserDefaults.standard.setValue(featureSettings, forKey: defaultsKey)
     }
 
     public func setAllowRemoteFlags(allowRemote: Bool) {
