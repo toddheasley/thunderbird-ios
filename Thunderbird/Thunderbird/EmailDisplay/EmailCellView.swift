@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EmailCellView: View {
     let email: TempEmail
+    @Environment(FeatureFlags.self) private var flags: FeatureFlags
     let senderText: String
     let headerText: String
     let bodyText: String
@@ -34,20 +35,6 @@ struct EmailCellView: View {
         self.email = email
     }
 
-    //Doesn't display times properly yes
-    func dateFormatter(date: Date) -> String {
-        if Calendar.current.isDateInToday(date) {
-            return date.formatted(date: .omitted, time: .shortened)
-        } else {
-            let relativeDateFormatter = DateFormatter()
-            relativeDateFormatter.timeStyle = .none
-            relativeDateFormatter.dateStyle = .medium
-            relativeDateFormatter.doesRelativeDateFormatting = true
-            return relativeDateFormatter.string(from: date)
-        }
-
-    }
-
     var body: some View {
         return NavigationLink(
             destination: ReadEmailView(
@@ -65,11 +52,15 @@ struct EmailCellView: View {
                         .font(.headline)
                         .fontWeight(unread ? .semibold : .regular)
                     Spacer()
-                    Text(dateFormatter(date: dateSent))
-                        .lineLimit(1)
-                        .font(.footnote)
-                        .truncationMode(.tail)
-                        .foregroundColor(.muted)
+                    Text(
+                        SmartDateFormatter()
+                            .dateFormatter(date: dateSent, isSmartDate: !flags.flagForKey(key: Flag.fullDate.rawValue))
+                    )
+                    .lineLimit(1)
+                    .font(.footnote)
+                    .truncationMode(.tail)
+                    .foregroundColor(.muted)
+
                 }.padding(.leading, pinned ? 0 : 20)
                 HStack {
                     if newEmail {

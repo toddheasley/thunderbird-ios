@@ -64,7 +64,7 @@
 "add_another_account" = "Add another account";
 
 //Email List Actions
-"mark_all_read_button" = "Mark all read"
-"select_all_button" = "Select All"
-"done_button" = "Done"
+"mark_all_read_button" = "Mark all read";
+"select_all_button" = "Select All";
+"done_button" = "Done";
 

@@ -37,6 +37,7 @@
 			membershipExceptions = (
 				FeatureFlags/Distribution.swift,
 				FeatureFlags/FeatureFlags.swift,
+				Util/SmartDateFormatter.swift,
 			);
 			target = 1521D8232D9C4D6300C4DFDF /* ThunderbirdTests */;
 		};
