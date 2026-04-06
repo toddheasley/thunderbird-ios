@@ -13,7 +13,7 @@ struct EmailListView: View {
     @Environment(\.openURL) private var openURL
     let tempEmails = TempEmail.sampleData
     @State var editMode: EditMode = .inactive
-    @State private var selections = Set<String>()
+    @State private var selections = Set<UUID>()
 
     //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
@@ -35,6 +35,19 @@ struct EmailListView: View {
         AlertManager.shared.alertTitle = "Sort Emails"
     }
 
+    func selectAll() {
+        tempEmails.forEach { email in
+            selections.insert(email.uuid)
+        }
+    }
+    //TODO: replace with backend unread state call
+    func markAllRead() {
+        tempEmails.forEach { email in
+            email.unread = false
+            email.newEmail = false
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
@@ -54,17 +67,19 @@ struct EmailListView: View {
                         Spacer()
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(tempEmails, id: \.uuid, selection: $selections) { email in
-                        EmailCellView(email: email)
-                            .listRowSeparator(.hidden)
-                    }
-                    .listStyle(.plain)
-                    #if os(iOS)
-                    .toolbar {
-                        EditButton()
-                    }
-                    #endif
-                    .scrollContentBackground(.hidden)
+                    VStack {
+                        List(tempEmails, id: \.uuid, selection: $selections) { email in
+                            EmailCellView(email: email)
+                                .listRowSeparator(.hidden)
+                                .onLongPressGesture {
+                                    withAnimation {
+                                        editMode = .active
+                                    }
+                                }
+                        }
+                    }.environment(\.editMode, $editMode)
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
                 }
                 Button {
                     // Action
@@ -82,7 +97,19 @@ struct EmailListView: View {
                 .disabled(true)
             }
             .navigationTitle("inbox_header")
+            .navigationBarBackButtonHidden(editMode.isEditing)
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    if editMode.isEditing == true {
+                        Button(
+                            "close_button", systemImage: "xmark",
+                            action: {
+                                withAnimation {
+                                    editMode = .inactive
+                                }
+                            })
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(
@@ -107,14 +134,17 @@ struct EmailListView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(
-                            "Select",
+                            editMode.isEditing ? "done_button" : "select_all_button",
                             action: {
-                                editMode = .active
+                                withAnimation {
+                                    editMode = editMode.isEditing ? .inactive : .active
+                                }
+                                selectAll()
                             })
                         Button(
-                            "Mark all read",
+                            "mark_all_read_button",
                             action: {
-
+                                markAllRead()
                             })
                         Button(
                             "account_sign_out_button",

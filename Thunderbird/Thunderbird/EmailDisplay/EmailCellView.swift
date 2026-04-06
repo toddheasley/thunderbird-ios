@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct EmailCellView: View {
-    @Environment(\.editMode) private var editMode
     let email: TempEmail
     let senderText: String
     let headerText: String
