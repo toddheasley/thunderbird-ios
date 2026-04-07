@@ -36,15 +36,15 @@ struct EmailListView: View {
     }
 
     func selectAll() {
-        tempEmails.forEach { email in
-            selections.insert(email.uuid)
+        for tempEmail in tempEmails {
+            selections.insert(tempEmail.uuid)
         }
     }
     //TODO: replace with backend unread state call
     func markAllRead() {
-        tempEmails.forEach { email in
-            email.unread = false
-            email.newEmail = false
+        for tempEmail in tempEmails {
+            tempEmail.unread = false
+            tempEmail.newEmail = false
         }
     }
 
