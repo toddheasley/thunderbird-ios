@@ -8,15 +8,20 @@
 import Foundation
 
 import SwiftData
+import EmailAddress
 @Model
 class TempEmail {
-
-    var senderText: String
     var headerText: String
     var bodyText: String
     var dateSent: Date
     var uuid: UUID
-    var recipients: [String]
+
+    var from: [EmailAddress]
+    var sender: [EmailAddress]
+    var reply: [EmailAddress]
+    var to: [EmailAddress]
+    var cc: [EmailAddress]
+    var bcc: [EmailAddress]
     var attachments: [Data]!
 
     // For alignment, bool check likely not final
@@ -26,8 +31,12 @@ class TempEmail {
     var pinned: Bool
 
     init(
-        sender: String,
-        recipients: [String],
+        from: [EmailAddress],
+        sender: [EmailAddress],
+        reply: [EmailAddress],
+        to: [EmailAddress],
+        cc: [EmailAddress],
+        bcc: [EmailAddress],
         headerText: String,
         bodyText: String,
         dateSent: Date,
@@ -37,7 +46,12 @@ class TempEmail {
         isThread: Bool,
         pinned: Bool
     ) {
-        self.senderText = sender
+        self.from = from
+        self.sender = sender
+        self.reply = reply
+        self.to = to
+        self.cc = cc
+        self.bcc = bcc
         self.headerText = headerText
         self.bodyText = bodyText
         self.dateSent = dateSent
@@ -46,14 +60,17 @@ class TempEmail {
         self.attachments = attachments
         self.isThread = isThread
         self.uuid = UUID()
-        self.recipients = recipients
         self.pinned = pinned
     }
 
     @MainActor static let sampleData = [
         TempEmail(
-            sender: "Sender1",
-            recipients: ["Rhea Thunderbird"],
+            from: [EmailAddress("sender1@test.com", label: "Sender1")],
+            sender: [EmailAddress("sender1@test.com", label: "Sender1")],
+            reply: [EmailAddress("sender1@test.com", label: "Sender1")],
+            to: [EmailAddress("rheaThun@thundermail.com", label: "Rhea Thunderbird")],
+            cc: [],
+            bcc: [],
             headerText: "Email one",
             bodyText: "This is some nice long text",
             dateSent: Date(),
@@ -64,8 +81,12 @@ class TempEmail {
             pinned: false
         ),
         TempEmail(
-            sender: "Sender1",
-            recipients: ["Rhea Thunderbird"],
+            from: [EmailAddress("sender1@test.com", label: "Sender1")],
+            sender: [EmailAddress("sender1@test.com", label: "Sender1")],
+            reply: [EmailAddress("sender1@test.com", label: "Sender1")],
+            to: [EmailAddress("rheaThun@thundermail.com", label: "Rhea Thunderbird")],
+            cc: [],
+            bcc: [],
             headerText: "Email two",
             bodyText: "This is some nice long text",
             dateSent: Date(timeIntervalSinceNow: -6000),
@@ -76,8 +97,12 @@ class TempEmail {
             pinned: true
         ),
         TempEmail(
-            sender: "Sender2",
-            recipients: ["Rhea Thunderbird"],
+            from: [EmailAddress("sendera@test.com", label: "Sendera")],
+            sender: [],
+            reply: [EmailAddress("sender2replyto@test.com", label: "Sender2")],
+            to: [EmailAddress("rheaThun@thundermail.com", label: "Rhea Thunderbird")],
+            cc: [],
+            bcc: [],
             headerText: "Email three with a longer set of text",
             bodyText: "This is some nice long text",
             dateSent: Date(timeIntervalSinceNow: -6200),
@@ -88,8 +113,12 @@ class TempEmail {
             pinned: false
         ),
         TempEmail(
-            sender: "Sender5",
-            recipients: ["Rhea Thunderbird", "Roc Thunderbird Jr", "Roc Thunderbird", "Roc Thunderbird Sr"],
+            from: [EmailAddress("sender3@test.com", label: "Sender3")],
+            sender: [EmailAddress("sender3@test.com", label: "Sender3")],
+            reply: [EmailAddress("sender2@test.com", label: "Sender2")],
+            to: [EmailAddress("rheaThun@thundermail.com", label: "Rhea Thunderbird")],
+            cc: [EmailAddress("rocThun@thundermail.com", label: "Roc Thunderbird"), EmailAddress("rocjrThun@thundermail.com"), EmailAddress("rocsrThun@thundermail.com", label: "Dad")],
+            bcc: [],
             headerText: "Email four with a longer set of text",
             bodyText: "This is some nice long text",
             dateSent: Date(timeIntervalSinceNow: -100000),
@@ -100,23 +129,15 @@ class TempEmail {
             pinned: false
         ),
         TempEmail(
-            sender: "Sender5",
-            recipients: ["Rhea Thunderbird", "Roc Thunderbird"],
+            from: [EmailAddress("sender2@test.com", label: "Sender2")],
+            sender: [EmailAddress("sender2@test.com", label: "Sender2")],
+            reply: [EmailAddress("sender2@test.com", label: "Sender2")],
+            to: [EmailAddress("rheaThun@thundermail.com", label: "Rhea Thunderbird")],
+            cc: [],
+            bcc: [],
             headerText: "Email four with a longer set of text",
             bodyText: "This is some nice long text",
             dateSent: Date(timeIntervalSinceNow: -257000),
-            unread: false,
-            newEmail: false,
-            attachments: [Data()],
-            isThread: false,
-            pinned: false
-        ),
-        TempEmail(
-            sender: "Sender6",
-            recipients: ["Rhea Thunderbird", "Roc Thunderbird"],
-            headerText: "Email four with a longer set of text",
-            bodyText: "This is some nice long text",
-            dateSent: Date(timeIntervalSinceReferenceDate: 51_556_900),
             unread: false,
             newEmail: false,
             attachments: [Data()],
