@@ -1,4 +1,4 @@
-# Feature Libraries
+# Core Libraries
 
 ## `Autoconfiguration`
 
@@ -179,7 +179,7 @@ try await SMTPClient(Server(
 
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.
 
-`JMAP` feature library is a _client_ implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird for iOS.](https://github.com/thunderbird/thunderbird-ios)
+`JMAP` library is a _client_ implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird for iOS.](https://github.com/thunderbird/thunderbird-ios)
 
 ## `MIME`
 
@@ -187,7 +187,7 @@ try await SMTPClient(Server(
 
 ### Library
 
-`MIME` feature library is a multipart message encoder and decoder. It's useful for the following purposes:
+`MIME` library is a multipart message encoder and decoder. It's useful for the following purposes:
 
 * Decoding IMAP- or POP-delivered email messages
 * Encoding email messages for SMTP sending
