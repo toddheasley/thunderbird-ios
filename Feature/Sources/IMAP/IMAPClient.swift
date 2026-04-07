@@ -180,16 +180,36 @@ public class IMAPClient {
         try await execute(command: VoidCommand(.close))
     }
 
-    /// Fetch messages by mailbox sequence number.
-    public func fetch(_ set: SequenceSet = .all, attributes: [FetchAttribute]) async throws -> MessageSet {
+    /// Fetch a set of messages by mailbox ``SequenceNumber``; fetches all headers and omits message body by default.
+    public func fetch(_ set: SequenceSet = .all, attributes: [FetchAttribute] = .header) async throws -> MessageSet {
         logger?.info("Fetching messages by mailbox sequence number…")
         return try await execute(command: FetchCommand(set, attributes: attributes.filtered(capabilities)))
     }
 
-    /// Fetch messages by UID.
-    public func fetch(_ set: UIDSet, attributes: [FetchAttribute]) async throws -> MessageSet {
+    /// Fetch a specific message by ``SequenceNumber``; fetches complete message by default.
+    public func fetch(_ number: SequenceNumber, attributes: [FetchAttribute] = .complete) async throws -> Message {
+        logger?.info("Fetching message \(number)…")
+        let messages: MessageSet = try await fetch(SequenceSet(number), attributes: attributes)
+        guard let message: Message = messages.first?.value else {
+            throw IMAPError.commandFailed("Message \(number) not found")
+        }
+        return message
+    }
+
+    /// Fetch a set of messages by ``UID``; fetches all headers and omits message body by default.
+    public func fetch(uid set: UIDSet, attributes: [FetchAttribute] = .header) async throws -> MessageSet {
         logger?.info("Fetching messages by UID…")
         return try await execute(command: UIDFetchCommand(set, attributes: attributes.filtered(capabilities)))
+    }
+
+    /// Fetch a specific message by ``UID``; fetches complete message by default.
+    public func fetch(uid: UID, attributes: [FetchAttribute] = .complete) async throws -> Message {
+        logger?.info("Fetching message UID \(uid)…")
+        let messages: MessageSet = try await fetch(uid: UIDSet(uid), attributes: attributes)
+        guard let message: Message = messages.first?.value else {
+            throw IMAPError.commandFailed("Message UID \(uid) not found")
+        }
+        return message
     }
 
     public init(

@@ -74,7 +74,7 @@ extension IMAPCommandHandler where InboundIn == Response, Result == Void {
 }
 
 extension Int64 {
-    static let timeout: Self = 30  // Practical default
+    static let timeout: Self = 60  // Practical default
 }
 
 // IMAP [CLIENTBUG] is an error code mail servers include in responses to

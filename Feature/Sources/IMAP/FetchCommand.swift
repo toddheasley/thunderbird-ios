@@ -28,8 +28,8 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
     var isStreaming: Bool { streaming != nil }
 
     private var streaming: (kind: StreamingKind, data: Data, byteCount: Int)?
-    private var components: [Message.Component] = []
     private var sequenceNumber: SequenceNumber?
+    private var components: [Message.Component] = []
 
     // MARK: IMAPCommandHandler
     typealias InboundIn = Response
@@ -79,7 +79,7 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
                 }
                 streaming = nil
             case .finish:
-                messages[sequenceNumber!] = Message(components: components)
+                messages[sequenceNumber!] = Message(components)
                 sequenceNumber = nil
                 components = []
             default:
