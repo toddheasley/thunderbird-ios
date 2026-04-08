@@ -80,13 +80,13 @@ struct ReadEmailView: View {
                                 action: {
 
                                 })
-                            if(email.pinned){
+                            if email.pinned {
                                 Button(
                                     "unpin_button",
                                     action: {
 
                                     })
-                            }else{
+                            } else {
                                 Button(
                                     "pin_button",
                                     action: {
