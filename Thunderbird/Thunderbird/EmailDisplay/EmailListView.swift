@@ -12,6 +12,8 @@ struct EmailListView: View {
     @Environment(Accounts.self) private var accounts: Accounts
     @Environment(\.openURL) private var openURL
     let tempEmails = TempEmail.sampleData
+    @State var editMode: EditMode = .inactive
+    @State private var selections = Set<UUID>()
 
     //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
@@ -33,6 +35,19 @@ struct EmailListView: View {
         AlertManager.shared.alertTitle = "Sort Emails"
     }
 
+    func selectAll() {
+        for tempEmail in tempEmails {
+            selections.insert(tempEmail.uuid)
+        }
+    }
+    //TODO: replace with backend unread state call
+    func markAllRead() {
+        for tempEmail in tempEmails {
+            tempEmail.unread = false
+            tempEmail.newEmail = false
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
@@ -43,7 +58,7 @@ struct EmailListView: View {
                         Text("new_messages_will_appear")
                             .padding(.bottom, 10)
                         Button {
-
+                            //Do Nothing
                         } label: {
                             Text("add_another_account")
                         }.buttonBorderShape(.capsule)
@@ -52,21 +67,18 @@ struct EmailListView: View {
                         Spacer()
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(tempEmails) { email in
-                        EmailCellView(email: email)
-                            .listRowSeparator(.hidden)
-                            .background {
-                                NavigationLink(value: email) {
-                                    EmptyView()
-                                }.opacity(0)
-                            }
-                    }.listStyle(.plain)
-                        .navigationDestination(for: TempEmail.self) { tempEmail in
-                            //Eventually will pass the email object
-                            ReadEmailView(
-                                tempEmail
-                            )
+                    VStack {
+                        List(tempEmails, id: \.uuid, selection: $selections) { email in
+                            EmailCellView(email: email)
+                                .listRowSeparator(.hidden)
+                                .onLongPressGesture {
+                                    withAnimation {
+                                        editMode = .active
+                                    }
+                                }
                         }
+                    }.environment(\.editMode, $editMode)
+                        .listStyle(.plain)
                         .scrollContentBackground(.hidden)
                 }
                 Button {
@@ -82,9 +94,22 @@ struct EmailListView: View {
                 }
                 .background(.clear)
                 .padding()
+                .disabled(true)
             }
             .navigationTitle("inbox_header")
+            .navigationBarBackButtonHidden(editMode.isEditing)
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    if editMode.isEditing == true {
+                        Button(
+                            "close_button", systemImage: "xmark",
+                            action: {
+                                withAnimation {
+                                    editMode = .inactive
+                                }
+                            })
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(
@@ -108,6 +133,19 @@ struct EmailListView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Button(
+                            editMode.isEditing ? "done_button" : "select_all_button",
+                            action: {
+                                withAnimation {
+                                    editMode = editMode.isEditing ? .inactive : .active
+                                }
+                                selectAll()
+                            })
+                        Button(
+                            "mark_all_read_button",
+                            action: {
+                                markAllRead()
+                            })
                         Button(
                             "account_sign_out_button",
                             action: {

@@ -7,45 +7,32 @@
 
 import SwiftUI
 import WebKit
+import EmailAddress
 
 struct ReadEmailView: View {
     init(_ email: TempEmail) {
-
         self.email = email
-
-        self.emailBody = email.bodyText
-        self.sender = email.senderText
-        self.subject = email.headerText
-        self.sentDate = email.dateSent
-        self.recipients = email.recipients
-        self.attachments = email.attachments
     }
     private var email: TempEmail
-    private var emailBody: String
-    private var sender: String
-    private var recipients: [String]
-    private var subject: String
-    private var sentDate: Date
-    private var attachments: [Data]!
 
     var body: some View {
         NavigationView {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
-                    Text(subject)
+                    Text(email.headerText)
                         .font(.title3)
                     Spacer()
-                    if attachments != nil {
+                    if email.attachments != nil {
                         Image(systemName: "paperclip").font(.caption)
                     }
                 }
 
                 ScrollView {
                     VStack(alignment: .leading) {
-                        SenderView(sender, sentDate, recipients)
-                        WebView(htmlString: emailBody).scaledToFill()
-                        if attachments != nil {
-                            AttachmentBlockView(attachments)
+                        SenderView(email: email)
+                        WebView(htmlString: email.bodyText).scaledToFill()
+                        if email.attachments != nil {
+                            AttachmentBlockView(email.attachments)
                         }
                     }
                 }
@@ -185,31 +172,41 @@ extension ToolbarItemPlacement {
 #endif
 
 struct SenderView: View {
-    init(_ sender: String, _ sentDate: Date, _ recipients: [String]) {
-        self.sender = sender
-        self.date = sentDate
-        self.recipients = recipients
+    init(email: TempEmail) {
+        from = email.from
+        sender = email.sender
+        recipients = email.cc
+        toText = email.to
+        date = email.dateSent
+        replyTo = email.reply
     }
-    private var sender: String
-    private var recipients: [String]
+    private var from: [EmailAddress]
+    private var sender: [EmailAddress]
+    private var replyTo: [EmailAddress]
+    private var recipients: [EmailAddress]
+    private var toText: [EmailAddress]
     private var date: Date
     @State private var showingAlert = false
     @State private var unimplementedFeatureName: String = ""
+    @State private var showSenderRecipientInfo = false
 
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
                 HStack {
-                    Text(sender).font(.title3)
+                    Text(from[0].value).font(.title3)
                 }
                 HStack {
-                    Text("To: \(recipients[0])")
-                    if recipients.count > 1 {
-                        Text("+\(recipients.count-1)")
+                    Text("To: \(toText[0].label ?? toText[0].value)")
+                    if recipients.count > 0 {
+                        Text("+\(recipients.count)")
                     }
                 }
                 .font(.subheadline)
                 .foregroundStyle(.accent)
+                .onTapGesture {
+                    showSenderRecipientInfo = true
+                }
 
             }
             Spacer()
@@ -228,13 +225,79 @@ struct SenderView: View {
             }
 
         }
+        .sheet(isPresented: $showSenderRecipientInfo) {
+            VStack {
+                Text(date.formatted(.dateTime.hour().minute().second().month(.abbreviated).day().year()))
+                    .font(.caption2)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding([.top, .trailing])
+
+                List {
+                    Section(header: Text("from_header")) {
+                        ForEach(from) { person in
+                            ContactCellView(contact: person)
+                        }
+                    }.listRowSeparator(.hidden)
+
+                    if !sender.isEmpty {
+                        Section(header: Text("sender_header")) {
+                            ForEach(sender) { person in
+                                ContactCellView(contact: person)
+                            }
+                        }.listRowSeparator(.hidden)
+                    }
+                    if !replyTo.isEmpty {
+                        Section(header: Text("reply_to_header")) {
+                            ForEach(replyTo) { person in
+                                ContactCellView(contact: person)
+                            }
+                        }.listRowSeparator(.hidden)
+                    }
+                    Section(header: Text("to_header")) {
+                        ForEach(toText) { person in
+                            ContactCellView(contact: person)
+                        }
+                        if !recipients.isEmpty {
+                            ForEach(recipients) { person in
+                                ContactCellView(contact: person)
+                            }
+                        }
+                    }.listRowSeparator(.hidden)
+
+                }
+                .listSectionSpacing(.compact)
+            }
+            .presentationDetents([.medium])
+
+        }
+    }
+}
+
+struct ContactCellView: View {
+    let contact: EmailAddress
+    init(contact: EmailAddress) {
+        self.contact = contact
+    }
+    var body: some View {
+        HStack {
+            //TODO: Avatar with initials/icon
+            VStack(alignment: .leading) {
+                if contact.label != nil { Text(contact.label!) }
+                Text(contact.value)
+            }.font(.caption)
+            //TODO: button for interaction
+        }
     }
 }
 
 #Preview {
-    let tempEmail = TempEmail(
-        sender: "Sender@sender.com",
-        recipients: ["Rhea Thunderbird", "Roc"],
+    var tempEmail = TempEmail(
+        from: [EmailAddress("sender1@test.com", label: "Sender1")],
+        sender: [EmailAddress("sender1@test.com", label: "Sender1")],
+        reply: [EmailAddress("sender1@test.com", label: "Sender1")],
+        to: [EmailAddress("rheaThun@thundermail.com", label: "Rhea Thunderbird")],
+        cc: [],
+        bcc: [],
         headerText: "This is the subject line of the email",
         bodyText: """
             <!DOCTYPE html>
