@@ -9,8 +9,8 @@ struct AccountListView: View {
     var body: some View {
         ScrollView {
             VStack {
-                ForEach(accountManager.allAccounts) { account in
-                    Text(account.name)
+                ForEach(accountManager.allAccounts) {
+                    Text($0.name)
                 }
             }
         }

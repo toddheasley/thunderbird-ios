@@ -1,8 +1,23 @@
 @_exported import Autoconfiguration
 @_exported import EmailAddress
+@_exported import IMAP
+@_exported import JMAP
+@_exported import MIME
+@_exported import SMTP
 import Foundation
 
 public struct Account: Codable, Equatable, Hashable, Identifiable {
+    public enum EmailProtocol: String, CaseIterable, CustomStringConvertible, Identifiable {
+        case imap = "IMAP/SMTP"
+        case jmap = "JMAP"
+
+        // MARK: CustomStringConvertible
+        public var description: String { rawValue }
+
+        // MARK: Identifiable
+        public var id: String { rawValue }
+    }
+
     public var name: String
     public var deletePolicy: DeletePolicy
     public var identities: [EmailAddress]
@@ -10,6 +25,14 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
 
     public var incomingServer: Server? { server(.jmap) ?? server(.imap) ?? nil }
     public var outgoingServer: Server? { server(.jmap) ?? server(.smtp) ?? nil }
+
+    public var emailProtocol: EmailProtocol {
+        servers.map { $0.serverProtocol }.contains(.jmap) ? .jmap : .imap
+    }
+
+    public func server(_ serverProtocol: ServerProtocol) -> Server? {
+        servers.filter { $0.serverProtocol == serverProtocol }.first
+    }
 
     /// Configure an `Account` using ``Autoconfiguration.EmailProvider``.
     public init(_ emailAddress: String, provider: EmailProvider? = nil) {
@@ -40,10 +63,6 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
         self.identities = identities
         self.servers = servers
         self.id = id
-    }
-
-    func server(_ serverProtocol: ServerProtocol) -> Server? {
-        servers.filter { $0.serverProtocol == serverProtocol }.first
     }
 
     // MARK: Equatable

@@ -27,10 +27,12 @@ struct AccountAddView: View {
             Spacer()
             HStack {
                 TextField("Email address", text: $emailAddress)
-                    .textInputAutocapitalization(.never)
+                    #if os(iOS)
+                .textInputAutocapitalization(.never)
+                .keyboardType(.emailAddress)
+                .submitLabel(.search)
+                    #endif
                     .autocorrectionDisabled()
-                    .keyboardType(.emailAddress)
-                    .submitLabel(.search)
                     .onSubmit {
                         Task {
                             await search()

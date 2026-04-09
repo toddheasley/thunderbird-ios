@@ -21,6 +21,8 @@ public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertib
 
 /// General purpose server model for any supported `ServerProtocol`. Stores authorization credentials locally in the [Apple keychain.](https://developer.apple.com/documentation/security/storing-keys-in-the-keychain)
 public struct Server: Codable, Equatable, Hashable, Identifiable {
+    public typealias ConnectionSecurity = IMAP.ConnectionSecurity
+
     public var serverProtocol: ServerProtocol
     public var connectionSecurity: ConnectionSecurity
     public var authenticationType: AuthenticationType
@@ -69,7 +71,7 @@ public struct Server: Codable, Equatable, Hashable, Identifiable {
 }
 
 extension ServerProtocol {
-    var defaultPort: Int {
+    public var defaultPort: Int {
         switch self {
         case .imap: IMAP.Server(hostname: "").port
         case .jmap: JMAP.Server(authorization: nil, host: "").port
@@ -102,5 +104,14 @@ extension Server {
             hostname: server.hostname,
             port: server.port
         )
+    }
+}
+
+extension Server.ConnectionSecurity {
+    init(_ socketType: EmailProvider.Server.SocketType) {
+        switch socketType {
+        case .startTLS: self = .startTLS
+        case .ssl: self = .tls
+        }
     }
 }
