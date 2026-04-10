@@ -1,9 +1,12 @@
 name: Shippable Builds
 
 env:
+  # DEFAULT_VERSION is used when no version is provided via workflow_dispatch.
+  # Scheduled builds stamp the app with this version.
   DEFAULT_VERSION: &default_version "1.0"
   DEFAULT_NOTIFY_TESTERS: &default_notify_testers false
   DEFAULT_TEST_DEVICE: &default_test_device "iPhone 17"
+  XCODE_VERSION: "26.0"
 
 on:
   schedule:
@@ -47,12 +50,15 @@ jobs:
       - name: Xcode Select Version
         uses: mobiledevops/xcode-select-version-action@a58204ef24b6e61857940e51c0e11b0368065b94 # v1.0.0
         with:
-          xcode-select-version: '26.0'
+          xcode-select-version: ${{ env.XCODE_VERSION }}
+
+      - name: Ensure iOS Simulator Runtime installed
+        run: xcodebuild -downloadPlatform iOS
 
       - name: Setup Ruby and Fastlane
         uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1.295.0
         with:
-          ruby-version: '3.0'
+          ruby-version: '3.2'
           bundler-cache: true
           working-directory: fastlane
 
