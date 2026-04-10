@@ -10,7 +10,7 @@ import Foundation
 import SwiftData
 import EmailAddress
 @Model
-class TempEmail {
+class TempEmail: Identifiable {
     var headerText: String
     var bodyText: String
     var dateSent: Date

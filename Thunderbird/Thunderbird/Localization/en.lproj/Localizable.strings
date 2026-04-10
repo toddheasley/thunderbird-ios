@@ -91,3 +91,8 @@
 "forward_button" = "Forward";
 "forward_as_button" = "Forward as attachment";
 "edit_as_new_button" = "Edit as new";
+//Email List Actions
+"mark_all_read_button" = "Mark all read";
+"select_all_button" = "Select All";
+"done_button" = "Done";
+

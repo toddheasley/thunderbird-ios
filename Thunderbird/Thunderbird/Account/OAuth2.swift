@@ -134,7 +134,7 @@ extension OAuth2.Request: @retroactive CaseIterable {
 }
 
 extension OAuth2 {
-    static func request(_ emailAddress: EmailAddress) async throws -> Self.Request {
+    static func request(_ emailAddress: String) async throws -> Self.Request {
         let records: [MXRecord] = try await DNSResolver.queryMX(emailAddress)
         for record in records {
             for request in Request.allCases {

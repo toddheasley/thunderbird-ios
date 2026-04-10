@@ -11,39 +11,132 @@ let package: Package = Package(
     ],
     products: [
         .library(
-            name: "Core",
+            name: "Account",
             targets: [
-                "Core"
-            ]),
-        .library(
-            name: "Log",
-            targets: [
-                "Log"
+                "Account"
             ]),
         .executable(
-            name: "weblate",
+            name: "autoconfig",
             targets: [
-                "Weblate"
+                "AutoconfigurationCLI"
+            ]),
+        .library(
+            name: "Autoconfiguration",
+            targets: [
+                "Autoconfiguration"
+            ]),
+        .library(
+            name: "EmailAddress",
+            targets: [
+                "EmailAddress"
+            ]),
+        .library(
+            name: "IMAP",
+            targets: [
+                "IMAP"
+            ]),
+        .library(
+            name: "JMAP",
+            targets: [
+                "JMAP"
+            ]),
+        .library(
+            name: "MIME",
+            targets: [
+                "MIME"
+            ]),
+        .library(
+            name: "SMTP",
+            targets: [
+                "SMTP"
             ])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", branch: "main")
+        .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
+        .package(url: "https://github.com/apple/swift-async-dns-resolver", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-extras", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-imap", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-ssl", branch: "main"),
+        .package(url: "https://github.com/apple/swift-nio-transport-services", branch: "main")
     ],
     targets: [
-        .target(
-            name: "Core",
-            dependencies: [
-                "Log"
-            ]),
-        .target(name: "Log"),
+        .target(name: "Account"),
         .testTarget(
-            name: "LogTests",
+            name: "AccountTests",
             dependencies: [
-                "Log"
+                "Account"
+            ]),
+        .target(
+            name: "Autoconfiguration",
+            dependencies: [
+                .product(name: "AsyncDNSResolver", package: "swift-async-dns-resolver")
             ]),
         .executableTarget(
-            name: "Weblate",
+            name: "AutoconfigurationCLI",
             dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser")
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "Autoconfiguration"
+            ]),
+        .testTarget(
+            name: "AutoconfigurationTests",
+            dependencies: [
+                "Autoconfiguration"
+            ]),
+        .target(name: "EmailAddress"),
+        .testTarget(
+            name: "EmailAddressTests",
+            dependencies: [
+                "EmailAddress"
+            ]),
+        .target(
+            name: "IMAP",
+            dependencies: [
+                .product(name: "NIOIMAP", package: "swift-nio-imap"),
+                .product(name: "NIOSSL", package: "swift-nio-ssl"),
+                "EmailAddress",
+                "MIME"
+            ]),
+        .testTarget(
+            name: "IMAPTests",
+            dependencies: [
+                "IMAP"
+            ]),
+        .target(
+            name: "JMAP",
+            dependencies: [
+                "EmailAddress",
+                "MIME"
+            ]),
+        .testTarget(
+            name: "JMAPTests",
+            dependencies: [
+                "JMAP"
+            ]),
+        .target(
+            name: "MIME",
+            dependencies: []),
+        .testTarget(
+            name: "MIMETests",
+            dependencies: [
+                "MIME"
+            ],
+            resources: [
+                .process("Resources")
+            ]),
+        .target(
+            name: "SMTP",
+            dependencies: [
+                .product(name: "NIO", package: "swift-nio"),
+                .product(name: "NIOExtras", package: "swift-nio-extras"),
+                .product(name: "NIOSSL", package: "swift-nio-ssl"),
+                .product(name: "NIOTransportServices", package: "swift-nio-transport-services"),
+                "EmailAddress",
+                "MIME"
+            ]),
+        .testTarget(
+            name: "SMTPTests",
+            dependencies: [
+                "SMTP"
             ])
     ])
