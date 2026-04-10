@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		158DDFA72F7DBEC5003ABE87 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 158DDFA62F7DBEC5003ABE87 /* Account */; };
+		1522B1782F898B7100DD3C4F /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 1522B1772F898B7100DD3C4F /* Core */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				158DDFA72F7DBEC5003ABE87 /* Account in Frameworks */,
+				1522B1782F898B7100DD3C4F /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +78,7 @@
 			);
 			name = CoreDemo;
 			packageProductDependencies = (
-				158DDFA62F7DBEC5003ABE87 /* Account */,
+				1522B1772F898B7100DD3C4F /* Core */,
 			);
 			productName = CoreDemo;
 			productReference = 15514C7A2F7D5F6E00D39DB6 /* CoreDemo.app */;
@@ -401,9 +401,9 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		158DDFA62F7DBEC5003ABE87 /* Account */ = {
+		1522B1772F898B7100DD3C4F /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Account;
+			productName = Core;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

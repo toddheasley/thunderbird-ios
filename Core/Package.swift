@@ -26,6 +26,11 @@ let package: Package = Package(
                 "Autoconfiguration"
             ]),
         .library(
+            name: "Core",
+            targets: [
+                "Core"
+            ]),
+        .library(
             name: "EmailAddress",
             targets: [
                 "EmailAddress"
@@ -91,6 +96,11 @@ let package: Package = Package(
             name: "AutoconfigurationTests",
             dependencies: [
                 "Autoconfiguration"
+            ]),
+        .target(
+            name: "Core",
+            dependencies: [
+                "Account"
             ]),
         .target(name: "EmailAddress"),
         .testTarget(

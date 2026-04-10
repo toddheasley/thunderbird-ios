@@ -7,12 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1560FEE72DDF611F00F6295C /* BoltUI */; };
-		158C47212E4376FA0035F732 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 158C47202E4376FA0035F732 /* Account */; };
-		158C47252E4376FA0035F732 /* JMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 158C47242E4376FA0035F732 /* JMAP */; };
-		15B58B2B2EC374DF0061A707 /* IMAP in Frameworks */ = {isa = PBXBuildFile; productRef = 15B58B2A2EC374DF0061A707 /* IMAP */; };
-		15B58B2D2EC374DF0061A707 /* SMTP in Frameworks */ = {isa = PBXBuildFile; productRef = 15B58B2C2EC374DF0061A707 /* SMTP */; };
-		15E360BE2E71C1D300B31753 /* Autoconfiguration in Frameworks */ = {isa = PBXBuildFile; productRef = 15E360BD2E71C1D300B31753 /* Autoconfiguration */; };
+		1522B1742F898B3A00DD3C4F /* Bolt in Frameworks */ = {isa = PBXBuildFile; productRef = 1522B1732F898B3A00DD3C4F /* Bolt */; };
+		1522B1762F898B3A00DD3C4F /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 1522B1752F898B3A00DD3C4F /* Core */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,12 +67,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				158C47252E4376FA0035F732 /* JMAP in Frameworks */,
-				158C47212E4376FA0035F732 /* Account in Frameworks */,
-				15B58B2D2EC374DF0061A707 /* SMTP in Frameworks */,
-				15E360BE2E71C1D300B31753 /* Autoconfiguration in Frameworks */,
-				1560FEE82DDF611F00F6295C /* BoltUI in Frameworks */,
-				15B58B2B2EC374DF0061A707 /* IMAP in Frameworks */,
+				1522B1742F898B3A00DD3C4F /* Bolt in Frameworks */,
+				1522B1762F898B3A00DD3C4F /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,12 +128,8 @@
 			);
 			name = Thunderbird;
 			packageProductDependencies = (
-				1560FEE72DDF611F00F6295C /* BoltUI */,
-				158C47202E4376FA0035F732 /* Account */,
-				158C47242E4376FA0035F732 /* JMAP */,
-				15E360BD2E71C1D300B31753 /* Autoconfiguration */,
-				15B58B2A2EC374DF0061A707 /* IMAP */,
-				15B58B2C2EC374DF0061A707 /* SMTP */,
+				1522B1732F898B3A00DD3C4F /* Bolt */,
+				1522B1752F898B3A00DD3C4F /* Core */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -631,29 +619,13 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1560FEE72DDF611F00F6295C /* BoltUI */ = {
+		1522B1732F898B3A00DD3C4F /* Bolt */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = BoltUI;
+			productName = Bolt;
 		};
-		158C47202E4376FA0035F732 /* Account */ = {
+		1522B1752F898B3A00DD3C4F /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Account;
-		};
-		158C47242E4376FA0035F732 /* JMAP */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = JMAP;
-		};
-		15B58B2A2EC374DF0061A707 /* IMAP */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = IMAP;
-		};
-		15B58B2C2EC374DF0061A707 /* SMTP */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SMTP;
-		};
-		15E360BD2E71C1D300B31753 /* Autoconfiguration */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Autoconfiguration;
+			productName = Core;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -82,10 +82,14 @@ struct AccountEditView: View {
                 .containerRelativeFrame(.horizontal)
             }
         }
+        #if os(iOS)
         .navigationBarTitleDisplayMode(isAdding ? .inline : .automatic)
+        #endif
         .navigationTitle(isAdding ? "Add Account" : "Edit Account")
         .toolbar {
-            Button(action: {}) {
+            Button(action: {
+
+            }) {
                 Text("Save")
             }
             .buttonStyle(.borderedProminent)
