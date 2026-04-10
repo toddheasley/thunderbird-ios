@@ -1,4 +1,4 @@
-import Account
+import Core
 import SwiftUI
 
 @main
@@ -10,6 +10,7 @@ struct App: SwiftUI.App {
         WindowGroup {
             ContentView()
                 .environment(accountManager)
+                .alert($accountManager)
         }
     }
 }

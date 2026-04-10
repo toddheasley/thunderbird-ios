@@ -6,7 +6,30 @@ public typealias Accounts = AccountManager
 @Observable
 public class AccountManager {
     public private(set) var allAccounts: [Account] = []
-    public private(set) var error: Error?
+
+    public private(set) var error: Error? {
+        didSet { hasError = error != nil }
+    }
+
+    ///  Bindable, published error flag for presenting error alerts or sheets in SwiftUI
+    ///
+    ///  Setting `hasError` to `false` also clears error.
+    public var hasError: Bool = false {
+        didSet {
+            switch hasError {
+            case false:
+                guard error != nil else { break }
+                error = nil
+            case true:
+                guard error == nil else { break }
+                hasError = false
+            }
+        }
+    }
+
+    public func setError(_ error: Error) {
+        self.error = error
+    }
 
     public func account(for id: UUID) -> Account? {
         allAccounts.filter({ $0.id == id }).first

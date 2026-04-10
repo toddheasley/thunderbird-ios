@@ -1,4 +1,4 @@
-import Account
+import Core
 import SwiftUI
 
 struct AccountEditView: View {
@@ -34,6 +34,21 @@ struct AccountEditView: View {
 
     private var isAdding: Bool { accountManager.account(for: account.id) == nil }
 
+    private func save() {
+        switch emailProtocol {
+        case .imap:
+            account.servers = [
+                imapServer,
+                smtpServer
+            ]
+        case .jmap:
+            account.servers = [
+                jmapServer
+            ]
+        }
+        accountManager.set(account)
+    }
+
     // MARK: View
     var body: some View {
         VStack {
@@ -54,7 +69,22 @@ struct AccountEditView: View {
                 .foregroundStyle(.secondary)
                 .padding(.top)
                 TextField("name@example.com", text: $emailAddress)
+                    .onChange(of: emailAddress, initial: true) {
+                        account.identities = [
+                            EmailAddress(emailAddress)
+                        ]
+                    }
                 AuthorizationView(emailAddress, $authenticationType, authorization: $authorization)
+                    .onChange(of: authenticationType, initial: true) {
+                        jmapServer.authenticationType = authenticationType
+                        imapServer.authenticationType = authenticationType
+                        smtpServer.authenticationType = authenticationType
+                    }
+                    .onChange(of: authorization, initial: true) {
+                        jmapServer.authorization = authorization
+                        imapServer.authorization = authorization
+                        smtpServer.authorization = authorization
+                    }
             }
             .padding()
             Divider()

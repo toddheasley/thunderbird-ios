@@ -1,4 +1,4 @@
-import Account
+import Core
 import SwiftUI
 
 struct ContentView: View {
