@@ -7,7 +7,7 @@ public typealias Accounts = AccountManager
 public class AccountManager {
     public private(set) var allAccounts: [Account] = []
 
-    public private(set) var error: Error? {
+    public var error: Error? {
         didSet { hasError = error != nil }
     }
 

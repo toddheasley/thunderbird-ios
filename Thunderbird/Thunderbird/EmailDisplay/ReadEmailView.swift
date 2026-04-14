@@ -349,7 +349,9 @@ struct SenderView: View {
                     }.listRowSeparator(.hidden)
 
                 }
+                #if os(iOS)
                 .listSectionSpacing(.compact)
+                #endif
             }
             .presentationDetents([.medium])
 

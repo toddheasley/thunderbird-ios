@@ -91,6 +91,29 @@ extension ServerProtocol {
     }
 }
 
+extension IMAPError {
+    public static var serverProtocolMismatch: Self { .capabilityNotSupported("Server protocol mismatch") }
+    public static var oAuth2NotSupported: Self { .capabilityNotSupported("OAuth2 not supported") }
+}
+
+extension IMAP.Server {
+    public init(_ server: Server) throws {
+        guard server.serverProtocol == .imap else {
+            throw IMAPError.serverProtocolMismatch
+        }
+        guard server.authenticationType != .oAuth2 else {
+            throw IMAPError.oAuth2NotSupported
+        }
+        self.init(
+            IMAP.ConnectionSecurity(server.connectionSecurity),
+            hostname: server.hostname,
+            username: server.username,
+            password: server.authorization.password,
+            port: server.port
+        )
+    }
+}
+
 extension Server {
     init?(_ server: EmailProvider.Server) {
         guard let serverProtocol: ServerProtocol = ServerProtocol(server.serverType) else {
@@ -108,10 +131,23 @@ extension Server {
 }
 
 extension Server.ConnectionSecurity {
-    init(_ socketType: EmailProvider.Server.SocketType) {
+    init(_ socketType: EmailProvider.Server.SocketType, for serverProtocol: ServerProtocol? = nil) {
         switch socketType {
+        case .ssl:
+            guard serverProtocol != .smtp else { fallthrough }  // SMTP only supports STARTTLS; override autoconfig
+            self = .tls
+        case .startTLS:
+            self = .startTLS
+        }
+    }
+}
+
+private extension IMAP.ConnectionSecurity {
+    init(_ connectionSecurity: Server.ConnectionSecurity) {
+        switch connectionSecurity {
+        case .tls: self = .tls
         case .startTLS: self = .startTLS
-        case .ssl: self = .tls
+        case .none: self = .none
         }
     }
 }

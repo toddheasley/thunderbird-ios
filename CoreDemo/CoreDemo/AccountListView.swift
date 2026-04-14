@@ -7,11 +7,16 @@ struct AccountListView: View {
 
     // MARK: View
     var body: some View {
-        ScrollView {
-            VStack {
-                ForEach(accountManager.allAccounts) {
-                    Text($0.name)
+        List {
+            ForEach(accountManager.allAccounts, id: \.self) { account in
+                NavigationLink(destination: {
+                    AccountEditView(account)
+                }) {
+                    Text(account.name)
                 }
+            }
+            .onDelete { indexSet in
+                accountManager.deleteAccounts(at: indexSet)
             }
         }
         .overlay {
@@ -33,6 +38,7 @@ struct AccountListView: View {
         }
         .navigationTitle("Accounts")
         .toolbar {
+            EditButton()
             Button(action: {
                 isPresented = true
             }) {

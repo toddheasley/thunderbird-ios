@@ -13,10 +13,28 @@ struct AccountAddView: View {
         error = nil
         isSearching = true
         do {
-            let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress).config
-            account = Account(emailAddress, provider: config.emailProvider)
+            if let record: SRVRecord = try? await DNSResolver.querySRV(emailAddress).first {
+
+                // Trap only Fastmail accounts; volunteer for JMAP configurations
+                account = Account(name: emailAddress, identities: [
+                    EmailAddress(emailAddress)
+                ], servers: [
+                    Server(
+                        .jmap,
+                        connectionSecurity: .tls,
+                        authenticationType: .password,
+                        username: emailAddress,
+                        hostname: record.host,
+                        port: Int(record.port)
+                    )
+                ])
+            } else {
+                let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress).config
+                account = Account(emailAddress, provider: config.emailProvider)
+            }
         } catch {
             self.error = error
+            print("### \(error)")
         }
         isSearching = false
     }

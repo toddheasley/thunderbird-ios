@@ -2,10 +2,18 @@ import Core
 import SwiftUI
 
 struct AccountEditView: View {
+    var account: Account {
+        Account(
+            name: name,
+            identities: [
+                EmailAddress(emailAddress)
+            ], servers: servers, id: id)
+    }
     init(_ account: Account = Account(name: "")) {
         let jmapServer: Server = account.server(.jmap) ?? Server(.jmap)
         let imapServer: Server = account.server(.imap) ?? Server(.imap)
         let smtpServer: Server = account.server(.smtp) ?? Server(.smtp)
+        name = account.name
         emailAddress = account.identities.first?.value ?? ""
         emailProtocol = account.emailProtocol
         switch account.emailProtocol {
@@ -19,10 +27,12 @@ struct AccountEditView: View {
         self.jmapServer = jmapServer
         self.imapServer = imapServer
         self.smtpServer = smtpServer
-        self.account = account
+        id = account.id
     }
 
     @Environment(AccountManager.self) private var accountManager: AccountManager
+
+    @State private var name: String
     @State private var emailAddress: String
     @State private var emailProtocol: Account.EmailProtocol
     @State private var authenticationType: AuthenticationType
@@ -30,22 +40,36 @@ struct AccountEditView: View {
     @State private var jmapServer: Server
     @State private var imapServer: Server
     @State private var smtpServer: Server
-    @State private var account: Account
+    private let id: UUID
 
-    private var isAdding: Bool { accountManager.account(for: account.id) == nil }
-
-    private func save() {
+    private var servers: [Server] {
         switch emailProtocol {
         case .imap:
-            account.servers = [
+            imapServer.authorization = authorization
+            smtpServer.authorization = authorization
+            return [
                 imapServer,
                 smtpServer
             ]
         case .jmap:
-            account.servers = [
+            jmapServer.authorization = authorization
+            return [
                 jmapServer
             ]
         }
+    }
+
+    private var isAdding: Bool { accountManager.account(for: id) == nil }
+
+    private func test() async {
+        do {
+            try await account.test()
+        } catch {
+            accountManager.error = error
+        }
+    }
+
+    private func save() {
         accountManager.set(account)
     }
 
@@ -60,7 +84,7 @@ struct AccountEditView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.top)
-                TextField("Optional", text: $account.name)
+                TextField("\(emailAddress)", text: $name)
                 HStack {
                     Text("Email Address")
                     Spacer()
@@ -69,21 +93,11 @@ struct AccountEditView: View {
                 .foregroundStyle(.secondary)
                 .padding(.top)
                 TextField("name@example.com", text: $emailAddress)
-                    .onChange(of: emailAddress, initial: true) {
-                        account.identities = [
-                            EmailAddress(emailAddress)
-                        ]
-                    }
                 AuthorizationView(emailAddress, $authenticationType, authorization: $authorization)
                     .onChange(of: authenticationType, initial: true) {
                         jmapServer.authenticationType = authenticationType
                         imapServer.authenticationType = authenticationType
                         smtpServer.authenticationType = authenticationType
-                    }
-                    .onChange(of: authorization, initial: true) {
-                        jmapServer.authorization = authorization
-                        imapServer.authorization = authorization
-                        smtpServer.authorization = authorization
                     }
             }
             .padding()
@@ -118,7 +132,7 @@ struct AccountEditView: View {
         .navigationTitle(isAdding ? "Add Account" : "Edit Account")
         .toolbar {
             Button(action: {
-
+                Task { await test() }
             }) {
                 Text("Save")
             }
