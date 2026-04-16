@@ -10,6 +10,9 @@ struct App: SwiftUI.App {
         WindowGroup {
             ContentView()
                 .environment(accountManager)
+                .onAppear {
+                    accountManager.isJMAPAvailable = true
+                }
         }
     }
 }

@@ -6,6 +6,25 @@ public enum AccountError: CustomStringConvertible, Error, Equatable {
     case mime(MIMEError)
     case smtp(SMTPError)
 
+    public init?(_ error: Error) {
+        if let error: Self = error as? Self {
+            self = error
+        } else {
+            switch error {
+            case let error as IMAPError:
+                self = .imap(error)
+            case let error as JMAPError:
+                self = .jmap(error)
+            case let error as MIMEError:
+                self = .mime(error)
+            case let error as SMTPError:
+                self = .smtp(error)
+            default:
+                return nil
+            }
+        }
+    }
+
     // MARK: CustomStringConvertible
     public var description: String {
         switch self {

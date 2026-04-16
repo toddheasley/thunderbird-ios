@@ -68,3 +68,35 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
     // MARK: Identifiable
     public let id: UUID
 }
+
+extension Account {
+
+    /// Autoconfigure a new `Account`.
+    public static func autoconfig(_ emailAddress: String, isJMAPAvailable: Bool = false) async throws -> Self {
+        do {
+            if isJMAPAvailable, let record: SRVRecord = try await DNSResolver.querySRV(emailAddress).first {
+                return Account(
+                    name: emailAddress,
+                    identities: [
+                        EmailAddress(emailAddress)
+                    ],
+                    servers: [
+                        Server(
+                            .jmap,
+                            connectionSecurity: .tls,
+                            authenticationType: .password,
+                            username: emailAddress,
+                            hostname: record.host,
+                            port: Int(record.port)
+                        )
+                    ]
+                )
+            } else {
+                let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress).config
+                return Account(emailAddress, provider: config.emailProvider)
+            }
+        } catch {
+            throw AccountError.autoconfig(error)
+        }
+    }
+}

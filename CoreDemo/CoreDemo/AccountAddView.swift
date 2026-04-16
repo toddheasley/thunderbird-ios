@@ -14,30 +14,9 @@ struct AccountAddView: View {
         accountManager.error = nil
         isSearching = true
         do {
-            if let record: SRVRecord = try? await DNSResolver.querySRV(emailAddress).first {
-
-                // Trap only Fastmail accounts; volunteer for JMAP configurations
-                account = Account(
-                    name: emailAddress,
-                    identities: [
-                        EmailAddress(emailAddress)
-                    ],
-                    servers: [
-                        Server(
-                            .jmap,
-                            connectionSecurity: .tls,
-                            authenticationType: .password,
-                            username: emailAddress,
-                            hostname: record.host,
-                            port: Int(record.port)
-                        )
-                    ])
-            } else {
-                let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress).config
-                account = Account(emailAddress, provider: config.emailProvider)
-            }
+            account = try await .autoconfig(emailAddress, isJMAPAvailable: accountManager.isJMAPAvailable)
         } catch {
-            accountManager.error = .autoconfig(error)
+            accountManager.error = AccountError(error) ?? .autoconfig(error)
         }
         isSearching = false
     }
