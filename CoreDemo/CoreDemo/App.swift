@@ -10,7 +10,6 @@ struct App: SwiftUI.App {
         WindowGroup {
             ContentView()
                 .environment(accountManager)
-                .alert($accountManager)
         }
     }
 }

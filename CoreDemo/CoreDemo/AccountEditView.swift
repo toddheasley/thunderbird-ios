@@ -7,8 +7,12 @@ struct AccountEditView: View {
             name: name,
             identities: [
                 EmailAddress(emailAddress)
-            ], servers: servers, id: id)
+            ],
+            servers: servers,
+            id: id
+        )
     }
+
     init(_ account: Account = Account(name: "")) {
         let jmapServer: Server = account.server(.jmap) ?? Server(.jmap)
         let imapServer: Server = account.server(.imap) ?? Server(.imap)
@@ -31,7 +35,8 @@ struct AccountEditView: View {
     }
 
     @Environment(AccountManager.self) private var accountManager: AccountManager
-
+    @Environment(\.dismiss) private var dismiss
+    @State private var isPresented: Bool = false
     @State private var name: String
     @State private var emailAddress: String
     @State private var emailProtocol: Account.EmailProtocol
@@ -42,35 +47,20 @@ struct AccountEditView: View {
     @State private var smtpServer: Server
     private let id: UUID
 
+    private var isAdding: Bool { accountManager.account(for: id) == nil }
+
     private var servers: [Server] {
         switch emailProtocol {
         case .imap:
-            imapServer.authorization = authorization
-            smtpServer.authorization = authorization
-            return [
+            [
                 imapServer,
                 smtpServer
             ]
         case .jmap:
-            jmapServer.authorization = authorization
-            return [
+            [
                 jmapServer
             ]
         }
-    }
-
-    private var isAdding: Bool { accountManager.account(for: id) == nil }
-
-    private func test() async {
-        do {
-            try await account.test()
-        } catch {
-            accountManager.error = error
-        }
-    }
-
-    private func save() {
-        accountManager.set(account)
     }
 
     // MARK: View
@@ -98,6 +88,11 @@ struct AccountEditView: View {
                         jmapServer.authenticationType = authenticationType
                         imapServer.authenticationType = authenticationType
                         smtpServer.authenticationType = authenticationType
+                    }
+                    .onChange(of: authorization, initial: true) {
+                        jmapServer.authorization = authorization
+                        imapServer.authorization = authorization
+                        smtpServer.authorization = authorization
                     }
             }
             .padding()
@@ -132,12 +127,23 @@ struct AccountEditView: View {
         .navigationTitle(isAdding ? "Add Account" : "Edit Account")
         .toolbar {
             Button(action: {
-                Task { await test() }
+                isPresented = true
             }) {
-                Text("Save")
+                Label("Test", systemImage: "stethoscope")
+            }
+            Button(action: {
+                accountManager.set(account)
+                dismiss()
+            }) {
+                Label("Save", systemImage: "checkmark")
             }
             .buttonStyle(.borderedProminent)
         }
+        .sheet(isPresented: $isPresented) {
+            AccountTestView(account)
+                .presentationDragIndicator(.visible)
+        }
+        .error()
     }
 }
 
@@ -175,7 +181,7 @@ struct ServerEditView: View {
     }
 }
 
-#Preview("Server Edit View") {
+#Preview("ServerEditView") {
     @Previewable @State var server: Server = Server(.imap, connectionSecurity: .tls, hostname: "imap.example.com")
 
     ServerEditView($server)
@@ -219,7 +225,7 @@ struct ConnectionSecurityView: View {
     }
 }
 
-#Preview("Connection Security View") {
+#Preview("ConnectionSecurityView") {
     @Previewable @State var connectionSecurity: Server.ConnectionSecurity = .tls
 
     ConnectionSecurityView($connectionSecurity)
@@ -257,7 +263,7 @@ struct AuthenticationTypeView: View {
     }
 }
 
-#Preview("Authentication Type View") {
+#Preview("AuthenticationTypeView") {
     @Previewable @State var authenticationType: AuthenticationType = .oAuth2
 
     AuthenticationTypeView($authenticationType)
@@ -311,7 +317,7 @@ struct AuthorizationView: View {
     }
 }
 
-#Preview("Authorization View") {
+#Preview("AuthorizationView") {
     @Previewable @State var authenticationType: AuthenticationType = .password
     @Previewable @State var authorization: Authorization = .basic(user: "user@example.com", password: "fake-appp-pass-word")
 
@@ -356,7 +362,7 @@ struct PasswordField: View {
     }
 }
 
-#Preview("Password Field") {
+#Preview("PasswordField") {
     @Previewable @State var text: String = "fake-appp-pass-word"
 
     PasswordField(text: $text)

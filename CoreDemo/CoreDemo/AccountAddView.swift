@@ -2,39 +2,42 @@ import Core
 import SwiftUI
 
 struct AccountAddView: View {
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @State private var isSearching: Bool = false
     @State private var emailAddress: String = ""
     @State private var account: Account?
-    @State private var error: Error?
+    @FocusState private var isFocused: Bool
 
     private var isDisabled: Bool { !emailAddress.isEmailAddress || isSearching }
 
     private func search() async {
-        error = nil
+        accountManager.error = nil
         isSearching = true
         do {
             if let record: SRVRecord = try? await DNSResolver.querySRV(emailAddress).first {
 
                 // Trap only Fastmail accounts; volunteer for JMAP configurations
-                account = Account(name: emailAddress, identities: [
-                    EmailAddress(emailAddress)
-                ], servers: [
-                    Server(
-                        .jmap,
-                        connectionSecurity: .tls,
-                        authenticationType: .password,
-                        username: emailAddress,
-                        hostname: record.host,
-                        port: Int(record.port)
-                    )
-                ])
+                account = Account(
+                    name: emailAddress,
+                    identities: [
+                        EmailAddress(emailAddress)
+                    ],
+                    servers: [
+                        Server(
+                            .jmap,
+                            connectionSecurity: .tls,
+                            authenticationType: .password,
+                            username: emailAddress,
+                            hostname: record.host,
+                            port: Int(record.port)
+                        )
+                    ])
             } else {
                 let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress).config
                 account = Account(emailAddress, provider: config.emailProvider)
             }
         } catch {
-            self.error = error
-            print("### \(error)")
+            accountManager.error = .autoconfig(error)
         }
         isSearching = false
     }
@@ -51,15 +54,15 @@ struct AccountAddView: View {
                 .submitLabel(.search)
                     #endif
                     .autocorrectionDisabled()
+                    .focused($isFocused, equals: true)
+                    .onAppear {
+                        isFocused = true
+                    }
                     .onSubmit {
-                        Task {
-                            await search()
-                        }
+                        Task { await search() }
                     }
                 Button(action: {
-                    Task {
-                        await search()
-                    }
+                    Task { await search() }
                 }) {
                     Label("Search configurations", systemImage: "magnifyingglass")
                 }
@@ -77,5 +80,11 @@ struct AccountAddView: View {
         .navigationDestination(item: $account) { account in
             AccountEditView(account)
         }
+        .error()
     }
+}
+
+#Preview {
+    AccountAddView()
+        .padding()
 }

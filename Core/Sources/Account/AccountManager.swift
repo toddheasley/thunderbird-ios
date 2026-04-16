@@ -2,34 +2,11 @@ import Foundation
 
 public typealias Accounts = AccountManager
 
-/// Globally manage persistent accounts from the SwiftUI environment.
+/// Globally manage shared, persistent accounts from the SwiftUI environment.
 @Observable
 public class AccountManager {
     public private(set) var allAccounts: [Account] = []
-
-    public var error: Error? {
-        didSet { hasError = error != nil }
-    }
-
-    ///  Bindable, published error flag for presenting error alerts or sheets in SwiftUI
-    ///
-    ///  Setting `hasError` to `false` also clears error.
-    public var hasError: Bool = false {
-        didSet {
-            switch hasError {
-            case false:
-                guard error != nil else { break }
-                error = nil
-            case true:
-                guard error == nil else { break }
-                hasError = false
-            }
-        }
-    }
-
-    public func setError(_ error: Error) {
-        self.error = error
-    }
+    public var error: AccountError?
 
     public func account(for id: UUID) -> Account? {
         allAccounts.filter({ $0.id == id }).first
@@ -52,7 +29,7 @@ public class AccountManager {
             try FileManager.default.write(accounts, to: .accounts)
             allAccounts = try FileManager.default.readAccounts(from: .accounts)
         } catch {
-            self.error = error
+            self.error = .fileManager(error)
         }
     }
 
@@ -62,7 +39,7 @@ public class AccountManager {
             try FileManager.default.write(allAccounts.filter { $0.id != account.id }, to: .accounts)
             allAccounts = try FileManager.default.readAccounts(from: .accounts)
         } catch {
-            self.error = error
+            self.error = .fileManager(error)
         }
     }
 
@@ -72,7 +49,7 @@ public class AccountManager {
             try FileManager.default.write([], to: .accounts)
             allAccounts = []
         } catch {
-            self.error = error
+            self.error = .fileManager(error)
         }
     }
 
@@ -81,7 +58,7 @@ public class AccountManager {
             guard try FileManager.default.fileExists(at: .accounts) else { return }
             allAccounts = try FileManager.default.readAccounts(from: .accounts)
         } catch {
-            self.error = error
+            self.error = .fileManager(error)
         }
     }
 }

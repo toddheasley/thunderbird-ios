@@ -1,14 +1,25 @@
 import Core
-import Foundation
+import SwiftUI
 
-extension AccountManager {
-    func deleteAccounts(at indexSet: IndexSet) {
-        let accounts: [Account] = indexSet.compactMap { allAccounts[$0] }
-        for account in accounts {
-            delete(account)
-        }
+struct AccountTestView: View {
+    init(_ account: Account) {
+        self.account = account
     }
 
+    private let account: Account
+
+    // MARK: View
+    var body: some View {
+        ContentUnavailableView {
+            Label("\(account.name)", systemImage: "stethoscope")
+        }
+    }
+}
+
+#Preview {
+    @Previewable @State var account: Account = Account(name: "")
+
+    AccountTestView(account)
 }
 
 extension Account {

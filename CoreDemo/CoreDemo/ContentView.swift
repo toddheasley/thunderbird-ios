@@ -10,11 +10,16 @@ struct ContentView: View {
                 AccountListView()
             },
             content: {
-                Text("Content")
+                ContentUnavailableView {
+                    Label("Content", systemImage: "mail.stack")
+                }
             },
             detail: {
-                Text("Detail")
-            })
+                ContentUnavailableView {
+                    Label("Detail", systemImage: "envelope.open")
+                }
+            }
+        )
     }
 }
 

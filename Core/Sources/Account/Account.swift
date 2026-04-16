@@ -65,11 +65,6 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
         self.id = id
     }
 
-    // MARK: Equatable
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id  // Account equality based on UUID exclusively
-    }
-
     // MARK: Identifiable
     public let id: UUID
 }
