@@ -35,7 +35,6 @@ struct AccountEditView: View {
     }
 
     @Environment(AccountManager.self) private var accountManager: AccountManager
-    @Environment(\.dismiss) private var dismiss
     @State private var isPresented: Bool = false
     @State private var name: String
     @State private var emailAddress: String
@@ -133,7 +132,6 @@ struct AccountEditView: View {
             }
             Button(action: {
                 accountManager.set(account)
-                dismiss()
             }) {
                 Label("Save", systemImage: "checkmark")
             }

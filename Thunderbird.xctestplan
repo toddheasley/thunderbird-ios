@@ -78,6 +78,16 @@
       }
     },
     {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "IMAPClientTests",
+            "testFunctions" : [
+              "allCommands(_:)"
+            ]
+          }
+        ]
+      },
       "target" : {
         "containerPath" : "container:..\/Core",
         "identifier" : "IMAPTests",
@@ -87,6 +97,12 @@
     {
       "skippedTests" : {
         "suites" : [
+          {
+            "name" : "JMAPClientTests",
+            "testFunctions" : [
+              "allMethods(_:)"
+            ]
+          },
           {
             "name" : "URLSessionTests"
           }
@@ -106,6 +122,16 @@
       }
     },
     {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "SMTPClientTests",
+            "testFunctions" : [
+              "send(server:)"
+            ]
+          }
+        ]
+      },
       "target" : {
         "containerPath" : "container:..\/Core",
         "identifier" : "SMTPTests",

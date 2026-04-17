@@ -108,7 +108,7 @@ extension IMAP.Server {
             IMAP.ConnectionSecurity(server.connectionSecurity),
             hostname: server.hostname,
             username: server.username,
-            password: server.authorization.password,
+            password: server.authorization.rawValue,
             port: server.port
         )
     }
@@ -138,6 +138,16 @@ extension Server.ConnectionSecurity {
             self = .tls
         case .startTLS:
             self = .startTLS
+        }
+    }
+}
+
+private extension Authorization {
+    var rawValue: String {
+        switch self {
+        case .basic(_, let password): password
+        case .oauth(_, let token): token.value
+        case .none: ""
         }
     }
 }
