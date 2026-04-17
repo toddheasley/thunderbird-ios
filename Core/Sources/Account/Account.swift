@@ -74,7 +74,7 @@ extension Account {
     /// Autoconfigure a new `Account`.
     public static func autoconfig(_ emailAddress: String, isJMAPAvailable: Bool = false) async throws -> Self {
         do {
-            if isJMAPAvailable, let record: SRVRecord = try await DNSResolver.querySRV(emailAddress).first {
+            if isJMAPAvailable, try emailAddress.host == "fastmail.com" {
                 return Account(
                     name: emailAddress,
                     identities: [
@@ -86,8 +86,7 @@ extension Account {
                             connectionSecurity: .tls,
                             authenticationType: .password,
                             username: emailAddress,
-                            hostname: record.host,
-                            port: Int(record.port)
+                            hostname: "api.fastmail.com"
                         )
                     ]
                 )

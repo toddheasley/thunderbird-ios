@@ -15,7 +15,6 @@ struct AccountTestView: View {
     var body: some View {
         VStack {
             ContentUnavailableView("\(account.name)", systemImage: "stethoscope")
-                .padding(.vertical)
             ForEach(results) { result in
                 HStack {
                     Text(result.description)
@@ -46,15 +45,10 @@ struct AccountTestView: View {
                     results.append(.imapConnect())
                     try await client.login()
                     results.append(.imapAuthenticate())
-                    /*
-                    for capability in [
-                        IMAP.Capability.gmailExtensions,
-                        .idle,
-                        .saslIR,
-                        .uidPlus
-                    ] {
+                    for capability in client.capabilities {
                         results.append(.imapCapability(capability))
-                    } */
+                        try await Task.sleep(for: .milliseconds(100))  // Just for drama
+                    }
                     try await client.logout()
                 } catch {
                     results.append(.imapConnect(error))
@@ -98,12 +92,12 @@ private enum TestResult: CustomStringConvertible, Identifiable, Sendable {
     // MARK: CustomStringConvertible
     var description: String {
         switch self {
-        case .imapConnect: "IMAP connect"
-        case .imapAuthenticate: "IMAP authenticate"
-        case .imapCapability(let capability, _): "IMAP capability: \(capability)"
-        case .jmapSession: "JMAP session"
-        case .jmapCapability(let capability, _): "JMAP capability: \(capability)"
-        case .smtpSend: "SMTP send"
+        case .imapConnect: "IMAP CONNECT"
+        case .imapAuthenticate: "IMAP AUTHENTICATE"
+        case .imapCapability(let capability, _): "IMAP CAPABILITY: \(capability)"
+        case .jmapSession: "JMAP SESSION"
+        case .jmapCapability(let capability, _): "JMAP CAPABILITY: \(capability)"
+        case .smtpSend: "SMTP SEND"
         }
     }
 

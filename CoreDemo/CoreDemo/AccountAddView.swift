@@ -27,12 +27,11 @@ struct AccountAddView: View {
             Spacer()
             HStack {
                 TextField("Email address", text: $emailAddress)
+                    .disableAutoFormatting()
                     #if os(iOS)
-                .textInputAutocapitalization(.never)
                 .keyboardType(.emailAddress)
                 .submitLabel(.search)
                     #endif
-                    .autocorrectionDisabled()
                     .focused($isFocused, equals: true)
                     .onAppear {
                         isFocused = true

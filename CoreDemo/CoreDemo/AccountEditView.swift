@@ -74,6 +74,7 @@ struct AccountEditView: View {
                 .foregroundStyle(.secondary)
                 .padding(.top)
                 TextField("\(emailAddress)", text: $name)
+                    .disableAutoFormatting()
                 HStack {
                     Text("Email Address")
                     Spacer()
@@ -82,6 +83,10 @@ struct AccountEditView: View {
                 .foregroundStyle(.secondary)
                 .padding(.top)
                 TextField("name@example.com", text: $emailAddress)
+                    .disableAutoFormatting()
+                #if os(iOS)
+                    .keyboardType(.emailAddress)
+                #endif
                 AuthorizationView(emailAddress, $authenticationType, authorization: $authorization)
                     .onChange(of: authenticationType, initial: true) {
                         jmapServer.authenticationType = authenticationType
@@ -169,9 +174,11 @@ struct ServerEditView: View {
             .foregroundStyle(.secondary)
             HStack {
                 TextField(server.titleKey, text: $server.hostname)
+                    .disableAutoFormatting()
                 Spacer()
                 TextField("\(server.serverProtocol.defaultPort)", value: $server.port, format: .number)
                     .multilineTextAlignment(.trailing)
+                    .disableAutoFormatting()
                     .frame(maxWidth: 64.0)
             }
             ConnectionSecurityView($server.connectionSecurity)
@@ -348,6 +355,7 @@ struct PasswordField: View {
                 .monospaced()
                 .opacity(isSecure ? 1.0 : 0.0)
             TextField(titleKey, text: $text)
+                .disableAutoFormatting()
                 .monospaced()
                 .opacity(isSecure ? 0.0 : 1.0)
             Button(action: {
