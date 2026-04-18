@@ -32,6 +32,7 @@ struct AccountTestView: View {
         .padding()
         .task {
             isTesting = true
+            
             switch account.emailProtocol {
             case .imap:
                 guard let incomingServer: Server = account.incomingServer else {
@@ -54,7 +55,23 @@ struct AccountTestView: View {
                     results.append(.imapConnect(error))
                 }
             case .jmap:
-                results.append(.jmapSession(JMAPError.method(.accountNotSupportedByMethod)))
+                guard let server: Server = account.incomingServer else {
+                    results.append(.jmapSession(JMAPError.serverProtocolMismatch))
+                    break
+                }
+                do {
+                    let server: JMAP.Server = try JMAP.Server(server)
+                    let client: JMAPClient = try await .session(server)
+                    results.append(.jmapSession())
+                    /*
+                    let mailboxes: [JMAP.Mailbox] = try await client.mailboxes()
+                    let emails: [Email] = try await client.emails(in: mailboxes.first!)
+                    for email in emails {
+                        print(email)
+                    } */
+                } catch {
+                    results.append(.jmapSession(error))
+                }
             }
             isTesting = false
         }

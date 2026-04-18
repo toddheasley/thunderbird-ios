@@ -350,14 +350,16 @@ struct PasswordField: View {
 
     // MARK: View
     var body: some View {
-        ZStack(alignment: .trailing) {
-            SecureField(titleKey, text: $text)
-                .monospaced()
-                .opacity(isSecure ? 1.0 : 0.0)
-            TextField(titleKey, text: $text)
-                .disableAutoFormatting()
-                .monospaced()
-                .opacity(isSecure ? 0.0 : 1.0)
+        HStack(spacing: 10.0) {
+            ZStack(alignment: .trailing) {
+                SecureField(titleKey, text: $text)
+                    .monospaced()
+                    .opacity(isSecure ? 1.0 : 0.0)
+                TextField(titleKey, text: $text)
+                    .disableAutoFormatting()
+                    .monospaced()
+                    .opacity(isSecure ? 0.0 : 1.0)
+            }
             Button(action: {
                 isSecure.toggle()
             }) {
