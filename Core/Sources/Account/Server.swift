@@ -91,9 +91,10 @@ extension ServerProtocol {
     }
 }
 
+// MARK: IMAP
 extension IMAPError {
-    public static var serverProtocolMismatch: Self { .capabilityNotSupported("Server protocol mismatch") }
     public static var oAuth2NotSupported: Self { .capabilityNotSupported("OAuth2 not supported") }
+    public static var serverProtocolMismatch: Self { .capabilityNotSupported("Server protocol mismatch") }
 }
 
 extension IMAP.Server {
@@ -114,6 +115,47 @@ extension IMAP.Server {
     }
 }
 
+// MARK: JMAP
+extension JMAPError {
+    public static var oAuth2NotSupported: Self { .underlying(URLError(.resourceUnavailable)) }
+    public static var serverProtocolMismatch: Self { .underlying(URLError(.unsupportedURL)) }
+    public static var sessionNotFound: Self { .underlying(URLError(.fileDoesNotExist)) }
+}
+
+extension JMAP.Server {
+    public init(_ server: Server) throws {
+        guard server.serverProtocol == .jmap else {
+            throw JMAPError.serverProtocolMismatch
+        }
+        guard server.authenticationType != .oAuth2 else {
+            throw JMAPError.oAuth2NotSupported
+        }
+        self.init(authorization: .bearer(server.authorization.rawValue), host: server.hostname, port: server.port)
+    }
+}
+
+// MARK: SMTP
+extension SMTPError {
+    public static var oAuth2NotSupported: Self { .response("OAuth2 not supported") }
+    public static var serverProtocolMismatch: Self { .response("Server protocol mismatch") }
+}
+
+extension SMTP.Server {
+    public init(_ server: Server) throws {
+        guard server.serverProtocol == .smtp else {
+            throw SMTPError.serverProtocolMismatch
+        }
+        guard server.connectionSecurity != .tls else {
+            throw SMTPError.requiredTLSNotConfigured
+        }
+        guard server.authenticationType != .oAuth2 else {
+            throw SMTPError.serverProtocolMismatch
+        }
+        self.init(hostname: server.hostname, username: server.username, password: server.authorization.rawValue)
+    }
+}
+
+// MARK: Autoconfiguration
 extension Server {
     init?(_ server: EmailProvider.Server) {
         guard let serverProtocol: ServerProtocol = ServerProtocol(server.serverType) else {

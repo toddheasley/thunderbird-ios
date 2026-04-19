@@ -46,7 +46,7 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
             identities: [
                 emailAddress
             ],
-            servers: (provider?.servers ?? []).compactMap { Server($0) },
+            servers: (provider?.servers ?? []).compactMap { Server($0) }
         )
     }
 

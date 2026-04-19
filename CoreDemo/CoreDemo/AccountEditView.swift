@@ -84,9 +84,9 @@ struct AccountEditView: View {
                 .padding(.top)
                 TextField("name@example.com", text: $emailAddress)
                     .disableAutoFormatting()
-                #if os(iOS)
-                    .keyboardType(.emailAddress)
-                #endif
+                    #if os(iOS)
+                .keyboardType(.emailAddress)
+                    #endif
                 AuthorizationView(emailAddress, $authenticationType, authorization: $authorization)
                     .onChange(of: authenticationType, initial: true) {
                         jmapServer.authenticationType = authenticationType
@@ -125,9 +125,6 @@ struct AccountEditView: View {
                 .containerRelativeFrame(.horizontal)
             }
         }
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(isAdding ? .inline : .automatic)
-        #endif
         .navigationTitle(isAdding ? "Add Account" : "Edit Account")
         .toolbar {
             Button(action: {
