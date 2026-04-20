@@ -10,7 +10,6 @@ import Account
 
 struct EmailListView: View {
     @Environment(Accounts.self) private var accounts: Accounts
-    @Environment(\.openURL) private var openURL
     let tempEmails = TempEmail.sampleData
     @State var editMode: EditMode = .inactive
     @State private var selections = Set<UUID>()
@@ -160,18 +159,9 @@ struct EmailListView: View {
                             action: {
                                 accounts.deleteAccounts()
                             })
-                        Button(
-                            "donation_support",
-                            action: {
-                                guard let url = URL(string: "https://www.thunderbird.net/en-US/donate/") else { return }
-                                openURL(url)
-                            })
                     } label: {
                         Label("options_button", systemImage: "ellipsis")
                     }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink("settings_button", destination: FeatureFlagDebugView())
                 }
             }
         }
