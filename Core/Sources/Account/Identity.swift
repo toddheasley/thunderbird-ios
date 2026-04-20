@@ -1,8 +1,8 @@
 public struct Identity: Codable, CustomStringConvertible, Hashable {
-    public let emailAddress: EmailAddress
+    public let emailAddress: String
     public let displayName: String?
 
-    public init(_ emailAddress: EmailAddress, displayName: String? = nil) {
+    public init(_ emailAddress: String, displayName: String? = nil) {
         self.emailAddress = emailAddress
         self.displayName = displayName
     }
