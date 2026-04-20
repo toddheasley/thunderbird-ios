@@ -16,6 +16,7 @@ struct EmailListView: View {
     @State var editMode: EditMode = .inactive
     #endif
     @State private var selections = Set<UUID>()
+    @State private var showDrawer = false
 
     //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
@@ -102,6 +103,7 @@ struct EmailListView: View {
                 .background(.clear)
                 .padding()
                 .disabled(true)
+                DrawerView(showDrawer: $showDrawer)
             }
             .navigationTitle("inbox_header")
             #if os(iOS)
@@ -109,6 +111,13 @@ struct EmailListView: View {
             #endif
             .toolbar {
                 #if os(iOS)
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showDrawer = true
+                    } label: {
+                        Label("Account", systemImage: "line.3.horizontal").labelStyle(.iconOnly)
+                    }
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     if editMode.isEditing == true {
                         Button(
