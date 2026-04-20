@@ -14,6 +14,7 @@ public class JMAPClient {
     }
 
     public let server: Server
+    public private(set) var session: Session?
 
     public func thread(for email: Email) async throws -> [Email] {
         if let session {
@@ -123,7 +124,6 @@ public class JMAPClient {
         self.logger = logger
     }
 
-    private(set) var session: Session?
     private let logger: Logger?
 }
 
