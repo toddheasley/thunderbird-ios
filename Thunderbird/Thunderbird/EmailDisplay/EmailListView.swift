@@ -14,6 +14,7 @@ struct EmailListView: View {
     let tempEmails = TempEmail.sampleData
     @State var editMode: EditMode = .inactive
     @State private var selections = Set<UUID>()
+    @State private var showDrawer = false
 
     //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
@@ -95,10 +96,18 @@ struct EmailListView: View {
                 .background(.clear)
                 .padding()
                 .disabled(true)
+                DrawerView(showDrawer: $showDrawer)
             }
             .navigationTitle("inbox_header")
             .navigationBarBackButtonHidden(editMode.isEditing)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showDrawer = true
+                    } label: {
+                        Label("Account", systemImage: "line.3.horizontal").labelStyle(.iconOnly)
+                    }
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     if editMode.isEditing == true {
                         Button(
