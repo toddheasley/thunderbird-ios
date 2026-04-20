@@ -1,3 +1,9 @@
+@_exported import Autoconfiguration
+@_exported import EmailAddress
+@_exported import IMAP
+@_exported import JMAP
+@_exported import MIME
+@_exported import SMTP
 import Foundation
 
 public struct Account: Codable, Equatable, Hashable, Identifiable {
