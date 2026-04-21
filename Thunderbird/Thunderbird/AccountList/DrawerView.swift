@@ -87,7 +87,7 @@ struct Mailbox: View {
                     VStack(alignment: .leading) {
                         Text(account.name)
                             .font(.headline)
-                        if let email = account.identities.first?.emailAddress {
+                        if let email = account.identities.first {
                             Text(String(describing: email))
                                 .font(.subheadline)
                         }

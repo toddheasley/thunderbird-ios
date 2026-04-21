@@ -1,40 +1,32 @@
 import Foundation
 
 public enum TestResult: CustomStringConvertible, Identifiable, Sendable {
-    case imapConnect(Error? = nil)
-    case imapAuthenticate(Error? = nil)
-    case imapCapability(IMAP.Capability)
-    case jmapSession(Error? = nil)
-    case jmapCapability(JMAP.Capability, key: JMAP.Capability.Key)
-    case smtpSend(Error? = nil)
+    case failure(String, error: Error)
+    case success(String)
 
     public var isFailure: Bool { error != nil }
 
     public var error: Error? {
         switch self {
-        case .imapConnect(let error),
-            .imapAuthenticate(let error),
-            .jmapSession(let error),
-            .smtpSend(let error):
-            error
-        default: nil
+        case .failure(_, let error): error
+        case .success: nil
         }
     }
 
     // MARK: CustomStringConvertible
     public var description: String {
         switch self {
-        case .imapConnect: "IMAP CONNECT"
-        case .imapAuthenticate: "IMAP AUTHENTICATE"
-        case .imapCapability(let capability): "IMAP: \(capability)"
-        case .jmapSession: "JMAP SESSION"
-        case .jmapCapability(_, let key): "JMAP \(key.description.uppercased())"
-        case .smtpSend: "SMTP SEND"
+        case .failure(let description, _), .success(let description): description
         }
     }
 
     // MARK: Identifiable
-    public var id: String { description }
+    public var id: String {
+        switch self {
+        case .failure(let string, _): "\(string):x"
+        case .success(let string): string
+        }
+    }
 }
 
 extension Account {
@@ -46,34 +38,30 @@ extension Account {
             Task {
                 switch account.emailProtocol {
                 case .imap:
-                    var result: TestResult = .imapConnect()
+                    var description: String = "IMAP CONNECT"
                     do {
                         guard let incomingServer: Server = account.incomingServer else {
                             throw IMAPError.serverProtocolMismatch
                         }
                         let client: IMAPClient = IMAPClient(try IMAP.Server(incomingServer))
                         try await client.connect()
-                        continuation.yield(.imapConnect())
-                        result = .imapAuthenticate()
+                        continuation.yield(.success(description))
+                        description = "IMAP AUTHENTICATE"
                         try await client.login()
-                        continuation.yield(.imapAuthenticate())
+                        continuation.yield(.success(description))
                         for capability in client.capabilities {
                             try await Task.sleep(for: duration)  // Just for drama
-                            continuation.yield(.imapCapability(capability))
+                            continuation.yield(.success("IMAP \(capability)"))
                         }
                         try await client.logout()
-                        result = .smtpSend()
+                        description = "SMTP SEND"
                         guard let outgoingServer: Server = account.outgoingServer else {
                             throw SMTPError.serverProtocolMismatch
                         }
                         let _: SMTPClient = SMTPClient(try SMTP.Server(outgoingServer))
-                        continuation.yield(.smtpSend())
+                        continuation.yield(.success(description))
                     } catch {
-                        switch result {
-                        case .imapAuthenticate: continuation.yield(.imapAuthenticate(error))
-                        case .smtpSend: continuation.yield(.smtpSend(error))
-                        default: continuation.yield(.imapConnect(error))
-                        }
+                        continuation.yield(.failure(description, error: error))
                     }
                 case .jmap:
                     do {
@@ -84,13 +72,13 @@ extension Account {
                         guard let session: Session = client.session else {
                             throw JMAPError.sessionNotFound
                         }
-                        continuation.yield(.jmapSession())
+                        continuation.yield(.success("JMAP SESSION"))
                         for capability in session.capabilities.sorted(by: { $0.0.rawValue < $1.0.rawValue }) {
                             try await Task.sleep(for: duration)  // Just for drama
-                            continuation.yield(.jmapCapability(capability.value, key: capability.key))
+                            continuation.yield(.success("JMAP \(capability.key.description.uppercased())"))
                         }
                     } catch {
-                        continuation.yield(.jmapSession(error))
+                        continuation.yield(.failure("JMAP SESSION", error: error))
                     }
                 }
                 continuation.finish()
