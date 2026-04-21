@@ -32,10 +32,8 @@ struct DrawerView: View {
                             DrawerContent(showDrawer: $showDrawer)
                         }
                         Spacer()
-                        NavigationLink(destination: {
-                            //TODO: Settings screen
-                        }) {
-                            Label("settings_button", systemImage: "gearshape")
+                        NavigationLink(destination: GeneralSettingsView()) {
+                            Label("settings_header", systemImage: "gearshape")
                                 .foregroundStyle(.black)
                         }
                     }
