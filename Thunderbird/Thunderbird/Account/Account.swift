@@ -3,7 +3,7 @@ import Autoconfiguration
 
 extension Account {
     // Configure an `Account` using `Autoconfiguration.EmailProvider`
-    init(_ emailAddress: EmailAddress, provider: EmailProvider? = nil) {
+    init(_ emailAddress: String, provider: EmailProvider? = nil) {
         self.init(name: emailAddress, servers: (provider?.servers ?? []).compactMap { Server($0) })
     }
 }
