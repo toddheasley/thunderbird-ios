@@ -68,7 +68,7 @@
 "has_attachments_sort_button" = "Attachments";
 "date_sort_button" = "Date";
 "read_status_sort_button" = "Read/Unread";
-"settings_button" = "Settings";
+"settings_header" = "Settings";
 "options_button" = "Options";
 "empty_inbox" = "Your inbox is empty";
 "new_messages_will_appear" = "New messages will appear here as they arrive";
