@@ -17,7 +17,7 @@ struct GeneralSettingsView: View {
                 Section("General Settings") {
 
                 }
-                Section("Accounts") {
+                Section("accounts_heading") {
                     ForEach(accounts.allAccounts) { account in
                         HStack {
                             Text(account.name)
