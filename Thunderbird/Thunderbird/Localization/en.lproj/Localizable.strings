@@ -7,6 +7,7 @@
 "onboarding_welcome_start_button" = "Get started";
 
 //Account setup
+"accounts_heading" = "Accounts";
 "account_oauth_sign_in_button" = "Sign in";
 "account_sign_out_button" = "Sign out";
 "account_oauth_sign_in_with_google_button" = "Sign in with Google";
