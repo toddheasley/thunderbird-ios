@@ -30,6 +30,9 @@ struct ManualAccount: View {
                             })
                     }
                 }
+                .onChange(of: accounts.allAccounts.count) {
+                    dismiss()
+                }
                 .navigationBarBackButtonHidden()
                 .navigationDestination(for: String.self) { destination in
                     if destination == "EmailAccountTypeSelection" {
