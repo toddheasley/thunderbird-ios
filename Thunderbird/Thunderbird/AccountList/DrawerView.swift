@@ -61,53 +61,26 @@ struct DrawerContent: View {
     @Binding var showDrawer: Bool
     var body: some View {
         VStack(alignment: .leading) {
-            Mailbox(mailboxName: "Inbox")
-            Mailbox(mailboxName: "Sent")
+            MailboxDropdownRowView(mailboxName: "Inbox", iconName: "tray")
+            MailboxDropdownRowView(mailboxName: "Sent", iconName: "paperplane")
             Divider()
             Text("Account Folders")
             ForEach(accounts.allAccounts) { account in
-                AccountFolder(account: account)
+                AccountFolderDisclosureView(account: account)
             }
 
         }
     }
 }
 
-//TODO: Connect to actual account and folder structure
-struct Mailbox: View {
-    @Environment(Accounts.self) private var accounts: Accounts
-    var mailboxName: String
-
-    var body: some View {
-        DisclosureGroup(mailboxName) {
-            ForEach(accounts.allAccounts) { account in
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(account.name)
-                            .font(.headline)
-                        if let email = account.identities.first {
-                            Text(String(describing: email))
-                                .font(.subheadline)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-            }
-        }
-    }
-}
-
-//TODO: Connect to actual account and folder structure
-struct AccountFolder: View {
-    var account: Account
-    var body: some View {
-        DisclosureGroup(account.name) {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("Inbox")
-                }
-            }
-            .padding(.horizontal)
-        }
+//TODO: Remove when account color association happens
+//we will associate a color with an account but don't yet
+extension Color {
+    static var random: Color {
+        return Color(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1)
+        )
     }
 }
