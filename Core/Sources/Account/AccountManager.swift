@@ -4,7 +4,7 @@ public typealias Accounts = AccountManager
 
 /// Globally manage shared, persistent accounts from the SwiftUI environment.
 @Observable
-public class AccountManager {
+public final class AccountManager {
     public private(set) var allAccounts: [Account] = []
     public var error: AccountError?
 

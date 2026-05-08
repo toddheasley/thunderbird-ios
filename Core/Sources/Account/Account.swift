@@ -99,3 +99,50 @@ extension Account {
         }
     }
 }
+
+extension Account {
+    var imapClient: IMAPClient {
+        get async throws {
+            if let client: IMAPClient = Self.clients[id] as? IMAPClient {
+                // IMAP Client already exists for account ID; reconnect and return
+                if !client.isConnected {
+                    try await client.connect()
+                    try await client.login()
+                }
+                return client
+            } else {
+                // No client exists for account ID; make a new one, connect and return
+                guard let incomingServer else {
+                    throw IMAPError.serverProtocolMismatch
+                }
+                let client: IMAPClient = IMAPClient(try IMAP.Server(incomingServer))
+                try await client.connect()
+                try await client.login()
+                Self.clients[id] = client  // Donate to shared pool
+                return client
+            }
+        }
+    }
+
+    var jmapClient: JMAPClient {
+        get async throws {
+            if let client: JMAPClient = Self.clients[id] as? JMAPClient, client.session != nil {
+                // JMAP Client already exists for account ID; return
+                return client
+            } else {
+                // No client exists for account ID; start a new session and return
+                guard let server: Server = servers.first else {
+                    throw JMAPError.serverProtocolMismatch
+                }
+                let client: JMAPClient = try await .session(try JMAP.Server(server))
+                guard client.session != nil else {
+                    throw JMAPError.sessionNotFound
+                }
+                return client
+            }
+        }
+    }
+
+    // Share existing IMAP and JMAP clients associated with account
+    nonisolated(unsafe) private static var clients: [UUID: Any] = [:]
+}

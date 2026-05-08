@@ -32,7 +32,7 @@ struct AccountTestView: View {
         }
         .padding()
         .task {
-            try? await Task.sleep(for: .seconds(1))
+            try? await Task.sleep(for: .milliseconds(500))
             isTesting = true
             for await result in account.test(sleep: .milliseconds(200)) {
                 results.append(result)

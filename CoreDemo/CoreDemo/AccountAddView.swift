@@ -63,6 +63,9 @@ struct AccountAddView: View {
 }
 
 #Preview {
+    @Previewable @State var accountManager: AccountManager = AccountManager()
+
     AccountAddView()
+        .environment(accountManager)
         .padding()
 }
