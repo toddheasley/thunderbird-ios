@@ -170,7 +170,9 @@ struct EmailListView: View {
 }
 
 #Preview("Email List") {
+    @Previewable @State var flags: FeatureFlags = FeatureFlags(distribution: .current)
     @Previewable @State var accounts: Accounts = Accounts()
-    EmailListView().environment(accounts)
-
+    EmailListView()
+        .environment(flags)
+        .environment(accounts)
 }
