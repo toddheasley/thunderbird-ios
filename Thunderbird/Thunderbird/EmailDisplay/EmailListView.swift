@@ -40,6 +40,7 @@ struct EmailListView: View {
             selections.insert(tempEmail.uuid)
         }
     }
+
     //TODO: replace with backend unread state call
     func markAllRead() {
         for tempEmail in tempEmails {
@@ -69,13 +70,19 @@ struct EmailListView: View {
                 } else {
                     VStack {
                         List(tempEmails, id: \.uuid, selection: $selections) { email in
-                            EmailCellView(email: email)
-                                .listRowSeparator(.hidden)
-                                .onLongPressGesture {
+                            NavigationLink {
+                                ReadEmailView(email)
+                            } label: {
+                                EmailCellView(email: email)
+                            }
+                            .simultaneousGesture (
+                                LongPressGesture().onEnded { _ in
                                     withAnimation {
                                         editMode = .active
                                     }
                                 }
+                            )
+                            .listRowSeparator(.hidden)
                         }
                     }.environment(\.editMode, $editMode)
                         .listStyle(.plain)
@@ -165,7 +172,6 @@ struct EmailListView: View {
                 }
             }
         }
-
     }
 }
 
