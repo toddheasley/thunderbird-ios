@@ -75,6 +75,7 @@ struct EmailListView: View {
                             } label: {
                                 EmailCellView(email: email)
                             }
+                            .contentShape(Rectangle())
                             .simultaneousGesture (
                                 LongPressGesture().onEnded { _ in
                                     withAnimation {
