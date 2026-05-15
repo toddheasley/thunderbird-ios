@@ -6,7 +6,7 @@ struct ListCommand: IMAPCommand {
     let options: [ReturnOption]
     let wildcard: Character
 
-    init(options: [ReturnOption] = [], wildcard: Character) {
+    init(options: [ReturnOption] = [.subscribed], wildcard: Character) {
         self.options = options
         self.wildcard = wildcard
     }

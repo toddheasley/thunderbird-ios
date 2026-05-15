@@ -10,7 +10,7 @@ struct AccountListView: View {
         List {
             ForEach(accountManager.allAccounts, id: \.self) { account in
                 NavigationLink(destination: {
-                    AccountMainView(account)
+                    MailboxListView(account)
                 }) {
                     Text(account.name)
                 }
@@ -64,8 +64,7 @@ struct AccountListView: View {
 
 private extension AccountManager {
     func deleteAccounts(at indexSet: IndexSet) {
-        let accounts: [Account] = indexSet.compactMap { allAccounts[$0] }
-        for account in accounts {
+        for account in indexSet.compactMap({ allAccounts[$0] }) {
             delete(account)
         }
     }
