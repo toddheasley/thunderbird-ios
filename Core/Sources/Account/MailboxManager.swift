@@ -64,7 +64,7 @@ public final class MailboxManager {
             switch account.emailProtocol {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
-                let mailboxes: [IMAP.Mailbox] = try await client.list()
+                let mailboxes: [(IMAP.Mailbox, IMAP.Mailbox.Status?)] = try await client.list()
                 self.mailboxes = mailboxes.map { Mailbox($0) }
             case .jmap:
                 let client: JMAPClient = try await account.jmapClient

@@ -2,6 +2,6 @@
 import Testing
 import Foundation
 
-struct MailboxTests {
+struct MailboxManagerTests {
 
 }

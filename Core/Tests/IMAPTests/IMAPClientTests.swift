@@ -9,8 +9,8 @@ struct IMAPClientTests {
         try await client.connect()
         try await client.login()  // Use credentials in canned `Server`
 
-        let mailboxes: [Mailbox] = try await client.list()  // List mailboxes
-        guard let inbox: Mailbox = mailboxes.filter({ $0.path.name.isInbox }).first else {
+        let mailboxes: [(Mailbox, Mailbox.Status?)] = try await client.list()  // List mailboxes
+        guard let inbox: Mailbox = mailboxes.filter({ $0.0.path.name.isInbox }).first?.0 else {
             throw IMAPError.unexpectedResponse("Inbox not found")
         }  // Find inbox in mailbox list
         try await client.select(mailbox: inbox)  // Select inbox

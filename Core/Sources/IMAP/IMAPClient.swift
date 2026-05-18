@@ -109,7 +109,7 @@ public class IMAPClient {
     }
 
     /// List all mailboxes on logged-in IMAP ``Server``.
-    public func list(wildcard: Character = .wildcard) async throws -> [Mailbox] {
+    public func list(wildcard: Character = .wildcard) async throws -> [(Mailbox, Mailbox.Status?)] {
         logger?.info("Listing mailboxes…")
         return try await execute(command: ListCommand(wildcard: wildcard))
     }
