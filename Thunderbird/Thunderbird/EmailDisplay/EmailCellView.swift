@@ -367,6 +367,6 @@ struct EmailCellView: View {
         isThread: false,
         pinned: true
     )
-    
+
     EmailCellView(email: tempEmail).environment(flags)
 }
