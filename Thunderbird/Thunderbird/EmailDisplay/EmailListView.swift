@@ -76,7 +76,7 @@ struct EmailListView: View {
                                 EmailCellView(email: email)
                             }
                             .contentShape(Rectangle())
-                            .simultaneousGesture (
+                            .simultaneousGesture(
                                 LongPressGesture().onEnded { _ in
                                     withAnimation {
                                         editMode = .active
