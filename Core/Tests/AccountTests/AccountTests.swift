@@ -43,17 +43,46 @@ extension AccountTests {
     }
 }
 
-private extension Server {
-    static var jmap: Self {
-        Self(
-            .jmap,
-            connectionSecurity: .none,
-            authenticationType: .none,
-            username: "user",
-            hostname: "jmap.example.com"
-        )
+extension AccountTests {
+    @Test func imapClient() async throws {
+        await #expect(throws: IMAPError.self) {
+            let _ = try await Account.imap.imapClient
+        }
     }
 
+    @Test func jmapClient() async throws {
+        await #expect(throws: URLError.self) {
+            let _ = try await Account.jmap.jmapClient
+        }
+    }
+}
+
+private extension Account {
+    static var imap: Self {
+        Self(
+            name: "",
+            identities: [
+                "example@thunderbird.net"
+            ],
+            servers: [
+                .gmail,
+                Server(.smtp)
+            ])
+    }
+
+    static var jmap: Self {
+        Self(
+            name: "",
+            identities: [
+                "example@fastmail.com"
+            ],
+            servers: [
+                .fastmail
+            ])
+    }
+}
+
+private extension Server {
     static var imap: Self {
         Self(
             .imap,
@@ -61,6 +90,16 @@ private extension Server {
             authenticationType: .none,
             username: "user",
             hostname: "imap.example.com"
+        )
+    }
+
+    static var jmap: Self {
+        Self(
+            .jmap,
+            connectionSecurity: .none,
+            authenticationType: .none,
+            username: "user",
+            hostname: "jmap.example.com"
         )
     }
 

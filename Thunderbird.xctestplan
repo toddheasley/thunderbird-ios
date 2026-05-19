@@ -41,6 +41,17 @@
       }
     },
     {
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "AccountTests",
+            "testFunctions" : [
+              "imapClient()",
+              "jmapClient()"
+            ]
+          }
+        ]
+      },
       "target" : {
         "containerPath" : "container:..\/Core",
         "identifier" : "AccountTests",
