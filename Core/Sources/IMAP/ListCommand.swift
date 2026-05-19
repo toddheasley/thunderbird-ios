@@ -6,13 +6,23 @@ struct ListCommand: IMAPCommand {
     let options: [ReturnOption]
     let wildcard: Character
 
-    init(options: [ReturnOption] = [], wildcard: Character) {
+    init(
+        options: [ReturnOption] = [
+            .subscribed,
+            .statusOption([
+                .messageCount,
+                .recentCount,
+                .unseenCount
+            ])
+        ],
+        wildcard: Character
+    ) {
         self.options = options
         self.wildcard = wildcard
     }
 
     // MARK: IMAPCommand
-    typealias Result = [MailboxInfo]
+    typealias Result = [(MailboxInfo, MailboxStatus?)]
     typealias Handler = ListHandler
 
     var name: String { "list" }
@@ -27,9 +37,10 @@ class ListHandler: IMAPCommandHandler, @unchecked Sendable {
     // MARK: IMAPCommandHandler
     typealias InboundIn = Response
     typealias InboundOut = Response
-    typealias Result = [MailboxInfo]
+    typealias Result = [(MailboxInfo, MailboxStatus?)]
 
-    var mailboxes: Result = []
+    var mailboxes: [MailboxInfo] = []
+    var status: [MailboxName: MailboxStatus] = [:]
     var clientBug: String? = nil
     let promise: EventLoopPromise<Result>
     let tag: String
@@ -48,12 +59,14 @@ class ListHandler: IMAPCommandHandler, @unchecked Sendable {
             case .bad(let text), .no(let text):
                 promise.fail(IMAPError.commandFailed(text.text))
             case .ok:
-                promise.succeed(mailboxes)
+                promise.succeed(mailboxes.map { ($0, status[$0.path.name]) })
             }
         case .untagged(let payload):
             switch payload {
             case .mailboxData(.list(let mailbox)):
                 mailboxes.append(mailbox)
+            case .mailboxData(.status(let name, let status)):
+                self.status[name] = status
             default:
                 break
             }
