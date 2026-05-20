@@ -36,7 +36,7 @@ extension Mailbox {
     init(_ mailbox: (IMAP.Mailbox, IMAP.Mailbox.Status?)) {
         self.init(
             mailbox.0.path.name.description,
-            role: mailbox.0.path.name == .inbox ? .inbox : nil,
+            role: mailbox.0.path.role,
             isSubscribed: !mailbox.0.attributes.filter({ $0 == .subscribed }).isEmpty,
             unreadEmails: mailbox.1?.unseenCount,
             totalEmails: mailbox.1?.messageCount
@@ -52,5 +52,11 @@ extension Mailbox {
             totalEmails: mailbox.totalEmails,
             id: mailbox.id
         )
+    }
+}
+
+extension IMAP.Mailbox.Path {
+    var role: Mailbox.Role? {
+        Mailbox.Role(rawValue: lastPathComponent.lowercased().components(separatedBy: " ")[0])
     }
 }

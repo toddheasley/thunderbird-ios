@@ -36,15 +36,7 @@ struct MailboxListView: View {
             List {
                 Section {
                     ForEach(mailboxManager.mailboxes, id: \.self) { mailbox in
-                        Label(mailbox.name, systemImage: "folder")
-                            .swipeActions {
-                                Button(action: {
-                                    self.mailbox = mailbox
-                                }) {
-                                    Label("Edit", systemImage: "gearshape")
-                                }
-                                .labelStyle(.iconOnly)
-                            }
+                        MailboxListItem(mailbox, selected: $mailbox)
                     } /*
                     .onDelete { indexSet in
                         Task { await mailboxManager.deleteMailboxes(at: indexSet) }
@@ -118,6 +110,106 @@ struct MailboxListView: View {
             ContentUnavailableView {
                 Label("No account selected", systemImage: "envelope")
             }
+        }
+    }
+}
+
+struct MailboxListItem: View {
+    let mailbox: Mailbox
+
+    init(_ mailbox: Mailbox, selected: Binding<Mailbox?>) {
+        self.mailbox = mailbox
+        _selected = selected
+    }
+
+    @Binding private var selected: Mailbox?
+
+    // MARK: View
+    var body: some View {
+        HStack {
+            Label(mailbox.name, systemImage: mailbox.role?.systemImage ?? "folder")
+            Spacer()
+            MailboxStatusView(mailbox)
+        }
+        .swipeActions {
+            Button(action: { selected = mailbox }) {
+                Label("Edit", systemImage: "gearshape")
+            }
+            .labelStyle(.iconOnly)
+        }
+    }
+}
+
+struct MailboxStatusView: View {
+    let unread: Int?
+    let total: Int?
+
+    init(_ mailbox: Mailbox) {
+        self.init(unread: mailbox.unreadEmails, total: mailbox.totalEmails)
+    }
+
+    init(unread: Int? = nil, total: Int? = nil) {
+        self.unread = unread
+        self.total = total
+    }
+
+    // MARK: View
+    var body: some View {
+        if let total, total > 0 {
+            HStack {
+                if let unread, unread > 0 {
+                    Text("\(unread)")
+                        .foregroundStyle(.primary)
+                        .bold()
+                    Text("/")
+                }
+                Text("\(total)")
+            }
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 11.0)
+            .padding(.vertical, 3.0)
+            .background {
+                Capsule()
+                    .fill(.quinary.opacity(0.33))
+            }
+        } else {
+            EmptyView()
+        }
+    }
+}
+
+#Preview("Mailbox Status View") {
+    MailboxStatusView(unread: 3, total: 47)
+}
+
+extension Image {
+    init(role: Mailbox.Role?) {
+        self.init(systemName: role?.systemName ?? "folder")
+    }
+}
+
+#Preview("Image") {
+    VStack {
+        ForEach(Mailbox.Role.allCases) { role in
+            Image(role: role)
+                .padding()
+        }
+        Image(role: nil)
+            .padding()
+    }
+}
+
+extension Mailbox.Role {
+    var systemImage: String { systemName }
+
+    var systemName: String {
+        switch self {
+        case .inbox: "tray"
+        case .archive: "archivebox"
+        case .drafts: "document"
+        case .sent: "paperplane"
+        case .junk: "xmark.bin"
+        case .trash: "trash"
         }
     }
 }
