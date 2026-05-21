@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
 import Foundation
 
 /// Multipart part content disposition and parameters described in [RFC 2183](https://www.rfc-editor.org/rfc/rfc2183)

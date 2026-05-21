@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
 /// Multipart data boundary described in [RFC 2046](https://www.rfc-editor.org/rfc/rfc2046#section-5.1.1)
 public struct Boundary: CustomStringConvertible, Equatable, RawRepresentable, Sendable {
     public static var bounds: ClosedRange<Int> { 1...70 }
