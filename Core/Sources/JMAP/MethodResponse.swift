@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
 import Foundation
 
 /// Standard ``Method`` responses with generic response components modeled, part of [JMAP core](https://jmap.io/spec-core.html#the-response-object)
