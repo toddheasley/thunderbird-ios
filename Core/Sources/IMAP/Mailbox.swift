@@ -15,7 +15,7 @@ extension Mailbox {
 }
 
 extension MailboxName: @retroactive CustomStringConvertible {
-    init(_ string: String) {
+    public init(_ string: String) {
         self.init(ByteBuffer(string: string))
     }
 

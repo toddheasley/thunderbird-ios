@@ -4,7 +4,7 @@
 
 import Autoconfiguration
 
-public enum AuthenticationType: String, Codable, CaseIterable, CustomStringConvertible, Identifiable {
+public enum AuthenticationType: String, Codable, CaseIterable, CustomStringConvertible, Identifiable, Sendable {
     case password
     case oAuth2 = "OAuth2"
     case none

@@ -112,7 +112,7 @@ try await client.login(username: "name@example.com", password: "fAK3-PASs-w0rD")
 For the authenticated client, list mailboxes and select inbox:
 
 ```swift
-let mailboxes: [Mailbox] = try await client.list()  // List mailboxes
+let mailboxes: [Mailbox] = try await client.list().map { $0.0 }  // List mailboxes
 guard let inbox: Mailbox = mailboxes.filter({ $0.path.name.isInbox }).first else {
     throw IMAPError.unexpectedResponse("Inbox not found")
 }  // Find inbox in mailbox list
