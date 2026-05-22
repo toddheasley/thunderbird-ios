@@ -22,6 +22,7 @@ public struct Mailbox: CustomStringConvertible, Hashable, Identifiable {
     ) {
         self.role = role
         self.rights = rights
+
         self.name = name
         self.isSubscribed = isSubscribed
         self.unreadEmails = unreadEmails
@@ -53,6 +54,7 @@ extension Mailbox {
             mailbox.name,
             role: mailbox.role,
             rights: mailbox.rights,
+
             isSubscribed: mailbox.isSubscribed,
             unreadEmails: mailbox.unreadEmails,
             totalEmails: mailbox.totalEmails,

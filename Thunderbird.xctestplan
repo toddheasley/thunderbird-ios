@@ -47,6 +47,8 @@
             "name" : "AccountTests",
             "testFunctions" : [
               "autoconfig()"
+              "imapClient()",
+              "jmapClient()"
             ]
           }
         ]

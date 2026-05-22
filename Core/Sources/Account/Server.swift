@@ -11,7 +11,7 @@ import MIME
 import SMTP
 
 /// All supported server types enumerated.
-public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertible, Identifiable {
+public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertible, Identifiable, Sendable {
     case imap = "IMAP"
     case jmap = "JMAP"
     case smtp = "SMTP"
@@ -24,7 +24,7 @@ public enum ServerProtocol: String, Codable, CaseIterable, CustomStringConvertib
 }
 
 /// General purpose server model for any supported `ServerProtocol`. Stores authorization credentials locally in the [Apple keychain.](https://developer.apple.com/documentation/security/storing-keys-in-the-keychain)
-public struct Server: Codable, Equatable, Hashable, Identifiable {
+public struct Server: Codable, Equatable, Hashable, Identifiable, Sendable {
     public typealias ConnectionSecurity = IMAP.ConnectionSecurity
 
     public var serverProtocol: ServerProtocol
