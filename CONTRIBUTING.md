@@ -3,6 +3,7 @@
 - [Overview](#overview)
 - [Getting Started](#getting-started)
 - [Contribution Guidelines](#contributing-to-thunderbird-ios)
+- [AI Contributions](#ai-contributions)
 - [License](#license)
 
 ## Overview
@@ -46,6 +47,11 @@ Thunderbird iOS project is boring by design. We won't accept any changes to the 
 <!-- TODO: Pull request template -->
 
 In the spirit of making this project accessible to as many potential contributors as possible, we'll take contributions as they come. If you prefer directions and approvals up front, before you write a line of code, [open a new issue on GitHub](https://github.com/thunderbird/thunderbird-ios/issues) and ask, or describe what you want to do. Or send us the pull request as both question and answer, and we'll figure it out.
+
+## AI Contributions
+
+AI contributions to open source projects is a controversial and complicated topic. We are working on guidelines and documentation for how we as a team are handling these contributions. For the moment, please indicate if and how AI was used in a contribution. If we suspect a contribution is AI generated with no human contribution we may reject it for security reasons. Keep an eye out for more detailed guidelines.
+
 
 ## Style and Conventions
 
