@@ -14,9 +14,16 @@ struct AccountListView: View {
                 }) {
                     Text(account.name)
                 }
-            }
-            .onDelete { indexSet in
-                accountManager.deleteAccounts(at: indexSet)
+                .swipeActions {
+                    Button(
+                        role: .destructive,
+                        action: {
+                            accountManager.delete(account)
+                        }
+                    ) {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
             }
         }
         .overlay {
@@ -37,9 +44,6 @@ struct AccountListView: View {
         }
         .navigationTitle("Accounts")
         .toolbar {
-            #if os(iOS)
-            EditButton()
-            #endif
             Button(action: {
                 isPresented = true
             }) {
@@ -60,12 +64,4 @@ struct AccountListView: View {
 
     AccountListView()
         .environment(accountManager)
-}
-
-private extension AccountManager {
-    func deleteAccounts(at indexSet: IndexSet) {
-        for account in indexSet.compactMap({ allAccounts[$0] }) {
-            delete(account)
-        }
-    }
 }

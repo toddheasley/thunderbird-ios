@@ -37,10 +37,8 @@ struct MailboxListView: View {
                 Section {
                     ForEach(mailboxManager.mailboxes, id: \.self) { mailbox in
                         MailboxListItem(mailbox, selected: $mailbox)
-                    } /*
-                    .onDelete { indexSet in
-                        Task { await mailboxManager.deleteMailboxes(at: indexSet) }
-                    } */
+                            .environment(mailboxManager)
+                    }
                 } header: {
                     Text("Mailboxes")
                 } footer: {
@@ -88,6 +86,12 @@ struct MailboxListView: View {
                     Label("Edit account", systemImage: "gearshape")
                 }
             }
+            .sheet(isPresented: $isPresented) {
+                NavigationStack {
+                    AccountEditView(account)
+                }
+                .presentationDragIndicator(.visible)
+            }
             .sheet(
                 item: $mailbox,
                 onDismiss: {
@@ -97,12 +101,6 @@ struct MailboxListView: View {
                 NavigationStack {
                     MailboxEditView(mailbox)
                         .environment(mailboxManager)
-                }
-                .presentationDragIndicator(.visible)
-            }
-            .sheet(isPresented: $isPresented) {
-                NavigationStack {
-                    AccountEditView(account)
                 }
                 .presentationDragIndicator(.visible)
             }
@@ -122,6 +120,7 @@ struct MailboxListItem: View {
         _selected = selected
     }
 
+    @Environment(MailboxManager.self) private var mailboxManager: MailboxManager?
     @Binding private var selected: Mailbox?
 
     // MARK: View
@@ -132,8 +131,18 @@ struct MailboxListItem: View {
             MailboxStatusView(mailbox)
         }
         .swipeActions {
+            if mailbox.rights.mayDelete {
+                Button(
+                    role: .destructive,
+                    action: {
+                        Task { await mailboxManager?.delete(mailbox) }
+                    }
+                ) {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
             Button(action: { selected = mailbox }) {
-                Label("Edit", systemImage: "gearshape")
+                Label("Edit mailbox", systemImage: "gearshape")
             }
             .labelStyle(.iconOnly)
         }
@@ -210,15 +219,6 @@ extension Mailbox.Role {
         case .sent: "paperplane"
         case .junk: "xmark.bin"
         case .trash: "trash"
-        }
-    }
-}
-
-private extension MailboxManager {
-    func deleteMailboxes(at indexSet: IndexSet) async {
-        let mailboxes: [Mailbox] = indexSet.compactMap { self.mailboxes[$0] }
-        for mailbox in mailboxes {
-            await delete(mailbox)
         }
     }
 }

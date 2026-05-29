@@ -10,6 +10,10 @@ public final class MailboxManager {
         self.account = account
     }
 
+    public func mailbox(_ name: String) -> Mailbox? {
+        mailboxes.filter({ $0.name == name }).first
+    }
+
     public func mailbox(for id: String) -> Mailbox? {
         mailboxes.filter({ $0.id == id }).first
     }
@@ -19,7 +23,8 @@ public final class MailboxManager {
             switch account.emailProtocol {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
-                try await client.create(mailbox: Name(name))
+                try await client.create(mailbox: IMAP.Mailbox.Name(name))
+                mailboxes.append(Mailbox(name))
                 await refreshMailboxes()
             case .jmap:
                 throw JMAPError.method(.unknownMethod)
@@ -34,7 +39,7 @@ public final class MailboxManager {
             switch account.emailProtocol {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
-                try await client.rename(mailbox: Name(mailbox.name), to: Name(name))
+                try await client.rename(mailbox: IMAP.Mailbox.Name(mailbox.name), to: IMAP.Mailbox.Name(name))
                 await refreshMailboxes()
             case .jmap:
                 throw JMAPError.method(.unknownMethod)
@@ -49,7 +54,37 @@ public final class MailboxManager {
             switch account.emailProtocol {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
-                try await client.delete(mailbox: Name(mailbox.name))
+                try await client.delete(mailbox: IMAP.Mailbox.Name(mailbox.name))
+                await refreshMailboxes()
+            case .jmap:
+                throw JMAPError.method(.unknownMethod)
+            }
+        } catch {
+            self.error = AccountError(error)
+        }
+    }
+
+    public func subscribe(_ mailbox: Mailbox) async {
+        do {
+            switch account.emailProtocol {
+            case .imap:
+                let client: IMAPClient = try await account.imapClient
+                try await client.subscribe(mailbox: IMAP.Mailbox.Name(mailbox.name))
+                await refreshMailboxes()
+            case .jmap:
+                throw JMAPError.method(.unknownMethod)
+            }
+        } catch {
+            self.error = AccountError(error)
+        }
+    }
+
+    public func unsubscribe(_ mailbox: Mailbox) async {
+        do {
+            switch account.emailProtocol {
+            case .imap:
+                let client: IMAPClient = try await account.imapClient
+                try await client.unsubscribe(mailbox: IMAP.Mailbox.Name(mailbox.name))
                 await refreshMailboxes()
             case .jmap:
                 throw JMAPError.method(.unknownMethod)
@@ -65,7 +100,7 @@ public final class MailboxManager {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
                 let mailboxes: [(IMAP.Mailbox, IMAP.Mailbox.Status?)] = try await client.list()
-                self.mailboxes = mailboxes.map { Mailbox($0) }
+                self.mailboxes = mailboxes.map { Mailbox($0, id: self.mailbox($0.0.path.name.description)?.id) }  // Transfer UUIDs from previous list
             case .jmap:
                 let client: JMAPClient = try await account.jmapClient
                 let mailboxes: [JMAP.Mailbox] = try await client.mailboxes()
@@ -75,6 +110,4 @@ public final class MailboxManager {
             self.error = AccountError(error)
         }
     }
-
-    private typealias Name = IMAP.Mailbox.Name
 }

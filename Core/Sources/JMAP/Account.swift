@@ -20,7 +20,7 @@ public struct Account: CustomStringConvertible, Decodable, Sendable {
     public init(from decoder: any Decoder) throws {
         let container: KeyedDecodingContainer<Key> = try decoder.container(keyedBy: Key.self)
         name = try container.decode(String.self, forKey: .name)
-        let dictionary: [String: Capability] = try container.decode([String: Capability].self, forKey: .accountCapabilities)
+        let dictionary: [String: Capability] = (try? container.decode([String: Capability].self, forKey: .accountCapabilities)) ?? [:]
         var capabilities: [Capability.Key: Capability] = [:]
         for key in dictionary.keys {
             guard let _key: Capability.Key = Capability.Key(rawValue: key) else { continue }
