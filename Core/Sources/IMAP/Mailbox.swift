@@ -11,14 +11,32 @@ public typealias Mailbox = NIOIMAPCore.MailboxInfo
 extension Mailbox {
     public typealias Attribute = NIOIMAPCore.MailboxInfo.Attribute
     public typealias Name = NIOIMAPCore.MailboxName
+    public typealias Path = NIOIMAPCore.MailboxPath
     public typealias Status = NIOIMAPCore.MailboxStatus
 }
 
-extension MailboxName: @retroactive CustomStringConvertible {
+extension MailboxName: @retroactive CustomStringConvertible, @retroactive ExpressibleByStringLiteral {
     public init(_ string: String) {
         self.init(ByteBuffer(string: string))
     }
 
     // MARK: CustomStringConvertible
     public var description: String { String(data: Data(bytes), encoding: .utf8) ?? "" }
+
+    // MARK: ExpressibleByStringLiteral
+    public init(stringLiteral value: String) {
+        self.init(value)
+    }
+}
+
+extension MailboxPath: @retroactive CustomStringConvertible {
+    public var lastPathComponent: String {
+        guard let pathSeparator else {
+            return name.description
+        }
+        return name.description.components(separatedBy: "\(pathSeparator)").last!
+    }
+
+    // MARK: CustomStringConvertible
+    public var description: String { name.description }
 }
