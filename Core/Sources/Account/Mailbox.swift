@@ -22,7 +22,7 @@ public struct Mailbox: CustomStringConvertible, Hashable, Identifiable {
         isSubscribed: Bool = true,
         unreadEmails: Int? = nil,
         totalEmails: Int? = nil,
-        id: String = UUID().uuidString(1)
+        id: String? = nil
     ) {
         self.role = role
         self.rights = rights
@@ -30,7 +30,7 @@ public struct Mailbox: CustomStringConvertible, Hashable, Identifiable {
         self.isSubscribed = isSubscribed
         self.unreadEmails = unreadEmails
         self.totalEmails = totalEmails
-        self.id = id
+        self.id = id ?? UUID().uuidString(1)
     }
 
     // MARK: CustomStringConvertible
