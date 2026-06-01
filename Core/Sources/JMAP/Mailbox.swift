@@ -16,7 +16,7 @@ public struct Mailbox: CustomStringConvertible, Decodable, Equatable, Hashable, 
         public var id: String { rawValue }
     }
 
-    public struct Rights: Decodable, Sendable {
+    public struct Rights: Decodable, Equatable, Hashable, Sendable {
         public let mayReadItems: Bool
         public let mayAddItems: Bool
         public let mayRemoveItems: Bool
@@ -27,7 +27,7 @@ public struct Mailbox: CustomStringConvertible, Decodable, Equatable, Hashable, 
         public let mayDelete: Bool
         public let maySubmit: Bool
 
-        init(
+        public init(
             mayReadItems: Bool = true,
             mayAddItems: Bool = true,
             mayRemoveItems: Bool = true,
