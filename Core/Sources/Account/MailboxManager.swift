@@ -1,5 +1,6 @@
 import Foundation
 
+/// Manage and display mailboxes for a given `Account`.
 @Observable
 public final class MailboxManager {
     public let account: Account
