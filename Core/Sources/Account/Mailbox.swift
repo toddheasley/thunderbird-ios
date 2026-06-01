@@ -1,10 +1,12 @@
 import Foundation
 
+/// Common mailbox model represents a single JMAP or IMAP mailbox, folder or Gmail label.
 public struct Mailbox: CustomStringConvertible, Hashable, Identifiable {
+    /// Common mailbox adopts JMAP roles; extends IMAP mailboxes with best guess as a client convenience.
     public typealias Role = JMAP.Mailbox.Role
-    public typealias Rights = JMAP.Mailbox.Rights
 
-    public static var id: String { UUID().uuidString(1) }
+    /// Common mailbox adopts JMAP rights model.
+    public typealias Rights = JMAP.Mailbox.Rights
 
     public let role: Role?
     public let rights: Rights
@@ -20,7 +22,7 @@ public struct Mailbox: CustomStringConvertible, Hashable, Identifiable {
         isSubscribed: Bool = true,
         unreadEmails: Int? = nil,
         totalEmails: Int? = nil,
-        id: String = Self.id
+        id: String = UUID().uuidString(1)
     ) {
         self.role = role
         self.rights = rights
@@ -52,7 +54,7 @@ extension Mailbox {
             isSubscribed: !mailbox.0.attributes.filter({ $0 == .subscribed }).isEmpty,
             unreadEmails: mailbox.1?.unseenCount,
             totalEmails: mailbox.1?.messageCount,
-            id: id ?? Self.id  // Transfer UUID or autogenenrate new one
+            id: id ?? UUID().uuidString(1)  // Transfer UUID or autogenenrate new one
         )
     }
 
