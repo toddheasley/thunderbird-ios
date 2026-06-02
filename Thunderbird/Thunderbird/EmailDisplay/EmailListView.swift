@@ -87,6 +87,7 @@ struct EmailListView: View {
                                 }
                             )
                             .listRowSeparator(.hidden)
+                            .navigationLinkIndicatorVisibility(.hidden)
                         }
                     }.environment(\.editMode, $editMode)
                         .listStyle(.plain)
