@@ -93,6 +93,69 @@ public class JMAPClient {
         }
     }
 
+    /// Create a new mailbox.
+    @discardableResult public func create(mailbox: Mailbox) async throws -> MethodSetResponse? {
+        guard let session, let accountID: String = session.accounts.keys.first else {
+            throw JMAPError.method(.accountNotFound)
+        }
+        logger?.info("Creating \"\(mailbox.name)\" mailbox…")
+        return try await URLSession.shared.jmapAPI(
+            [
+                Mailbox.SetMethod(
+                    accountID,
+                    actions: [
+                        .create([
+                            mailbox.id: [
+                                "name": mailbox.name,
+                                "isSubscribed": mailbox.isSubscribed
+                            ]
+                        ])
+                    ])
+            ], url: session.apiURL, authorization: server.authorization!
+        ).first as? MethodSetResponse
+    }
+
+    /// Update an existing mailbox.
+    @discardableResult public func update(mailbox: Mailbox) async throws -> MethodSetResponse? {
+        guard let session, let accountID: String = session.accounts.keys.first else {
+            throw JMAPError.method(.accountNotFound)
+        }
+        logger?.info("Updating \"\(mailbox.name)\" mailbox…")
+        return try await URLSession.shared.jmapAPI(
+            [
+                Mailbox.SetMethod(
+                    accountID,
+                    actions: [
+                        .update([
+                            mailbox.id: [
+                                "name": mailbox.name,
+                                "isSubscribed": mailbox.isSubscribed
+                            ]
+                        ])
+                    ])
+            ], url: session.apiURL, authorization: server.authorization!
+        ).first as? MethodSetResponse
+    }
+
+    /// Destroy an existing mailbox.
+    @discardableResult public func destroy(mailbox: Mailbox) async throws -> MethodSetResponse? {
+        guard let session, let accountID: String = session.accounts.keys.first else {
+            throw JMAPError.method(.accountNotFound)
+        }
+        logger?.info("Destroying \"\(mailbox.name)\" mailbox…")
+        return try await URLSession.shared.jmapAPI(
+            [
+                Mailbox.SetMethod(
+                    accountID,
+                    actions: [
+                        .destroy([
+                            mailbox.id
+                        ])
+                    ])
+            ], url: session.apiURL, authorization: server.authorization!
+        ).first as? MethodSetResponse
+    }
+
     public func mailboxes() async throws -> [Mailbox] {
         if let session {
             guard let id: String = session.accounts.keys.first else {
