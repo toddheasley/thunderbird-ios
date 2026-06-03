@@ -62,7 +62,7 @@ public struct Mailbox: CustomStringConvertible, Decodable, Equatable, Hashable, 
 
     public var rights: Rights { myRights }  // Rename `myRights` to `rights`
 
-    public init(name: String, parentID: String? = nil, isSubscribed: Bool = true, id: String) {
+    public init(name: String, parentID: String? = nil, isSubscribed: Bool = true, id: String? = nil) {
         self.name = name
         self.parentID = parentID
         role = nil
@@ -73,7 +73,7 @@ public struct Mailbox: CustomStringConvertible, Decodable, Equatable, Hashable, 
         unreadThreads = 0
         self.isSubscribed = isSubscribed
         myRights = Rights()
-        self.id = id
+        self.id = id ?? "NOID"  // Non-empty, client-provided temporary ID: https://jmap.io/spec/rfc8620/#section-5.3-3.3.1
     }
 
     let myRights: Rights
