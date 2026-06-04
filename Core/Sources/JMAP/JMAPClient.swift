@@ -105,7 +105,7 @@ public class JMAPClient {
                     accountID,
                     actions: [
                         .create([
-                            "ID--": [
+                            mailbox.id: [
                                 "name": mailbox.name,
                                 "isSubscribed": mailbox.isSubscribed
                             ]
