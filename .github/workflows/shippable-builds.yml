@@ -6,7 +6,7 @@ env:
   DEFAULT_VERSION: &default_version "1.0"
   DEFAULT_NOTIFY_TESTERS: &default_notify_testers false
   DEFAULT_TEST_DEVICE: &default_test_device "iPhone 17"
-  XCODE_VERSION: "26.0"
+  XCODE_VERSION: "26.1"
 
 on:
   schedule:

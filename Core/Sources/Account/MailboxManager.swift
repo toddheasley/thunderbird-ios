@@ -26,10 +26,11 @@ public final class MailboxManager {
                 let client: IMAPClient = try await account.imapClient
                 try await client.create(mailbox: IMAP.Mailbox.Name(name))
                 mailboxes.append(Mailbox(name))
-                await refreshMailboxes()
             case .jmap:
-                throw JMAPError.method(.unknownMethod)
+                let client: JMAPClient = try await account.jmapClient
+                try await client.create(mailbox: JMAP.Mailbox(name: name))
             }
+            await refreshMailboxes()
         } catch {
             self.error = AccountError(error)
         }
@@ -41,10 +42,11 @@ public final class MailboxManager {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
                 try await client.rename(mailbox: IMAP.Mailbox.Name(mailbox.name), to: IMAP.Mailbox.Name(name))
-                await refreshMailboxes()
             case .jmap:
-                throw JMAPError.method(.unknownMethod)
+                let client: JMAPClient = try await account.jmapClient
+                try await client.update(mailbox: JMAP.Mailbox(name: name, isSubscribed: mailbox.isSubscribed, id: mailbox.id))
             }
+            await refreshMailboxes()
         } catch {
             self.error = AccountError(error)
         }
@@ -56,10 +58,11 @@ public final class MailboxManager {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
                 try await client.delete(mailbox: IMAP.Mailbox.Name(mailbox.name))
-                await refreshMailboxes()
             case .jmap:
-                throw JMAPError.method(.unknownMethod)
+                let client: JMAPClient = try await account.jmapClient
+                try await client.destroy(mailbox: JMAP.Mailbox(name: mailbox.name, id: mailbox.id))
             }
+            await refreshMailboxes()
         } catch {
             self.error = AccountError(error)
         }
@@ -71,10 +74,11 @@ public final class MailboxManager {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
                 try await client.subscribe(mailbox: IMAP.Mailbox.Name(mailbox.name))
-                await refreshMailboxes()
             case .jmap:
-                throw JMAPError.method(.unknownMethod)
+                let client: JMAPClient = try await account.jmapClient
+                try await client.update(mailbox: JMAP.Mailbox(name: mailbox.name, isSubscribed: true, id: mailbox.id))
             }
+            await refreshMailboxes()
         } catch {
             self.error = AccountError(error)
         }
@@ -86,10 +90,11 @@ public final class MailboxManager {
             case .imap:
                 let client: IMAPClient = try await account.imapClient
                 try await client.unsubscribe(mailbox: IMAP.Mailbox.Name(mailbox.name))
-                await refreshMailboxes()
             case .jmap:
-                throw JMAPError.method(.unknownMethod)
+                let client: JMAPClient = try await account.jmapClient
+                try await client.update(mailbox: JMAP.Mailbox(name: mailbox.name, isSubscribed: false, id: mailbox.id))
             }
+            await refreshMailboxes()
         } catch {
             self.error = AccountError(error)
         }
