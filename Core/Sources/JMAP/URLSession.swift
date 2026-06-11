@@ -34,7 +34,7 @@ extension URLSession {
             switch name.components(separatedBy: "/").last {
             case "get":
 
-                // Map generic parts of [get response.](https://jmap.io/spec-core.html#get)
+                // Map generic parts of [get response.](https://jmap.io/spec/rfc8620/#section-5.1)
                 guard let notFound: [String] = object["notFound"] as? [String],
                     let list: [Any] = object["list"] as? [Any]
                 else {
@@ -46,7 +46,7 @@ extension URLSession {
                 return MethodGetResponse(name, data: data, notFound: notFound, id: id)
             case "query":
 
-                // Map generic parts of [query response.](https://jmap.io/spec-core.html#query)
+                // Map generic parts of [query response.](https://jmap.io/spec/rfc8620/#section-5.5)
                 guard let ids: [String] = object["ids"] as? [String],
                     let position: Int = object["position"] as? Int,
                     let total: Int = object["total"] as? Int
@@ -56,7 +56,7 @@ extension URLSession {
                 return MethodQueryResponse(name, ids: ids, position: position, total: total, id: id)
             case "set":
 
-                // Map generic parts of [set response.](https://jmap.io/spec-core.html#set)
+                // Map generic parts of [set response.](https://jmap.io/spec/rfc8620/#section-5.3)
                 func mapErrorValues(for key: String) -> [String: SetError] {
                     (object[key] as? [String: Any] ?? [:])
                         .mapValues { SetError($0) ?? .notFound }

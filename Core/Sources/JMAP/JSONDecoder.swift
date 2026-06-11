@@ -6,7 +6,7 @@ import Foundation
 
 extension JSONDecoder {
 
-    // https://jmap.io/spec-core.html#the-date-and-utcdate-data-types
+    // https://jmap.io/spec/rfc8620/#section-1.4
     convenience init(date decodingStrategy: DateDecodingStrategy) {
         self.init()
         dateDecodingStrategy = decodingStrategy

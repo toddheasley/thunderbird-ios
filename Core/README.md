@@ -220,7 +220,7 @@ try await SMTPClient(Server(
 
 [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit.
 
-`JMAP` library is a client implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, with functionality tailored for use in [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios)
+`JMAP` library is a client implementation of both [JMAP core](https://jmap.io/spec/rfc8620) and [JMAP mail](https://jmap.io/spec/rfc8621) protocols, with functionality tailored for use in [Thunderbird iOS.](https://github.com/thunderbird/thunderbird-ios)
 
 JMAP support is early and experimental.
 

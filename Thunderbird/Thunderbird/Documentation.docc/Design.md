@@ -38,7 +38,7 @@ Separate, complementary libraries handle email retrieval and sending for all mai
 
 #### `JMAP`
 
- [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit. `JMAP` feature library is a client implementation of both [JMAP core](https://jmap.io/spec-core.html) and [JMAP mail](https://jmap.io/spec-mail.html) protocols, intended to replace IMAP/SMTP for mail accounts with provider support for JMAP.
+ [JSON Meta Application Protocol](https://jmap.io) (JMAP)) is a modern, API-based approach to email that uses standard HTTP requests and responses with JSON serialization for transit. `JMAP` feature library is a client implementation of both [JMAP core](https://jmap.io/spec/rfc8620) and [JMAP mail](https://jmap.io/spec/rfc8621) protocols, intended to replace IMAP/SMTP for mail accounts with provider support for JMAP.
 
 ### Bolt Package
 

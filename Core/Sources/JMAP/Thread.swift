@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Threads group replies to an ``Email`` message , part of [JMAP mail.](https://jmap.io/spec-mail.html#threads)
+/// Threads group replies to an ``Email`` message , part of [JMAP mail.](https://jmap.io/spec/rfc8621/#section-3)
 public struct Thread: Decodable, Identifiable {
     public let emailIDs: [String]
 
