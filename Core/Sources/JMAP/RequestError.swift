@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-/// Request-level configuration errors, part of [JMAP core](https://jmap.io/spec-core.html#errors)
+/// Request-level configuration errors, part of [JMAP core](https://jmap.io/spec/rfc8620/#section-3.6)
 public struct RequestError: Error, Decodable, CustomStringConvertible {
 
     /// Enumerated error code derived from `type` raw value

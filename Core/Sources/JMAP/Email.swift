@@ -5,7 +5,7 @@
 import Foundation
 import UniformTypeIdentifiers
 
-/// `Email` represents a single message, pre-decoded and modeled, no client-side MIME parsing required; part of [JMAP mail protocol.](https://jmap.io/spec-mail.html#emails)
+/// `Email` represents a single message, pre-decoded and modeled, no client-side MIME parsing required; part of [JMAP mail protocol.](https://jmap.io/spec/rfc8621/#section-4)
 public struct Email: Decodable, Equatable, Hashable, Identifiable, Sendable {
     public struct Address: CustomStringConvertible, Decodable, Equatable, Sendable {
         public let email: String

@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-/// Accounts are a component of the JMAP ``Session`` object, part of [JMAP core.](https://jmap.io/spec-core.html#the-jmap-session-resource)
+/// Accounts are a component of the JMAP ``Session`` object, part of [JMAP core.](https://jmap.io/spec/rfc8620/#section-2)
 public struct Account: CustomStringConvertible, Decodable, Sendable {
     public let name: String
     public let capabilities: [Capability.Key: Capability]

@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Standard request object, part of [JMAP core](https://jmap.io/spec-core.html#the-request-object)
+/// Standard request object, part of [JMAP core](https://jmap.io/spec/rfc8620/#section-5)
 public protocol Method: Identifiable {
     static var name: String { get }
     var accountID: String { get }
