@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-/// Capabilities are a component of the JMAP ``Session`` object, part of [JMAP core.](https://jmap.io/spec-core.html#the-jmap-session-resource)
+/// Capabilities are a component of the JMAP ``Session`` object, part of [JMAP core.](https://jmap.io/spec/rfc8620/#section-2)
 public struct Capability: Decodable, Sendable {
     public enum Key: String, CaseIterable, Codable, CustomStringConvertible, Identifiable, Sendable {
         case calendars = "urn:ietf:params:jmap:calendars"

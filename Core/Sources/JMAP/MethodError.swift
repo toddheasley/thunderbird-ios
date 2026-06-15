@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Errors describing impossible or ineligible``Method`` operation, part of [JMAP core](https://jmap.io/spec-core.html#errors)
+/// Errors describing impossible or ineligible``Method`` operation, part of [JMAP core](https://jmap.io/spec/rfc8620/#section-3.6)
 public enum MethodError: String, CaseIterable, CustomStringConvertible, Decodable, Error, Identifiable {
     case accountNotFound, accountNotSupportedByMethod, accountReadOnly
     case forbidden
