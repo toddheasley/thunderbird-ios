@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Filters narrow the returned responses when querying ``Email``, part of [JMAP core.](https://jmap.io/spec-core.html#query)
+/// Filters narrow the returned responses when querying ``Email``, part of [JMAP core.](https://jmap.io/spec/rfc8620/#section-5.5)
 public struct Filter: CustomStringConvertible {
     public protocol Condition: CustomStringConvertible {
         var key: String { get }
