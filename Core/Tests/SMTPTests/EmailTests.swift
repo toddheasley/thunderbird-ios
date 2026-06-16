@@ -22,9 +22,9 @@ struct EmailTests {
     @Test func allRecipients() {
         #expect(
             Email.example.allRecipients == [
-                "recipient@example.com",
+                "Recipient Name <recipient@example.com>",
                 "no.name@exmaple.com",
-                "cc@example.com",
+                "Copied Recipient <cc@example.com>",
                 "bcc@example.com"
             ]
         )
