@@ -2,31 +2,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import EmailAddress
 import Foundation
 import UniformTypeIdentifiers
 
 /// `Email` represents a single message, pre-decoded and modeled, no client-side MIME parsing required; part of [JMAP mail protocol.](https://jmap.io/spec/rfc8621/#section-4)
 public struct Email: Decodable, Equatable, Hashable, Identifiable, Sendable {
-    public struct Address: CustomStringConvertible, Decodable, Equatable, Sendable {
-        public let email: String
-        public let name: String?
-
-        init(_ email: String, name: String? = nil) {
-            self.email = email
-            self.name = name
-        }
-
-        // MARK: CustomStringConvertible
-        public var description: String {
-            !(name ?? "").isEmpty ? "\"\(name!)\" <\(email)>" : "\(email)"
-        }
-    }
-
-    public struct AddressGroup: Decodable, Equatable {
-        public let adresses: [Address]
-        public let name: String?
-    }
-
     public enum Keyword: String, CaseIterable, CustomStringConvertible, Sendable {
         case draft = "$draft"
         case seen = "$seen"
@@ -111,12 +92,12 @@ public struct Email: Decodable, Equatable, Hashable, Identifiable, Sendable {
     public let messageID: [String]?
     public let inReplyTo: [String]?
     public let references: [String]?
-    public let sender: [Address]?
-    public let from: [Address]?
-    public let replyTo: [Address]?
-    public let to: [Address]?
-    public let cc: [Address]?
-    public let bcc: [Address]?
+    public let sender: [EmailAddressProtocol]?
+    public let from: [EmailAddressProtocol]?
+    public let replyTo: [EmailAddressProtocol]?
+    public let to: [EmailAddressProtocol]?
+    public let cc: [EmailAddressProtocol]?
+    public let bcc: [EmailAddressProtocol]?
     public let subject: String?
     public let bodyStructure: BodyPart?
     // public let bodyValues: Any?
@@ -140,12 +121,12 @@ public struct Email: Decodable, Equatable, Hashable, Identifiable, Sendable {
         messageID = try container.decodeIfPresent([String].self, forKey: .messageId)
         inReplyTo = try container.decodeIfPresent([String].self, forKey: .inReplyTo)
         references = try container.decodeIfPresent([String].self, forKey: .references)
-        sender = try container.decodeIfPresent([Address].self, forKey: .sender)
-        from = try container.decodeIfPresent([Address].self, forKey: .from)
-        replyTo = try container.decodeIfPresent([Address].self, forKey: .replyTo)
-        to = try container.decodeIfPresent([Address].self, forKey: .to)
-        cc = try container.decodeIfPresent([Address].self, forKey: .cc)
-        bcc = try container.decodeIfPresent([Address].self, forKey: .bcc)
+        sender = try container.decodeIfPresent([EmailAddress.Group].self, forKey: .sender)
+        from = try container.decodeIfPresent([EmailAddress.Group].self, forKey: .from)?.erased()
+        replyTo = try container.decodeIfPresent([EmailAddress.Group].self, forKey: .replyTo)?.erased()
+        to = try container.decodeIfPresent([EmailAddress.Group].self, forKey: .to)?.erased()
+        cc = try container.decodeIfPresent([EmailAddress.Group].self, forKey: .cc)?.erased()
+        bcc = try container.decodeIfPresent([EmailAddress.Group].self, forKey: .bcc)?.erased()
         subject = try container.decodeIfPresent(String.self, forKey: .subject)
         bodyStructure = try container.decodeIfPresent(BodyPart.self, forKey: .bodyStructure)
         textBody = try container.decode([BodyPart].self, forKey: .textBody)
