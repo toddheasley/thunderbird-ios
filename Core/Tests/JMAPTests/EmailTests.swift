@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import EmailAddress
 import Foundation
 @testable import JMAP
 import Testing
@@ -10,7 +11,6 @@ struct EmailTests {
     @Test func decoderInit() throws {
         let emails: [Email] = try JSONDecoder(date: .iso8601).decode([Email].self, from: data)
         try #require(emails.count == 2)
-
         #expect(emails[0].blobID == "G8a183cc18aec2b46bd7b7f11c81d65783d400482")
         #expect(emails[0].threadID == "T1bebe52081852054")
         #expect(
@@ -35,13 +35,13 @@ struct EmailTests {
         #expect(emails[0].references == nil)
         #expect(emails[0].sender == nil)
         #expect(
-            emails[0].from == [
-                Email.Address("user@example.com", name: "Example User")
+            emails[0].from?.first?.addresses == [
+                EmailAddress("user@example.com", label: "Example User")
             ])
         #expect(emails[0].replyTo == nil)
         #expect(
-            emails[0].to == [
-                Email.Address("recipient@example.com")
+            emails[0].to?.first?.addresses == [
+                EmailAddress("recipient@example.com")
             ])
         #expect(emails[0].cc == nil)
         #expect(emails[0].bcc == nil)
@@ -102,13 +102,13 @@ struct EmailTests {
             ])
         #expect(emails[1].sender == nil)
         #expect(
-            emails[1].from == [
-                Email.Address("recipient@example.com", name: "Example User")
+            emails[1].from?.first?.addresses == [
+                EmailAddress("recipient@example.com", label: "Example User")
             ])
         #expect(emails[1].replyTo == nil)
         #expect(
-            emails[1].to == [
-                Email.Address("user@example.com", name: "Example User")
+            emails[1].to?.first?.addresses == [
+                EmailAddress("user@example.com", label: "Example User")
             ])
         #expect(emails[1].cc == nil)
         #expect(emails[1].bcc == nil)

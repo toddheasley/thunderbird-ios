@@ -9,7 +9,7 @@ public protocol EmailAddressProtocol: Sendable {
 }
 
 /// Shared email address model suitable for IMAP, JMAP and SMTP
-public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAddressProtocol, ExpressibleByStringLiteral, Hashable, Identifiable {
+public struct EmailAddress: CustomStringConvertible, EmailAddressProtocol, ExpressibleByStringLiteral, Hashable, Identifiable, Sendable {
     public let value: String
     public let label: String?
 
@@ -35,28 +35,11 @@ public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAd
         }
     }
 
-    // MARK: Codable
-    public func encode(to encoder: any Encoder) throws {
-        var container: SingleValueEncodingContainer = encoder.singleValueContainer()
-        try container.encode(description)
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let value: String = try container.decode(String.self)
-        self.init(stringLiteral: value)
-    }
-
     // MARK: CustomStringConvertible
     public var description: String { !(label ?? "").isEmpty ? "\(label!) <\(value)>" : value }
 
     // MARK: EmailAddressProtocol
     public var addresses: [Self] { [self] }
-
-    // MARK: Equatable
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id  // Equality ignores label
-    }
 
     // MARK: ExpressibleByStringLiteral
     public init(stringLiteral value: StringLiteralType) {
@@ -70,7 +53,7 @@ public struct EmailAddress: Codable, CustomStringConvertible, Equatable, EmailAd
 extension EmailAddress {
 
     /// Shared email address group/list model suitable for IMAP and JMAP
-    public struct Group: EmailAddressProtocol {
+    public struct Group: EmailAddressProtocol, Equatable, Sendable {
         public let label: String?
         public let email: [EmailAddressProtocol]
 
@@ -82,5 +65,11 @@ extension EmailAddress {
 
         // MARK: EmailAddressProtocol
         public var addresses: [EmailAddress] { email.flatMap { $0.addresses } }
+
+        // MARK: Equatable
+        public static func == (lhs: Self, rhs: Self) -> Bool {
+            // Equality ignores labels, positions and grouping
+            lhs.addresses.map({ $0.id }).sorted() == rhs.addresses.map({ $0.id }).sorted()
+        }
     }
 }
