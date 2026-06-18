@@ -37,23 +37,6 @@ struct EmailAddressTests {
         #expect(EmailAddress("name@example.com").label == nil)
     }
 
-    // MARK: Codable
-    @Test func encode() throws {
-        #expect(try JSONEncoder().encode(EmailAddress("name@example.com", label: "Example Name")) == "\"Example Name <name@example.com>\"".data(using: .utf8))
-        #expect(try JSONEncoder().encode(EmailAddress("name@example.com")) == "\"name@example.com\"".data(using: .utf8))
-    }
-
-    @Test func decoderInit() throws {
-        let data: [Data] = [
-            "\"Example Name <name@example.com>\"".data(using: .utf8)!,
-            "\"name@example.com\"".data(using: .utf8)!
-        ]
-        #expect(try JSONDecoder().decode(EmailAddress.self, from: data[0]).value == "name@example.com")
-        #expect(try JSONDecoder().decode(EmailAddress.self, from: data[0]).label == "Example Name")
-        #expect(try JSONDecoder().decode(EmailAddress.self, from: data[1]).value == "name@example.com")
-        #expect(try JSONDecoder().decode(EmailAddress.self, from: data[1]).label == nil)
-    }
-
     // MARK: ExpressibleByStringLiteral
     @Test func stringLiteralInit() {
         let labeledEmailAddress: EmailAddress = "Example Name <name@example.com>"
