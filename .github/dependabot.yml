@@ -12,6 +12,10 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
   - package-ecosystem: "swift"
     directory: "/"
     schedule:
