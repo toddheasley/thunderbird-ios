@@ -8,33 +8,34 @@ import IMAP
 import JMAP
 import MIME
 
+/// Common `Email` model represents and losslessly converts to and from both ``IMAP.Message`` and ``JMAP.Email``
 public struct Email: CustomStringConvertible, Identifiable, Sendable {
-    public let from: [EmailAddressProtocol]?
-    public let sender: [EmailAddressProtocol]?
-    public let replyTo: [EmailAddressProtocol]?
-    public let to: [EmailAddressProtocol]?
-    public let bcc: [EmailAddressProtocol]?
-    public let cc: [EmailAddressProtocol]?
+    public let from: [EmailAddressProtocol]
+    public let sender: [EmailAddressProtocol]
+    public let replyTo: [EmailAddressProtocol]
+    public let to: [EmailAddressProtocol]
+    public let bcc: [EmailAddressProtocol]
+    public let cc: [EmailAddressProtocol]
     public let received: Date?  // IMAP internal message date
     public let sent: Date?  // IMAP envelope date
-    public let messageID: [String]?
-    public let threadID: [String]?
-    public let inReplyTo: [String]?
+    public let messageID: [String]
+    public let threadID: [String]
+    public let inReplyTo: [String]
     public let subject: String?
     public let body: Body?
 
     public init(
-        from: [EmailAddressProtocol]? = nil,
-        sender: [EmailAddressProtocol]? = nil,
-        replyTo: [EmailAddressProtocol]? = nil,
-        to: [EmailAddressProtocol]? = nil,
-        bcc: [EmailAddressProtocol]? = nil,
-        cc: [EmailAddressProtocol]? = nil,
+        from: [EmailAddressProtocol] = [],
+        sender: [EmailAddressProtocol] = [],
+        replyTo: [EmailAddressProtocol] = [],
+        to: [EmailAddressProtocol] = [],
+        bcc: [EmailAddressProtocol] = [],
+        cc: [EmailAddressProtocol] = [],
         received: Date? = nil,
         sent: Date? = nil,
-        messageID: [String]? = nil,
-        threadID: [String]? = nil,
-        inReplyTo: [String]? = nil,
+        messageID: [String] = [],
+        threadID: [String] = [],
+        inReplyTo: [String] = [],
         subject: String? = nil,
         body: Body? = nil,
         id: String? = nil
@@ -56,13 +57,30 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
     }
 
     // MARK: CustomStringConvertible
-    public var description: String { "" }
+    public var description: String { messageID.first ?? id }
 
     // MARK: Identifiable
-    public let id: String  // Use either IMAP UID or JMAP ID
+    public let id: String  // IMAP message ID
 }
 
 extension Email {
+    // Decode Gmail message ID, if present
+    var gmailMessageID: UInt64? {
+        guard let id: UInt64 = UInt64(messageID.last ?? ""), id > .gmailIDFloor else {
+            return nil
+        }
+        return id
+    }
+
+    // Decode Gmail thread ID, if present
+    var gmailThreadID: UInt64? {
+        guard let id: UInt64 = UInt64(threadID.last ?? ""), id > .gmailIDFloor else {
+            return nil
+        }
+        return id
+    }
+
+    // Map from IMAP message
     init(_ message: IMAP.Message) {
         self.init(
             from: message.envelope.from,
@@ -71,33 +89,144 @@ extension Email {
             to: message.envelope.to,
             bcc: message.envelope.bcc,
             cc: message.envelope.cc,
-            received: message.internalDate,
-            sent: message.envelope.date?.date,
-            messageID: nil,
-            threadID: nil,
-            inReplyTo: nil,
+            received: message.internalDate,  // IMAP internal message date
+            sent: message.envelope.date?.date,  // IMAP envelope date; forget sender time zone
+            messageID: message.messageIDs,
+            threadID: message.threadIDs,
+            inReplyTo: message.inReplyTo,
             subject: message.envelope.subject,
             body: message.body,
-            id: message.emailID
+            id: message.emailID ?? message.gmailID
         )
     }
 
+    // Map from JMAP email
     init(_ email: JMAP.Email) {
         self.init(
-            from: email.from,
-            sender: email.sender,
-            replyTo: email.replyTo,
-            to: email.to,
-            bcc: email.bcc,
-            cc: email.cc,
+            from: email.from ?? [],
+            sender: email.sender ?? [],
+            replyTo: email.replyTo ?? [],
+            to: email.to ?? [],
+            bcc: email.bcc ?? [],
+            cc: email.cc ?? [],
             received: email.receivedAt,
             sent: email.sentAt,
-            messageID: email.messageID,
+            messageID: email.messageID ?? [],
             threadID: [email.threadID],
-            inReplyTo: email.inReplyTo,
+            inReplyTo: email.inReplyTo ?? [],
             subject: email.subject,
             body: nil,
             id: email.id
         )
     }
+}
+
+extension IMAP.Message {
+
+    // Use `gmailMessageID` as ID string, if present
+    var gmailID: String? { gmailMessageID != nil ? "\(gmailMessageID!)" : nil }
+
+    // Collect available message IDs, plain and/or Gmail flavored
+    var messageIDs: [String] {
+        var ids: [String] = []
+        if let id: String = envelope.messageID {
+            ids.append(id)
+        }
+        if let id: UInt64 = gmailMessageID {
+            ids.append("\(id)")
+        }
+        return ids
+    }
+
+    // Collect available thread IDs, plain and/or Gmail flavored
+    var threadIDs: [String] {
+        var ids: [String] = []
+        if let id: String = threadID {
+            ids.append(id)
+        }
+        if let id: UInt64 = gmailThreadID {
+            ids.append("\(id)")
+        }
+        return ids
+    }
+
+    var inReplyTo: [String] {
+        var ids: [String] = []
+        if let id: String = envelope.inReplyTo {
+            ids.append(id)
+        }
+        return ids
+    }
+
+    // Map back to IMAP message
+    init(_ email: Email) {
+        self.init(
+            body: email.body,
+            emailID: email.id,
+            envelope: Envelope(
+                subject: email.subject,
+                date: email.sent?.internetMessageDate,
+                from: email.from,
+                sender: email.sender,
+                reply: email.replyTo,
+                to: email.to,
+                cc: email.cc,
+                bcc: email.bcc,
+                inReplyTo: email.inReplyTo.first,
+                messageID: email.messageID.first
+            ),
+            flags: [],
+            gmailLabels: [],
+            gmailMessageID: email.gmailMessageID,
+            gmailThreadID: email.gmailThreadID,
+            internalDate: email.received,
+            threadID: email.threadID.first,
+            uid: nil
+        )
+    }
+}
+
+extension JMAP.Email {
+
+    // Map back to JMAP email
+    init(_ email: Email) {
+        self.init(
+            blobID: "",  // TODO: JMAP blob ID not carried over
+            threadID: email.threadID.first ?? "",
+            // TODO: JMAP mailbox IDs not carried over
+            // mailboxIDs: [:],
+            // TODO: JMAP keywords not implemented
+            // keywords: [:],
+            size: 0,
+            receivedAt: email.received,
+            sentAt: email.sent,
+            messageID: !email.messageID.isEmpty ? email.messageID : nil,
+            inReplyTo: !email.inReplyTo.isEmpty ? email.inReplyTo : nil,
+            references: nil,
+            sender: !email.sender.isEmpty ? email.sender : nil,
+            from: !email.from.isEmpty ? email.from : nil,
+            replyTo: !email.replyTo.isEmpty ? email.replyTo : nil,
+            to: !email.to.isEmpty ? email.to : nil,
+            cc: !email.cc.isEmpty ? email.cc : nil,
+            bcc: !email.bcc.isEmpty ? email.bcc : nil,
+            subject: email.subject,
+            // TODO: JMAP body structure encoding not implemented
+            // TODO: JMAP attachments not implemented
+            // bodyStructure: nil,
+            // textBody: [],
+            // htmlBody: [],
+            // attachments: [],
+            // hasAttachment: false,
+            // preview: nil,
+            id: email.id
+        )
+    }
+}
+
+extension Date {
+    var internetMessageDate: InternetMessageDate { InternetMessageDate(self) }
+}
+
+private extension UInt64 {
+    static let gmailIDFloor: Self = 1_000_000_000_000
 }
