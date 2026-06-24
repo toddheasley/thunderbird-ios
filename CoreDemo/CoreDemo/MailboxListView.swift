@@ -36,8 +36,13 @@ struct MailboxListView: View {
             List {
                 Section {
                     ForEach(mailboxManager.mailboxes, id: \.self) { mailbox in
-                        MailboxListItem(mailbox, selected: $mailbox)
-                            .environment(mailboxManager)
+                        NavigationLink(destination: {
+                            MailboxView(mailbox)
+                                .environment(mailboxManager)
+                        }) {
+                            MailboxListItem(mailbox, selected: $mailbox)
+                                .environment(mailboxManager)
+                        }
                     }
                 } header: {
                     Text("Mailboxes")
