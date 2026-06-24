@@ -105,7 +105,7 @@ public class IMAPClient {
     public func noop() async throws -> [IdleEvent] {
         logger?.info("Noop…")
         guard !isIdling else {
-            // NIOIMAP automatically (1) keeps idle alive and (2) streams idle events
+            // NIOIMAP automatically keeps idle alive and streams idle events
             // Manual `noop` polling is blocked by NIOIMAP during idle
             throw IMAPError.commandNotSupported("Noop during idle")
         }
@@ -119,21 +119,21 @@ public class IMAPClient {
     }
 
     /// Select current working mailbox in read/write mode.
-    @discardableResult public func select(mailbox: Mailbox) async throws -> Mailbox.Status {
-        logger?.info("Selecting mailbox \(mailbox.path.name)…")
-        return try await execute(command: SelectCommand(mailbox.path.name))
+    @discardableResult public func select(mailbox name: MailboxName) async throws -> Mailbox.Status {
+        logger?.info("Selecting mailbox \(name)…")
+        return try await execute(command: SelectCommand(name))
     }
 
     /// Select a working mailbox in read-only mode.
-    public func examine(mailbox: Mailbox) async throws -> Mailbox.Status {
-        logger?.info("Examining mailbox \(mailbox.path.name)…")
-        return try await execute(command: ExamineCommand(mailbox.path.name))
+    public func examine(mailbox name: MailboxName) async throws -> Mailbox.Status {
+        logger?.info("Examining mailbox \(name)…")
+        return try await execute(command: ExamineCommand(name))
     }
 
     /// Fetch the current status for a mailbox.
-    public func status(mailbox: Mailbox) async throws -> Mailbox.Status {
-        logger?.info("Refreshing mailbox \(mailbox.path.name) status…")
-        return try await execute(command: StatusCommand(mailbox.path.name, attributes: .standard + .extended(capabilities)))
+    public func status(mailbox name: MailboxName) async throws -> Mailbox.Status {
+        logger?.info("Refreshing mailbox \(name) status…")
+        return try await execute(command: StatusCommand(name, attributes: .standard + .extended(capabilities)))
     }
 
     /// Expunge messages flagged as deleted in current working mailbox.
