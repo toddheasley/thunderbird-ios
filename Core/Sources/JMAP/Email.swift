@@ -107,6 +107,58 @@ public struct Email: Decodable, Equatable, Hashable, Identifiable, Sendable {
     public let hasAttachment: Bool
     public let preview: String?
 
+    public init(
+        blobID: String,
+        threadID: String,
+        mailboxIDs: [String: Bool] = [:],
+        keywords: [String: Bool] = [:],
+        size: Int,
+        receivedAt: Date? = nil,
+        sentAt: Date? = nil,
+        messageID: [String]? = nil,
+        inReplyTo: [String]? = nil,
+        references: [String]? = nil,
+        sender: [EmailAddressProtocol]? = nil,
+        from: [EmailAddressProtocol]? = nil,
+        replyTo: [EmailAddressProtocol]? = nil,
+        to: [EmailAddressProtocol]? = nil,
+        cc: [EmailAddressProtocol]? = nil,
+        bcc: [EmailAddressProtocol]? = nil,
+        subject: String? = nil,
+        bodyStructure: BodyPart? = nil,
+        textBody: [BodyPart] = [],
+        htmlBody: [BodyPart] = [],
+        attachments: [BodyPart] = [],
+        hasAttachment: Bool = false,
+        preview: String? = nil,
+        id: String
+    ) {
+        self.blobID = blobID
+        self.threadID = threadID
+        self.mailboxIDs = mailboxIDs
+        self.keywords = keywords
+        self.size = size
+        self.receivedAt = receivedAt
+        self.sentAt = sentAt
+        self.messageID = messageID
+        self.inReplyTo = inReplyTo
+        self.references = references
+        self.sender = sender
+        self.from = from
+        self.replyTo = replyTo
+        self.to = to
+        self.cc = cc
+        self.bcc = bcc
+        self.subject = subject
+        self.bodyStructure = bodyStructure
+        self.textBody = textBody
+        self.htmlBody = htmlBody
+        self.attachments = attachments
+        self.hasAttachment = hasAttachment
+        self.preview = preview
+        self.id = id
+    }
+
     // MARK: Decodable
     public init(from decoder: any Decoder) throws {
         let container: KeyedDecodingContainer<Key> = try decoder.container(keyedBy: Key.self)
