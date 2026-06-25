@@ -6,52 +6,57 @@
 //
 
 import SwiftUI
+import Account
 
 struct ComposeHeaderView: View {
+    @Environment(Accounts.self) private var accounts: Accounts
+
     @State var subject: String = ""
-    @State var sender: [String] = [""]
     @State var toRecipients: [String] = []
+    @State var replyToRecipients: [String] = []
     @State var ccRecipients: [String] = []
     @State var bccRecipients: [String] = []
+    @State var selectedSender: UUID = UUID()
+    @State var showCCBCC: Bool = false
+    @State var showReplyTo: Bool = false
 
     var body: some View {
         VStack {
-            VStack {
-                List {
-                    AddressBar("From", $sender)
+            List {
+                HStack {
+                    Picker("From", selection: $selectedSender) {
+                        ForEach(accounts.allAccounts) { account in
+                            Text(account.name).tag(account.id)
+                        }
+                    } currentValueLabel: {
+                        Text(accounts.account(for: selectedSender)?.name ?? "")
+                    }.pickerStyle(.menu)
+                    Spacer()
+                    if !showReplyTo {
+                        Button("", systemImage: "chevron.down") {
+                            showReplyTo = true
+                        }.foregroundStyle(.black)
+                    }
+                }
+                if showReplyTo {
+                    MultiAddressBar("Reply To", $replyToRecipients)
+                }
+                HStack(alignment: .top) {
                     MultiAddressBar("To", $toRecipients)
+                    if !showCCBCC {
+                        Button("", systemImage: "chevron.down") {
+                            showCCBCC = true
+                        }.foregroundStyle(.black)
+                    }
+                }
+                if showCCBCC {
                     MultiAddressBar("CC", $ccRecipients)
                     MultiAddressBar("BCC", $bccRecipients)
-                    TextField("Subject", text: $subject)
-                }.frame(alignment: .leading)
-                    .font(.subheadline)
-
-            }
-
-        }
-    }
-}
-
-struct AddressBar: View {
-    init(
-        _ header: LocalizedStringResource = "",
-        _ entryText: Binding<[String]>,
-    ) {
-        headerText = header
-        _entryText = entryText
-    }
-    private var headerText: LocalizedStringResource
-    @Binding private var entryText: [String]
-
-    // MARK: View
-    var body: some View {
-        HStack {
-            Text(headerText)
-            HStack {
-                ForEach(entryText, id: \.self) { email in
-                    EmailPill(email, $entryText)
                 }
-            }
+
+                TextField("Subject", text: $subject)
+            }.frame(alignment: .leading)
+                .font(.subheadline)
         }
     }
 }
@@ -70,24 +75,29 @@ struct MultiAddressBar: View {
 
     // MARK: View
     var body: some View {
-        HStack {
-            Text(headerText)
-                .fixedSize()
-            TextField("", text: $entryString)
-                .textFieldStyle(.plain)
-                .autocorrectionDisabled()
-                .autocapitalization(.none)
-                .focusable()
-                .onSubmit {
-                    entryText.append(entryString)
-                    entryString = ""
+        VStack(alignment: .leading) {
+            HStack {
+                Text(headerText)
+                    .fixedSize()
+                TextField("", text: $entryString)
+                    .textFieldStyle(.plain)
+                    .autocorrectionDisabled()
+                    .autocapitalization(.none)
+                    .focusable()
+                    .onSubmit {
+                        if entryString.isEmailAddress {
+                            entryText.append(entryString)
+                            entryString = ""
+                        }
+                    }
+            }
+            HStackWrap {
+                ForEach(entryText, id: \.self) { email in
+                    EmailPill(email, $entryText)
                 }
-        }
-        VStack {
-            ForEach(entryText, id: \.self) { email in
-                EmailPill(email, $entryText)
             }
         }
+
     }
 }
 
@@ -116,5 +126,10 @@ struct EmailPill: View {
     }
 }
 #Preview {
-    ComposeHeaderView(sender: ["me@me.com"], toRecipients: ["me@mer1.com", "me@mer2.com", "mer3@me.com"], bccRecipients: ["mebcc@me.com"])
+    @Previewable @State var accounts: Accounts = Accounts()
+    ComposeHeaderView(
+        toRecipients: ["me@mer1.com", "me@mer2.com", "mer3@me.com"],
+        bccRecipients: ["mebcc@me.com"]
+    )
+    .environment(accounts)
 }
