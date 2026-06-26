@@ -17,9 +17,9 @@ struct IMAPClientTests {
         guard let inbox: Mailbox = mailboxes.filter({ $0.0.path.name.isInbox }).first?.0 else {
             throw IMAPError.unexpectedResponse("Inbox not found")
         }  // Find inbox in mailbox list
-        try await client.select(mailbox: inbox)  // Select inbox
+        try await client.select(mailbox: inbox.path.name)  // Select inbox
 
-        let status = try await client.status(mailbox: inbox)
+        let status = try await client.status(mailbox: inbox.path.name)
         #expect(status.messageCount != nil && status.messageCount! > 0)
         #expect(status.recentCount != nil && status.recentCount! >= 0)
         #expect(status.unseenCount != nil && status.unseenCount! >= 0)
