@@ -24,7 +24,7 @@ struct ComposeHeaderView: View {
         VStack {
             List {
                 HStack {
-                    Picker("From", selection: $selectedSender) {
+                    Picker("from_header", selection: $selectedSender) {
                         ForEach(accounts.allAccounts) { account in
                             Text(account.name).tag(account.id)
                         }
@@ -39,10 +39,10 @@ struct ComposeHeaderView: View {
                     }
                 }
                 if showReplyTo {
-                    MultiAddressBar("Reply To", $replyToRecipients)
+                    MultiAddressBar("reply_to_header", $replyToRecipients)
                 }
                 HStack(alignment: .top) {
-                    MultiAddressBar("To", $toRecipients)
+                    MultiAddressBar("to_header", $toRecipients)
                     if !showCCBCC {
                         Button("", systemImage: "chevron.down") {
                             showCCBCC = true
@@ -50,11 +50,11 @@ struct ComposeHeaderView: View {
                     }
                 }
                 if showCCBCC {
-                    MultiAddressBar("CC", $ccRecipients)
-                    MultiAddressBar("BCC", $bccRecipients)
+                    MultiAddressBar("cc_header", $ccRecipients)
+                    MultiAddressBar("bcc_header", $bccRecipients)
                 }
 
-                TextField("Subject", text: $subject)
+                TextField("subject_header", text: $subject)
             }.frame(alignment: .leading)
                 .font(.subheadline)
         }
@@ -113,7 +113,7 @@ struct EmailPill: View {
         HStack {
             Text(emailAddress)
                 .fixedSize(horizontal: true, vertical: false)
-            Label("Remove", systemImage: "x.circle").labelStyle(.iconOnly)
+            Label("remove_button", systemImage: "x.circle").labelStyle(.iconOnly)
                 .onTapGesture {
                     entries.remove(at: entries.firstIndex(of: emailAddress)!)
                 }
@@ -127,9 +127,6 @@ struct EmailPill: View {
 }
 #Preview {
     @Previewable @State var accounts: Accounts = Accounts()
-    ComposeHeaderView(
-        toRecipients: ["me@mer1.com", "me@mer2.com", "mer3@me.com"],
-        bccRecipients: ["mebcc@me.com"]
-    )
-    .environment(accounts)
+    ComposeHeaderView()
+        .environment(accounts)
 }
