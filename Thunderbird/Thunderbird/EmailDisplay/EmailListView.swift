@@ -17,6 +17,7 @@ struct EmailListView: View {
     @State var editMode: EditMode = .inactive
     @State private var selections = Set<UUID>()
     @State private var showDrawer = false
+    @State private var path = NavigationPath()
 
     //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
@@ -53,7 +54,7 @@ struct EmailListView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack(alignment: .bottomTrailing) {
                 if tempEmails.isEmpty {
                     VStack {
@@ -94,7 +95,7 @@ struct EmailListView: View {
                         .scrollContentBackground(.hidden)
                 }
                 Button {
-                    // Action
+                    path.append("compose")
                 } label: {
                     Image("compose")
                         .font(.title.weight(.regular))
@@ -106,10 +107,15 @@ struct EmailListView: View {
                 }
                 .background(.clear)
                 .padding()
-                .disabled(true)
+                .navigationDestination(for: String.self) { destination in
+                    if destination == "compose" {
+                        ComposeView()
+                    }
+                }
                 DrawerView(showDrawer: $showDrawer)
             }
             .navigationTitle("inbox_header")
+
             .navigationBarBackButtonHidden(editMode.isEditing)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
