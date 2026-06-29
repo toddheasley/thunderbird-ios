@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
 import Foundation
 
 /// Common mailbox model represents a single JMAP or IMAP mailbox, folder or Gmail label.
@@ -54,7 +58,7 @@ extension Mailbox {
             isSubscribed: !mailbox.0.attributes.filter({ $0 == .subscribed }).isEmpty,
             unreadEmails: mailbox.1?.unseenCount,
             totalEmails: mailbox.1?.messageCount,
-            id: id  // Transfer UUID or autogenenrate new one
+            id: id ?? UUID().uuidString(1)  // Transfer UUID or autogenenrate new one
         )
     }
 
