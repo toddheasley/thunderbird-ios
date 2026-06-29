@@ -57,6 +57,7 @@
 "bcc_header" = "BCC";
 "copy_header" = "Copy";
 "blind_copy_header" = "Blind Copy";
+"subject_header" = "Subject";
 
 
 // Other
@@ -92,6 +93,8 @@
 "forward_button" = "Forward";
 "forward_as_button" = "Forward as attachment";
 "edit_as_new_button" = "Edit as new";
+"remove_button" = "remove";
+
 //Email List Actions
 "mark_all_read_button" = "Mark all read";
 "select_all_button" = "Select All";
