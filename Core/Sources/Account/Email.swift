@@ -157,6 +157,37 @@ extension IMAP.Message {
         }
         return ids
     }
+
+    // Map back to IMAP message
+    init(_ email: Email) {
+        self.init(
+            body: email.body,
+            emailID: email.id,
+            envelope: Envelope(
+                subject: email.subject,
+                date: email.sent?.internetMessageDate,
+                from: email.from,
+                sender: email.sender,
+                reply: email.replyTo,
+                to: email.to,
+                cc: email.cc,
+                bcc: email.bcc,
+                inReplyTo: email.inReplyTo.first,
+                messageID: email.messageID.first
+            ),
+            flags: [],
+            gmailLabels: [],
+            gmailMessageID: email.gmailMessageID,
+            gmailThreadID: email.gmailThreadID,
+            internalDate: email.received,
+            threadID: email.threadID.first,
+            uid: nil
+        )
+    }
+}
+
+extension Date {
+    var internetMessageDate: InternetMessageDate { InternetMessageDate(self) }
 }
 
 private extension UInt64 {
