@@ -23,6 +23,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
     public let inReplyTo: [String]
     public let subject: String?
     public let body: Body?
+    public let blobID: String?
 
     public init(
         from: [EmailAddressProtocol] = [],
@@ -38,6 +39,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         inReplyTo: [String] = [],
         subject: String? = nil,
         body: Body? = nil,
+        blobID: String? = nil,
         id: String? = nil
     ) {
         self.from = from
@@ -53,6 +55,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         self.inReplyTo = inReplyTo
         self.subject = subject
         self.body = body
+        self.blobID = blobID
         self.id = id ?? UUID().uuidString(1)
     }
 
@@ -116,6 +119,7 @@ extension Email {
             inReplyTo: email.inReplyTo ?? [],
             subject: email.subject,
             body: nil,
+            blobID: email.blobID,
             id: email.id
         )
     }
@@ -182,6 +186,39 @@ extension IMAP.Message {
             internalDate: email.received,
             threadID: email.threadID.first,
             uid: nil
+        )
+    }
+}
+
+extension JMAP.Email {
+
+    // Map back to JMAP email
+    init(_ email: Email) {
+        self.init(
+            blobID: email.blobID ?? "",
+            threadID: email.threadID.first ?? "",
+            mailboxIDs: [:],  // TODO: JMAP mailbox IDs not carried
+            keywords: [:],  // TODO: JMAP keywords not implemented
+            size: 0,
+            receivedAt: email.received,
+            sentAt: email.sent,
+            messageID: !email.messageID.isEmpty ? email.messageID : nil,
+            inReplyTo: !email.inReplyTo.isEmpty ? email.inReplyTo : nil,
+            references: nil,
+            sender: !email.sender.isEmpty ? email.sender : nil,
+            from: !email.from.isEmpty ? email.from : nil,
+            replyTo: !email.replyTo.isEmpty ? email.replyTo : nil,
+            to: !email.to.isEmpty ? email.to : nil,
+            cc: !email.cc.isEmpty ? email.cc : nil,
+            bcc: !email.bcc.isEmpty ? email.bcc : nil,
+            subject: email.subject,
+            bodyStructure: nil,  // TODO: JMAP body structure encoding not implemented
+            textBody: [],
+            htmlBody: [],
+            attachments: [],  // TODO: JMAP attachments not implemented
+            hasAttachment: false,
+            preview: nil,  // // TODO: JMAP preview not implemented
+            id: email.id
         )
     }
 }
