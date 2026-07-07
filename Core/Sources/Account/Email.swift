@@ -24,6 +24,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
     public let subject: String?
     public let body: Body?
     public let blobID: String?
+    public let uid: UID?
 
     public init(
         from: [EmailAddressProtocol] = [],
@@ -40,6 +41,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         subject: String? = nil,
         body: Body? = nil,
         blobID: String? = nil,
+        uid: UID? = nil,
         id: String? = nil
     ) {
         self.from = from
@@ -56,6 +58,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         self.subject = subject
         self.body = body
         self.blobID = blobID
+        self.uid = uid
         self.id = id ?? UUID().uuidString(1)
     }
 
@@ -99,6 +102,7 @@ extension Email {
             inReplyTo: message.inReplyTo,
             subject: message.envelope.subject,
             body: message.body,
+            uid: message.uid,
             id: message.emailID ?? message.gmailID
         )
     }
@@ -185,7 +189,7 @@ extension IMAP.Message {
             gmailThreadID: email.gmailThreadID,
             internalDate: email.received,
             threadID: email.threadID.first,
-            uid: nil
+            uid: email.uid
         )
     }
 }

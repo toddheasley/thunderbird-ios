@@ -2,9 +2,9 @@ import Core
 import SwiftUI
 
 struct EmailView: View {
-    init(_ account: Account? = nil) {
+    init(_ email: Email? = nil, account: Account? = nil) {
         if let account {
-            emailManager = EmailManager(nil, account: account)
+            emailManager = EmailManager(email, account: account)
         }
         id = account?.id
     }
@@ -21,19 +21,38 @@ struct EmailView: View {
         return accountManager.account(for: id)
     }
 
+    private func refresh() async {
+        guard let emailManager else { return }
+        isRefreshing = true
+        await emailManager.refreshEmail()
+        isRefreshing = false
+    }
+
     // MARK: View
     var body: some View {
-        ContentUnavailableView(
-            label: {
-                Label("No email found", systemImage: "questionmark.folder")
-            },
-            actions: {
-                Button(action: {
-
-                }) {
-                    Text("Refresh")
-                }
+        VStack {
+            if let email: Email = emailManager?.email {
+                EmailListItem(email)
+                    .padding()
+                Divider()
             }
-        )
+            ScrollView {
+
+            }
+            .refreshable {
+                await refresh()
+            }
+        }
+        .overlay {
+            if emailManager == nil {
+                ContentUnavailableView {
+                    Label("Email not found", systemImage: "questionmark.folder")
+                }
+                .background()
+            }
+        }
+        .task {
+            await refresh()
+        }
     }
 }

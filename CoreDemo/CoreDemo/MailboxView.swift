@@ -27,7 +27,7 @@ struct MailboxView: View {
             List {
                 ForEach(emails) { email in
                     NavigationLink(destination: {
-                        EmailView()
+                        EmailView(email, account: mailboxManager.account)
                     }) {
                         EmailListItem(email)
                     }
@@ -114,7 +114,7 @@ struct EmailListItem: View {
     // MARK: View
     var body: some View {
         VStack(spacing: 10.0) {
-            HStack {
+            HStack(alignment: .top) {
                 Text(sender)
                     .bold()
                 Spacer()
