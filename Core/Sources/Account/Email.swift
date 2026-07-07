@@ -122,7 +122,7 @@ extension Email {
             threadID: [email.threadID],
             inReplyTo: email.inReplyTo ?? [],
             subject: email.subject,
-            body: nil,
+            body: try? Body(email),
             blobID: email.blobID,
             id: email.id
         )

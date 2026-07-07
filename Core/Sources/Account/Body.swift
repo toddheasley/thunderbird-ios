@@ -4,6 +4,11 @@
 
 import MIME
 
-extension Body {
+public typealias Body = MIME.Body
 
+extension Body {
+    init(_ email: JMAP.Email) throws {
+        // TODO: JMAP email body encoding and assembly not implemented
+        fatalError("init(_ :JMAP.Email) not implemented")
+    }
 }
