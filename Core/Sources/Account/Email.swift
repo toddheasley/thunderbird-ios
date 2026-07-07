@@ -23,6 +23,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
     public let inReplyTo: [String]
     public let subject: String?
     public let body: Body?
+    public let blobID: String?
 
     public init(
         from: [EmailAddressProtocol] = [],
@@ -38,6 +39,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         inReplyTo: [String] = [],
         subject: String? = nil,
         body: Body? = nil,
+        blobID: String? = nil,
         id: String? = nil
     ) {
         self.from = from
@@ -53,6 +55,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         self.inReplyTo = inReplyTo
         self.subject = subject
         self.body = body
+        self.blobID = blobID
         self.id = id ?? UUID().uuidString(1)
     }
 
@@ -116,6 +119,7 @@ extension Email {
             inReplyTo: email.inReplyTo ?? [],
             subject: email.subject,
             body: nil,
+            blobID: email.blobID,
             id: email.id
         )
     }
@@ -191,12 +195,10 @@ extension JMAP.Email {
     // Map back to JMAP email
     init(_ email: Email) {
         self.init(
-            blobID: "",  // TODO: JMAP blob ID not carried over
+            blobID: email.blobID ?? "",
             threadID: email.threadID.first ?? "",
-            // TODO: JMAP mailbox IDs not carried over
-            // mailboxIDs: [:],
-            // TODO: JMAP keywords not implemented
-            // keywords: [:],
+            mailboxIDs: [:],  // TODO: JMAP mailbox IDs not carried
+            keywords: [:],  // TODO: JMAP keywords not implemented
             size: 0,
             receivedAt: email.received,
             sentAt: email.sent,
@@ -210,14 +212,12 @@ extension JMAP.Email {
             cc: !email.cc.isEmpty ? email.cc : nil,
             bcc: !email.bcc.isEmpty ? email.bcc : nil,
             subject: email.subject,
-            // TODO: JMAP body structure encoding not implemented
-            // TODO: JMAP attachments not implemented
-            // bodyStructure: nil,
-            // textBody: [],
-            // htmlBody: [],
-            // attachments: [],
-            // hasAttachment: false,
-            // preview: nil,
+            bodyStructure: nil,  // TODO: JMAP body structure encoding not implemented
+            textBody: [],
+            htmlBody: [],
+            attachments: [],  // TODO: JMAP attachments not implemented
+            hasAttachment: false,
+            preview: nil,  // // TODO: JMAP preview not implemented
             id: email.id
         )
     }

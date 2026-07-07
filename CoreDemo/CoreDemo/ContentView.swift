@@ -5,6 +5,10 @@ struct ContentView: View {
 
     // MARK: View
     var body: some View {
+        NavigationStack {
+            AccountListView()
+        }
+        /*
         NavigationSplitView(
             sidebar: {
                 AccountListView()
@@ -19,7 +23,7 @@ struct ContentView: View {
                     Label("Detail", systemImage: "envelope.open")
                 }
             }
-        )
+        ) */
     }
 }
 

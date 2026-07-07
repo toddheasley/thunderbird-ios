@@ -27,7 +27,7 @@ struct MailboxView: View {
             List {
                 ForEach(emails) { email in
                     NavigationLink(destination: {
-                        Text(email.description)
+                        EmailView()
                     }) {
                         EmailListItem(email)
                     }
