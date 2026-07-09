@@ -13,6 +13,7 @@ import SwiftUI
 
 struct DrawerView: View {
     @Environment(Accounts.self) private var accounts: Accounts
+    //    @Environment(MailboxManager.self) private var mailboxs: MailboxManager
     @Binding var showDrawer: Bool
 
     // MARK: View
@@ -69,7 +70,8 @@ struct DrawerContent: View {
             Divider()
             Text("Account Folders")
             ForEach(accounts.allAccounts) { account in
-                AccountFolderDisclosureView(account: account)
+                var mailboxes: MailboxManager = MailboxManager(account: account)
+                AccountFolderDisclosureView().environment(mailboxes)
             }
 
         }

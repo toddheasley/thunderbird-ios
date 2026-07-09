@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 func createAvatarText(displayName: String) -> String {
     let splitName = displayName.split(separator: " ")
@@ -18,4 +19,9 @@ func createAvatarText(displayName: String) -> String {
     } else {
         return String(splitName[0].capitalized.first!)
     }
+}
+
+func randomizeAvatarColor() -> Color {
+    let userColors: [Color] = [.userRed, .userOrange, .userYellow, .userGreen, .userBlue, .userPink, .userPurple]
+    return userColors.randomElement()!
 }

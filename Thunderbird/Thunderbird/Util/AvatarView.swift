@@ -19,7 +19,7 @@ struct AvatarView: View {
         if !displayName.isEmpty {
             avatarText = createAvatarText(displayName: displayName)
         } else {
-            avatarText = String(emailAddress.value.first!)
+            avatarText = String(emailAddress.value.first!).capitalized
         }
         self.bubbleColor = bubbleColor
     }
@@ -44,5 +44,9 @@ struct AvatarView: View {
 }
 
 #Preview {
-    AvatarView(displayName: "blakls ddfas", emailAddress: EmailAddress("blah@blah.com"), bubbleColor: .yellow)
+    AvatarView(
+        displayName: "blakls ddfas",
+        emailAddress: EmailAddress("blah@blah.com"),
+        bubbleColor: randomizeAvatarColor()
+    )
 }
