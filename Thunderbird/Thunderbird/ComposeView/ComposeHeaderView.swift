@@ -23,40 +23,52 @@ struct ComposeHeaderView: View {
     var body: some View {
         VStack {
             List {
-                HStack {
-                    Picker("from_header", selection: $selectedSender) {
-                        ForEach(accounts.allAccounts) { account in
-                            Text(account.name).tag(account.id)
+                Section {
+                    HStack {
+                        Picker("from_header", selection: $selectedSender) {
+                            ForEach(accounts.allAccounts) { account in
+                                Text(account.name).tag(account.id)
+                            }
+                        } currentValueLabel: {
+                            Text(accounts.account(for: selectedSender)?.name ?? "")
                         }
-                    } currentValueLabel: {
-                        Text(accounts.account(for: selectedSender)?.name ?? "")
-                    }.pickerStyle(.menu)
-                    Spacer()
-                    if !showReplyTo {
-                        Button("", systemImage: "chevron.down") {
-                            showReplyTo = true
-                        }.foregroundStyle(.black)
-                    }
-                }
-                if showReplyTo {
-                    MultiAddressBar("reply_to_header", $replyToRecipients)
-                }
-                HStack(alignment: .top) {
-                    MultiAddressBar("to_header", $toRecipients)
-                    if !showCCBCC {
-                        Button("", systemImage: "chevron.down") {
-                            showCCBCC = true
-                        }.foregroundStyle(.black)
-                    }
-                }
-                if showCCBCC {
-                    MultiAddressBar("cc_header", $ccRecipients)
-                    MultiAddressBar("bcc_header", $bccRecipients)
-                }
+                        .pickerStyle(.menu)
 
-                TextField("subject_header", text: $subject)
-            }.frame(alignment: .leading)
-                .font(.subheadline)
+                        Spacer()
+
+                        if !showReplyTo {
+                            Button("", systemImage: "chevron.down") {
+                                showReplyTo = true
+                            }
+                            .foregroundStyle(.black)
+                        }
+                    }
+
+                    if showReplyTo {
+                        MultiAddressBar("reply_to_header", $replyToRecipients)
+                    }
+
+                    HStack(alignment: .top) {
+                        MultiAddressBar("to_header", $toRecipients)
+                        if !showCCBCC {
+                            Button("", systemImage: "chevron.down") {
+                                showCCBCC = true
+                            }
+                            .foregroundStyle(.black)
+                        }
+                    }
+
+                    if showCCBCC {
+                        MultiAddressBar("cc_header", $ccRecipients)
+                        MultiAddressBar("bcc_header", $bccRecipients)
+                    }
+
+                    TextField("subject_header", text: $subject)
+                }
+            }
+            .frame(alignment: .leading)
+            .font(.subheadline)
+            .scrollDisabled(true)
         }
     }
 }
