@@ -1,9 +1,6 @@
-//
-//  ComposeHeaderView.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 2/18/26.
-//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import SwiftUI
 import Account
@@ -77,7 +74,7 @@ struct ComposeHeaderView: View {
             TextField("subject_header", text: $subject)
                 .font(.subheadline)
                 .padding()
-                .background(.gray, in: RoundedRectangle(cornerRadius:24))
+                .background(.gray, in: RoundedRectangle(cornerRadius: 24))
         }
         .padding()
     }
@@ -120,7 +117,7 @@ struct MultiAddressBar: View {
             }
         }
         .padding()
-        .background(.gray, in: RoundedRectangle(cornerRadius:24))
+        .background(.gray, in: RoundedRectangle(cornerRadius: 24))
     }
 }
 
