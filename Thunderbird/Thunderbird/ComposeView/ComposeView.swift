@@ -12,10 +12,8 @@ struct ComposeView: View {
     @State private var rawText = NSAttributedString(string: "")
 
     var body: some View {
-        ScrollView {
-            ComposeHeaderView()
-            ComposeBodyView()
-        }.toolbar {
+        ComposeBodyView()
+        .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                 }) {

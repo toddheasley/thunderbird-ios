@@ -22,54 +22,64 @@ struct ComposeHeaderView: View {
 
     var body: some View {
         VStack {
-            List {
-                Section {
-                    HStack {
-                        Picker("from_header", selection: $selectedSender) {
-                            ForEach(accounts.allAccounts) { account in
-                                Text(account.name).tag(account.id)
-                            }
-                        } currentValueLabel: {
-                            Text(accounts.account(for: selectedSender)?.name ?? "")
+            Group {
+                HStack {
+                    Picker("from_header", selection: $selectedSender) {
+                        ForEach(accounts.allAccounts) { account in
+                            Text(account.name).tag(account.id)
                         }
-                        .pickerStyle(.menu)
+                    } currentValueLabel: {
+                        Text(accounts.account(for: selectedSender)?.name ?? "")
+                    }
+                    .pickerStyle(.menu)
 
-                        Spacer()
+                    Spacer()
 
+                    VStack {
                         if !showReplyTo {
+                            Spacer()
                             Button("", systemImage: "chevron.down") {
                                 showReplyTo = true
                             }
                             .foregroundStyle(.black)
+                            Spacer()
                         }
                     }
+                }
 
-                    if showReplyTo {
-                        MultiAddressBar("reply_to_header", $replyToRecipients)
-                    }
+                if showReplyTo {
+                    MultiAddressBar("reply_to_header", $replyToRecipients)
+                }
 
-                    HStack(alignment: .top) {
-                        MultiAddressBar("to_header", $toRecipients)
-                        if !showCCBCC {
+                HStack(alignment: .top) {
+                    MultiAddressBar("to_header", $toRecipients)
+                    if !showCCBCC {
+                        VStack {
+                            Spacer()
                             Button("", systemImage: "chevron.down") {
                                 showCCBCC = true
                             }
                             .foregroundStyle(.black)
+                            Spacer()
                         }
                     }
-
-                    if showCCBCC {
-                        MultiAddressBar("cc_header", $ccRecipients)
-                        MultiAddressBar("bcc_header", $bccRecipients)
-                    }
-
-                    TextField("subject_header", text: $subject)
                 }
             }
-            .frame(alignment: .leading)
-            .font(.subheadline)
-            .scrollDisabled(true)
+            .padding(.bottom, 4)
+
+            if showCCBCC {
+                MultiAddressBar("cc_header", $ccRecipients)
+                MultiAddressBar("bcc_header", $bccRecipients)
+            }
+
+            Divider()
+
+            TextField("subject_header", text: $subject)
+                .font(.subheadline)
+                .padding()
+                .background(.gray, in: RoundedRectangle(cornerRadius:24))
         }
+        .padding()
     }
 }
 
@@ -92,7 +102,7 @@ struct MultiAddressBar: View {
                 Text(headerText)
                     .fixedSize()
                 TextField("", text: $entryString)
-                    .textFieldStyle(.plain)
+                    .textFieldStyle(.automatic)
                     .autocorrectionDisabled()
                     .autocapitalization(.none)
                     .focusable()
@@ -109,7 +119,8 @@ struct MultiAddressBar: View {
                 }
             }
         }
-
+        .padding()
+        .background(.gray, in: RoundedRectangle(cornerRadius:24))
     }
 }
 

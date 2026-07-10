@@ -33,16 +33,20 @@ struct ComposeBodyView: View {
     }
 
     var body: some View {
-        ZStack {
-            RichHTMLEditor(html: $html, selection: $selection, textAttributes: textAttributes)
-                .padding()
-                .focused($keyboardShown)
+        ZStack(alignment: .bottom) {
+            ScrollView {
+                ComposeHeaderView()
+
+                RichHTMLEditor(html: $html, selection: $selection, textAttributes: textAttributes)
+                    .padding()
+                    .focused($keyboardShown)
+            }
 
             ComposeToolbar(textAttributes: textAttributes, keyboardShown: focusBinding, selection: $selection)
+                .background(.ultraThinMaterial)
                 .opacity(keyboardShown ? 1 : 0)
                 .frame(height: keyboardShown ? 44 : 0)
                 .animation(.easeIn(duration: 0.25), value: keyboardShown)
-                .background(.red)
         }
     }
 }
