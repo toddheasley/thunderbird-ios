@@ -37,7 +37,6 @@ struct EmailBodyView: View {
                         Task { @MainActor in
                             // This results in intermittent crashing when tapping on links, even when run on the main thread. There is significantly increased stability by using the `prefersInApp` option available in iOS 26 and later.
                             openURL(URL)
-//                            openURL(URL, prefersInApp: true)
                         }
                         return true
                     })
