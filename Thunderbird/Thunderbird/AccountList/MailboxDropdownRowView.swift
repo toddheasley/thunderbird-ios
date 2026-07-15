@@ -44,7 +44,7 @@ struct MailboxDropdownRowView: View {
                 //TODO: Load relevant email list
             }
             .padding(.horizontal)
-                .font(.subheadline)
+            .font(.subheadline)
         }
 
     }
@@ -76,7 +76,7 @@ struct MailboxDropdownRowView: View {
     }
 }
 
-func iconName(folderName:String) -> String {
+func iconName(folderName: String) -> String {
     let localizedFolderIconNames: [String: String] = [
         "inbox": "inbox_localized",
         "archive": "archive_localized",
@@ -89,7 +89,7 @@ func iconName(folderName:String) -> String {
         if (folderName
             .localizedCaseInsensitiveContains(icon)
             || folderName
-            .localizedCaseInsensitiveContains(localizedName))
+                .localizedCaseInsensitiveContains(localizedName))
         {
             return icon
         }
