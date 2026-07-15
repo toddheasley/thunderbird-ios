@@ -13,7 +13,6 @@ import SwiftUI
 
 struct DrawerView: View {
     @Environment(Accounts.self) private var accounts: Accounts
-    //    @Environment(MailboxManager.self) private var mailboxs: MailboxManager
     @Binding var showDrawer: Bool
 
     // MARK: View
@@ -42,7 +41,7 @@ struct DrawerView: View {
                         }
                     }
                     .padding()
-                    .background()
+                    .background(.surface)
                     Spacer()
                 }
                 .transition(.move(edge: .leading))
@@ -59,33 +58,15 @@ struct DrawerView: View {
     DrawerView(showDrawer: $showDrawer).environment(accounts)
 }
 
-//TODO: Connect to actual account and folder structure
 struct DrawerContent: View {
     @Environment(Accounts.self) private var accounts: Accounts
     @Binding var showDrawer: Bool
     var body: some View {
         VStack(alignment: .leading) {
-            MailboxDropdownRowView(mailboxName: "Inbox", iconName: "tray")
-            MailboxDropdownRowView(mailboxName: "Sent", iconName: "paperplane")
-            Divider()
-            Text("Account Folders")
             ForEach(accounts.allAccounts) { account in
-                var mailboxes: MailboxManager = MailboxManager(account: account)
+                let mailboxes: MailboxManager = MailboxManager(account: account)
                 AccountFolderDisclosureView().environment(mailboxes)
             }
-
         }
-    }
-}
-
-//TODO: Remove when account color association happens
-//we will associate a color with an account but don't yet
-extension Color {
-    static var random: Color {
-        return Color(
-            red: .random(in: 0...1),
-            green: .random(in: 0...1),
-            blue: .random(in: 0...1)
-        )
     }
 }

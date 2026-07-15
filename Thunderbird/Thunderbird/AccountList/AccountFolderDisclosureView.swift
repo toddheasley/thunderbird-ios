@@ -11,16 +11,16 @@ import Account
 struct AccountFolderDisclosureView: View {
     @Environment(MailboxManager.self) private var mailboxManager: MailboxManager
     @State var isExpanded: Bool = false
+    @State var unreadCount: Int = 0
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
             ForEach(mailboxManager.mailboxes) { mailbox in
                 HStack {
-                    Text(mailbox.name)
-                    Spacer()
+                    MailboxDropdownRowView(mailbox: mailbox)
                 }
             }
-
-            .padding(.horizontal)
+            .padding(.vertical, 10)
+            .safeAreaPadding(.horizontal)
         } label: {
             HStack {
                 AvatarView(emailAddress: EmailAddress(mailboxManager.account.name), bubbleColor: .accent)
@@ -32,30 +32,25 @@ struct AccountFolderDisclosureView: View {
                 }.padding(.horizontal)
                     .foregroundStyle(.black)
                 Spacer()
-                if (!isExpanded) {
-                    Text("3")
-                        .font(.caption2)
-                        .padding(.horizontal, 6)
-                        .foregroundColor(.accent)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(
-                                    .accent,
-                                    style: StrokeStyle(
-                                        lineWidth: 1
-                                    )
-                                )
-                                .frame(width: 20, height: 17)
-
-                        }
+                if (!isExpanded && unreadCount > 0) {
+                    UnreadCounter(unreadCount: unreadCount, hasNew: false)
                 }
+            }.padding(.vertical, 10)
+                .safeAreaPadding(.horizontal)
+        }.task {
+            for mailbox in mailboxManager.mailboxes {
+                unreadCount += mailbox.unreadEmails!
             }
-
-        }.safeAreaPadding(.leading)
+        }
+        .background {
+            RoundedRectangle(cornerRadius: 24)
+                .foregroundStyle(.white)
+                .frame(height: 56)
+        }
     }
 }
 
 #Preview {
     @Previewable @State var mailboxes: MailboxManager = MailboxManager(account: Account("temp@email.com"))
-    AccountFolderDisclosureView()
+    AccountFolderDisclosureView().environment(mailboxes)
 }
