@@ -5,11 +5,14 @@
 import SwiftUI
 import InfomaniakRichHTMLEditor
 
-struct ComposeBodyView: View {
+struct EmailBodyView: View {
+    @Environment(\.openURL) var openURL
+
     @State private var html = String.sampleHTML
     @State private var selection = ""
     @StateObject private var textAttributes = TextAttributes()
     @FocusState private var keyboardShown: Bool
+    let editable: Bool
 
     var focusBinding: Binding<Bool> {
         Binding(
@@ -17,10 +20,9 @@ struct ComposeBodyView: View {
                 return keyboardShown
             },
             set: { newValue in
-                if newValue == false {
-
+                if newValue == true && editable {
+                    keyboardShown = newValue
                 }
-                keyboardShown = newValue
             }
         )
     }
@@ -30,22 +32,31 @@ struct ComposeBodyView: View {
             ScrollView {
                 ComposeHeaderView()
 
-                RichHTMLEditor(html: $html, selection: $selection, textAttributes: textAttributes)
+                RichHTMLEditor(html: $html, selection: $selection, editable: editable, textAttributes: textAttributes)
+                    .handleLinkOpening(perform: { URL in
+                        Task { @MainActor in
+                            // This results in intermittent crashing when tapping on links, even when run on the main thread. There is significantly increased stability by using the `prefersInApp` option available in iOS 26 and later.
+                            openURL(URL)
+                        }
+                        return true
+                    })
                     .padding()
                     .focused($keyboardShown)
             }
 
-            ComposeToolbar(textAttributes: textAttributes, keyboardShown: focusBinding, selection: $selection)
-                .background(.ultraThinMaterial)
-                .opacity(keyboardShown ? 1 : 0)
-                .frame(height: keyboardShown ? 44 : 0)
-                .animation(.easeIn(duration: 0.25), value: keyboardShown)
+            if editable {
+                ComposeToolbar(textAttributes: textAttributes, keyboardShown: focusBinding, selection: $selection)
+                    .background(.ultraThinMaterial)
+                    .opacity(keyboardShown ? 1 : 0)
+                    .frame(height: keyboardShown ? 44 : 0)
+                    .animation(.easeIn(duration: 0.25), value: keyboardShown)
+            }
         }
     }
 }
 
 #Preview {
-    ComposeBodyView()
+    EmailBodyView(editable: false)
 }
 
 extension String {
