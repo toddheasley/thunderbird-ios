@@ -12,7 +12,10 @@ let iconShapes = FolderIconShapes()
 struct MailboxDropdownRowView: View {
     @State var isExpanded: Bool = false
     var mailbox: Mailbox
-    var tempHasSubfolders: Bool = true
+
+    //TODO: Subfolders and 'new' are not fully implemented
+    var tempHasSubfolders: Bool = false
+    var tempHasNew: Bool = false
 
     var body: some View {
         if tempHasSubfolders {
@@ -20,7 +23,7 @@ struct MailboxDropdownRowView: View {
                 //TODO: Eventual subfolder
             } label: {
                 HStack {
-                    (iconSwitcher(folderName: mailbox.name, tinted: false)).frame(width: 24, height: 24)
+                    (iconSwitcher(folderName: mailbox.name, tinted: tempHasNew)).frame(width: 24, height: 24)
                     Text(mailbox.name)
                         .foregroundStyle(.black)
                     Spacer()
@@ -32,12 +35,12 @@ struct MailboxDropdownRowView: View {
                 .font(.subheadline)
         } else {
             HStack {
-                (iconSwitcher(folderName: mailbox.name, tinted: false)).frame(width: 24, height: 24)
+                (iconSwitcher(folderName: mailbox.name, tinted: tempHasNew)).frame(width: 24, height: 24)
                 Text(mailbox.name)
                     .foregroundStyle(.black)
                 Spacer()
                 if mailbox.unreadEmails! > 0 {
-                    UnreadCounter(unreadCount: mailbox.unreadEmails ?? 0, hasNew: false)
+                    UnreadCounter(unreadCount: mailbox.unreadEmails ?? 0, hasNew: !tempHasNew)
                 }
             }
             .onTapGesture {

@@ -20,15 +20,16 @@ struct AccountFolderDisclosureView: View {
                 }
             }
             .padding(.vertical, 10)
-            .safeAreaPadding(.horizontal)
         } label: {
             HStack {
                 AvatarView(emailAddress: EmailAddress(mailboxManager.account.name), bubbleColor: .accent)
                 VStack(alignment: .leading) {
                     Text(mailboxManager.account.name)
                         .font(.body)
-                    Text(mailboxManager.account.name)
-                        .font(.caption2)
+                        .truncationMode(.middle)
+                    //                    Text(mailboxManager.account.name)
+                    //                        .font(.caption2)
+                    //                        .truncationMode(.middle)
                 }.padding(.horizontal)
                     .foregroundStyle(.black)
                 Spacer()
@@ -45,7 +46,6 @@ struct AccountFolderDisclosureView: View {
         .background {
             RoundedRectangle(cornerRadius: 24)
                 .foregroundStyle(.white)
-                .frame(height: 56)
         }
     }
 }

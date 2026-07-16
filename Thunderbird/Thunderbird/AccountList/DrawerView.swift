@@ -33,11 +33,16 @@ struct DrawerView: View {
                     VStack(alignment: .leading) {
                         ScrollView {
                             DrawerContent(showDrawer: $showDrawer)
-                        }
-                        Spacer()
-                        NavigationLink(destination: GeneralSettingsView()) {
-                            Label("settings_header", systemImage: "gearshape")
-                                .foregroundStyle(.black)
+                        }.toolbar {
+                            ToolbarItem(id: "settings", placement: .bottomBar) {
+                                NavigationLink(destination: GeneralSettingsView()) {
+                                    Text("settings_header")
+                                        .foregroundStyle(.black)
+                                }
+                            }
+                            ToolbarItem(placement: .bottomBar) {
+                                Spacer()
+                            }
                         }
                     }
                     .padding()
