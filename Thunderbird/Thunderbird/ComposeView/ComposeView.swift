@@ -9,7 +9,7 @@ struct ComposeView: View {
     @State private var rawText = NSAttributedString(string: "")
 
     var body: some View {
-        ComposeBodyView()
+        EmailBodyView(editable: true)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
