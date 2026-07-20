@@ -15,11 +15,11 @@ struct AvatarView: View {
     private var avatarText: String = ""
     private var bubbleColor: Color = .clear
 
-    init(displayName: String = "", emailAddress: EmailAddress, bubbleColor: Color) {
-        if !displayName.isEmpty {
+    init(displayName: String, bubbleColor: Color) {
+        if (!displayName.isEmpty && !displayName.isEmailAddress) {
             avatarText = createAvatarText(displayName: displayName)
-        } else {
-            avatarText = String(emailAddress.value.first!).capitalized
+        } else if (displayName.isEmailAddress) {
+            avatarText = String(displayName.first!).capitalized
         }
         self.bubbleColor = bubbleColor
     }
@@ -46,7 +46,6 @@ struct AvatarView: View {
 #Preview {
     AvatarView(
         displayName: "blakls ddfas",
-        emailAddress: EmailAddress("blah@blah.com"),
-        bubbleColor: randomizeAvatarColor()
+        bubbleColor: Color(randomizeAvatarColor())
     )
 }

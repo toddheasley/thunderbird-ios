@@ -21,5 +21,8 @@ struct UtilFunctionTests {
     @Test func displayName_moreThanTwoNames() async throws {
         #expect(createAvatarText(displayName: "Denny Klein Two") == "DK")
     }
+    @Test func displayName_empty() async throws {
+        #expect(createAvatarText(displayName: "") == "")
+    }
 
 }

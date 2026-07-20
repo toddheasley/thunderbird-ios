@@ -22,14 +22,20 @@ struct AccountFolderDisclosureView: View {
             .padding(.vertical, 10)
         } label: {
             HStack {
-                AvatarView(emailAddress: EmailAddress(mailboxManager.account.name), bubbleColor: .accent)
+                AvatarView(
+                    displayName: mailboxManager.account.name,
+                    bubbleColor: Color(mailboxManager.account.avatarColor)
+                )
                 VStack(alignment: .leading) {
                     Text(mailboxManager.account.name)
                         .font(.body)
                         .truncationMode(.middle)
-                    //                    Text(mailboxManager.account.name)
-                    //                        .font(.caption2)
-                    //                        .truncationMode(.middle)
+                    if (!mailboxManager.account.name.isEmailAddress) {
+                        Text(mailboxManager.account.identities[0].email)
+                            .font(.caption2)
+                            .truncationMode(.middle)
+                    }
+
                 }.padding(.horizontal)
                     .foregroundStyle(.black)
                 Spacer()

@@ -16,12 +16,17 @@ func createAvatarText(displayName: String) -> String {
     if splitName.count >= 2 {
         let letter = "\(splitName[0].capitalized.first!)\(splitName[1].capitalized.first!)"
         return letter
-    } else {
+    } else if (!splitName.isEmpty) {
         return String(splitName[0].capitalized.first!)
+    } else {
+        return ""
     }
 }
 
-func randomizeAvatarColor() -> Color {
-    let userColors: [Color] = [.userRed, .userOrange, .userYellow, .userGreen, .userBlue, .userPink, .userPurple]
+func randomizeAvatarColor() -> String {
+    let userColors: [String] = [
+        "user-red", "user-orange", "user-yellow", "user-green", "user-blue", "user-pink",
+        "user-purple"
+    ]
     return userColors.randomElement()!
 }
