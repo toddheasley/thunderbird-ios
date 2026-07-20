@@ -37,7 +37,9 @@ struct EmailView: View {
                 Divider()
             }
             ScrollView {
-
+                if let email: Email = emailManager?.email {
+                    Text(email.body?.description ?? "")
+                }
             }
             .refreshable {
                 await refresh()
