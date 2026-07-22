@@ -48,7 +48,8 @@ public struct Body: CustomStringConvertible, RawRepresentable, Sendable {
     public var rawValue: Data {
         var data: Data = Data()
         for header in headers {
-            data.append("\(header)\(crlf)".data(using: .ascii)!)
+            data.append("\(header)".data(using: .ascii)!)
+            data.append(.crlf)
         }
         data.append(.crlf)
         data.append(part.data)
