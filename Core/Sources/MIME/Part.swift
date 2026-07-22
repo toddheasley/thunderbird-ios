@@ -15,15 +15,15 @@ public struct Part: CustomStringConvertible, RawRepresentable, Sendable {
     /// The actual part content, encoded as an ASCII string using the transfer encoding specified in the part header; typically base64 or quoted-printable
     public let data: Data
 
-    public var headers: [String: String] {
-        var headers: [String: String] = [:]
+    public var headers: [Header] {
+        var headers: [Header] = []
         if let contentDisposition {
-            headers["Content-Disposition"] = contentDisposition.description
+            headers.append(try! Header(.contentDisposition, "\(contentDisposition)"))
         }
         if let contentTransferEncoding {
-            headers["Content-Transfer-Encoding"] = contentTransferEncoding.description
+            headers.append(try! Header(.contentTransferEncoding, "\(contentTransferEncoding)"))
         }
-        headers["Content-Type"] = contentType.description
+        headers.append(try! Header(.contentType, "\(contentType)"))
         return headers
     }
 
@@ -124,12 +124,13 @@ public struct Part: CustomStringConvertible, RawRepresentable, Sendable {
     // MARK: RawRepresentable
     public var rawValue: Data {
         var data: Data = Data()
-        for key in headers.keys.sorted() {
-            data.append("\(key): \(headers[key]!)\(crlf)".data(using: .ascii)!)
+        for header in headers {
+            data.append("\(header)".data(using: .ascii)!)
+            data.append(.crlf)
         }
-        data.append(crlf.data(using: .ascii)!)
-        data.append(self.data + crlf.data(using: .ascii)!)
-        data.append(crlf.data(using: .ascii)!)
+        data.append(.crlf)
+        data.append(self.data)
+        data.append(.crlf)
         return data
     }
 
@@ -144,13 +145,18 @@ extension [Part] {
             throw MIMEError.dataNotFound
         }
         var data: Data = Data()
-        data.append(crlf.data(using: .ascii)!)
+        data.append(.crlf)
         for part in self {
-            data.append("--\(boundary)\(crlf)".data(using: .ascii)!)
+            data.append("--\(boundary)".data(using: .ascii)!)
+            data.append(.crlf)
             data.append(part.rawValue)
-            data.append(crlf.data(using: .ascii)!)
         }
-        data.append("--\(boundary)--\(crlf)".data(using: .ascii)!)
+        data.append("--\(boundary)--".data(using: .ascii)!)
+        data.append(.crlf)
         return data
     }
+}
+
+extension Data {
+    static let crlf: Self = String.crlf.data(using: .ascii)!
 }

@@ -16,6 +16,7 @@ public enum MIMEError: Error, CustomStringConvertible, Equatable {
     case dataNotFound
     case dataNotQuotedPrintable
     case dateNotDecoded(String)
+    case headerNameNotFound
     case headerNotDecoded(String)
 
     // MARK: CustomStringConvertible
@@ -32,6 +33,7 @@ public enum MIMEError: Error, CustomStringConvertible, Equatable {
         case .dataNotFound: "Multipart data not found"
         case .dataNotQuotedPrintable: "Data not quoted-printable"
         case .dateNotDecoded(let string): "Date not decoded: \(string)"
+        case .headerNameNotFound: "Header name not found"
         case .headerNotDecoded(let string): "Header not decoded: \(string)"
         }
     }
