@@ -32,7 +32,7 @@ struct EmailBodyView: View {
             ScrollView {
                 ComposeHeaderView()
 
-                RichHTMLEditor(html: $html, selection: $selection, editable: editable, textAttributes: textAttributes)
+                RichHTMLEditor(html: $html, selection: $selection, textAttributes: textAttributes)
                     .handleLinkOpening(perform: { URL in
                         Task { @MainActor in
                             // This results in intermittent crashing when tapping on links, even when run on the main thread. There is significantly increased stability by using the `prefersInApp` option available in iOS 26 and later.

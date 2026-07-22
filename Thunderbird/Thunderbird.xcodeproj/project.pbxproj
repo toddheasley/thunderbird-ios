@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		15501F1C2F9666AB0041B309 /* Bolt in Frameworks */ = {isa = PBXBuildFile; productRef = 15501F1B2F9666AB0041B309 /* Bolt */; };
-		15501F1E2F9666AB0041B309 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 15501F1D2F9666AB0041B309 /* Core */; };
+		157AB5C73010F75D0059D0C1 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 157AB5C63010F75D0059D0C1 /* Core */; };
+		157AB5C93010F7650059D0C1 /* Bolt in Frameworks */ = {isa = PBXBuildFile; productRef = 157AB5C83010F7650059D0C1 /* Bolt */; };
 		FEFA29FB2FF6AAF700C8210B /* InfomaniakRichHTMLEditor in Frameworks */ = {isa = PBXBuildFile; productRef = FEFA29FA2FF6AAF700C8210B /* InfomaniakRichHTMLEditor */; };
 /* End PBXBuildFile section */
 
@@ -68,9 +68,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15501F1C2F9666AB0041B309 /* Bolt in Frameworks */,
+				157AB5C73010F75D0059D0C1 /* Core in Frameworks */,
 				FEFA29FB2FF6AAF700C8210B /* InfomaniakRichHTMLEditor in Frameworks */,
-				15501F1E2F9666AB0041B309 /* Core in Frameworks */,
+				157AB5C93010F7650059D0C1 /* Bolt in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,9 +130,9 @@
 			);
 			name = Thunderbird;
 			packageProductDependencies = (
-				15501F1B2F9666AB0041B309 /* Bolt */,
-				15501F1D2F9666AB0041B309 /* Core */,
 				FEFA29FA2FF6AAF700C8210B /* InfomaniakRichHTMLEditor */,
+				157AB5C63010F75D0059D0C1 /* Core */,
+				157AB5C83010F7650059D0C1 /* Bolt */,
 			);
 			productName = Thunderbird;
 			productReference = 1521D8162D9C4D6200C4DFDF /* Thunderbird.app */;
@@ -634,13 +634,13 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1522B1732F898B3A00DD3C4F /* Bolt */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Bolt;
-		};
-		1522B1752F898B3A00DD3C4F /* Core */ = {
+		157AB5C63010F75D0059D0C1 /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Core;
+		};
+		157AB5C83010F7650059D0C1 /* Bolt */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Bolt;
 		};
 		FEFA29FA2FF6AAF700C8210B /* InfomaniakRichHTMLEditor */ = {
 			isa = XCSwiftPackageProductDependency;
