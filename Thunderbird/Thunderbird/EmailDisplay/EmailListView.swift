@@ -85,7 +85,9 @@ struct EmailListView: View {
                             .simultaneousGesture(
                                 LongPressGesture().onEnded { _ in
                                     withAnimation {
+                                        #if os(iOS)
                                         editMode = .active
+                                        #endif
                                     }
                                 }
                             )

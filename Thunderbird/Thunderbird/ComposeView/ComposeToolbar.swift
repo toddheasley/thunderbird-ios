@@ -19,14 +19,14 @@ struct ComposeToolbar: View {
         let foregroundColor = Binding<Color>(
             get: { textAttributes.foregroundColor ?? .black },
             set: { newValue in
-                textAttributes.setForegroundColor(UIColor(newValue))
+                textAttributes.setForegroundColor(PlatformColor(newValue))
             }
         )
 
         let backgroundColor = Binding<Color>(
             get: { textAttributes.backgroundColor ?? .white },
             set: { newValue in
-                textAttributes.setBackgroundColor(UIColor(newValue))
+                textAttributes.setBackgroundColor(PlatformColor(newValue))
             }
         )
 

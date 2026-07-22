@@ -48,7 +48,9 @@ struct DrawerView: View {
             }
         }
         .animation(.easeInOut, value: showDrawer)
+        #if os(iOS)
         .toolbar(showDrawer ? .hidden : .visible, for: .navigationBar)
+        #endif
     }
 }
 
