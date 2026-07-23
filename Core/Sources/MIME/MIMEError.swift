@@ -18,6 +18,7 @@ public enum MIMEError: Error, CustomStringConvertible, Equatable {
     case dateNotDecoded(String)
     case headerNameNotFound
     case headerNotDecoded(String)
+    case headerValueNotASCII
 
     // MARK: CustomStringConvertible
     public var description: String {
@@ -35,6 +36,7 @@ public enum MIMEError: Error, CustomStringConvertible, Equatable {
         case .dateNotDecoded(let string): "Date not decoded: \(string)"
         case .headerNameNotFound: "Header name not found"
         case .headerNotDecoded(let string): "Header not decoded: \(string)"
+        case .headerValueNotASCII: "Header value not ASCII"
         }
     }
 }

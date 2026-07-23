@@ -5,6 +5,9 @@
 import Foundation
 
 /// MIME part described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.5)
+///
+/// `Part` can contain data for a single piece of text or binary, or they can themselves be multipart, containing one or more subparts.
+/// `Part` encodes and decodes complete plain text or MIME message part using `RawRepresentable` conformance.
 public struct Part: CustomStringConvertible, RawRepresentable, Sendable {
 
     /// Instruct mail client to display decoded body part inline, in message, or link as an attachment. Optionally include file name and other metadata for source file.
@@ -87,7 +90,9 @@ public struct Part: CustomStringConvertible, RawRepresentable, Sendable {
                 continue
             }
         }
-        guard let data: Data = components.dropFirst(index).joined(separator: "\n").trimmed().data(using: .ascii), let contentType else {
+        guard let data: Data = components.dropFirst(index).joined(separator: "\n").trimmed().data(using: .ascii),
+            let contentType
+        else {
             throw MIMEError.dataNotDecoded(description.data(using: .ascii) ?? Data(), encoding: .ascii)
         }
         self.init(
