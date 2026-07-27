@@ -5,6 +5,9 @@
 import Foundation
 
 /// Multipart body element described in [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045#section-2.6)
+///
+/// `Body` contains a single ``Part`` that is either multipart or text ``ContentType``.
+/// `Body` encodes and decodes complete plain text or MIME message bodies using `RawRepresentable` conformance.
 public struct Body: CustomStringConvertible, RawRepresentable, Sendable {
     public let part: Part
 
@@ -48,7 +51,8 @@ public struct Body: CustomStringConvertible, RawRepresentable, Sendable {
     public var rawValue: Data {
         var data: Data = Data()
         for header in headers {
-            data.append("\(header)\(crlf)".data(using: .ascii)!)
+            data.append("\(header)".data(using: .ascii)!)
+            data.append(.crlf)
         }
         data.append(.crlf)
         data.append(part.data)
