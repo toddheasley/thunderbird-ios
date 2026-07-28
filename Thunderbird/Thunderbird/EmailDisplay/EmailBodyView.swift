@@ -9,7 +9,7 @@ struct EmailBodyView: View {
     @Environment(\.openURL) var openURL
 
     @State var html = String.sampleHTML
-    
+
     @State private var selection = ""
     @StateObject private var textAttributes = TextAttributes()
     @FocusState private var keyboardShown: Bool
