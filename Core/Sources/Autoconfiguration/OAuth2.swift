@@ -40,6 +40,18 @@ public struct OAuth2: Decodable {
             return components.url!
         }
 
+        public func refreshTokenURL(_ refreshToken: String) -> URL {
+            var components: URLComponents = URLComponents(string: tokenURI)!  // Validated during init
+            components.queryItems = [
+                URLQueryItem(name: "client_id", value: clientID),
+                URLQueryItem(name: "client_secret", value: ""),
+                URLQueryItem(name: "redirect_uri", value: redirectURI),
+                URLQueryItem(name: "grant_type", value: "refresh_token"),
+                URLQueryItem(name: "refresh_token", value: refreshToken)
+            ]
+            return components.url!
+        }
+
         public func matches(_ host: String) -> Bool {
             for _host in hosts {
                 guard host.hasSuffix(_host) else { continue }
