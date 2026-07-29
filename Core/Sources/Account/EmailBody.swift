@@ -7,7 +7,7 @@ import JMAP
 import MIME
 
 public struct EmailBody: CustomStringConvertible, Sendable {
-    public let attachments: [EmailAttachment]  // Both inline and attached
+    public let attachments: [EmailAttachment]  // Both inline and attached dispositions
     public let preview: String?
     public let html: String?  // Base64-encoded inline media attachments
     public let text: String?
@@ -25,21 +25,10 @@ public struct EmailBody: CustomStringConvertible, Sendable {
 
 extension EmailBody {
     init(body: MIME.Body?) throws {
-        guard let body else {
-            throw URLError(.resourceUnavailable)
+        guard let body, !body.isEmpty else {
+            throw AccountError.mime(.dataNotFound)
         }
-        var components: MIME.Part.Components = ([], [], [])
-        do {
-            for part in body.parts {
-                let _components: MIME.Part.Components = try part.components()
-                components.html += _components.html
-                components.text += _components.text
-                components.0 += _components.0
-            }
-        } catch {
-            print("*** \(error)")
-            throw error
-        }
+        let components: MIME.Part.Components = try body.part.components()
         let html: String? = !components.html.isEmpty ? components.html.joined() : nil
         let text: String? = !components.text.isEmpty ? components.text.joined() : nil
         let preview: String? = nil  // TODO: Generate preview text
@@ -52,49 +41,59 @@ extension EmailBody {
     }
 }
 
+extension MIME.Body {
+    var isEmpty: Bool { part.data.count < 1 }
+}
+
 extension MIME.Part {
     typealias Components = ([EmailAttachment], html: [String], text: [String])
 
-    func components() throws -> Components {
-        print("*** ======== components()")
-        print("*** data: \(data.count)")
-        var components: Components = ([], [], [])
-        print("*** contentTransferEncoding: \(contentTransferEncoding?.description ?? "nil")")
-        switch contentType {
-        case .multipart(let subtype, _):
-            switch subtype {
-            case .alternative:
-                print("*** multipart/alt")
-            case .related:
-                print("*** multipart/rel")
-            case .mixed:
-                print("*** multipart/mix")
-                fallthrough
+    // Recursively decode and collect all subparts into component arrays
+    func components(appendedTo components: Components? = nil) throws -> Components {
+        var components: Components = components ?? ([], [], [])
+        do {
+            switch contentType {
+            case .multipart:
+                for part in try parts {
+                    components = try part.components(appendedTo: components)
+                }
+            case .text(let subtype, let characterSet):
+                let string: String = try String(
+                    contentTransferEncoding,
+                    data: data,
+                    encoding: characterSet?.encoding ?? .utf8
+                )
+                switch subtype {
+                case .html:
+                    components.html.append(string)
+                case .plain:
+                    fallthrough
+                default:  // All non-HTML email is plain text
+                    components.text.append(string)
+                }
+            case .message:
+                // Single `message/rfc822` type identifier exists for type `message`
+                // "No encoding other than 7bit, 8bit, or binary is permitted for messages or parts of type message"
+                // https://www.w3.org/Protocols/rfc1341/7_3_Message.html
+                if let body: Body = try? Body(data) {
+                    // TODO: Handle forwarded/attached message
+                    print(body)
+                } else if let text: String = try? String(contentTransferEncoding, data: data, encoding: .ascii) {
+                    // TODO: Handle inline plain text message
+                    print(text)
+                }
             default:
-                print("*** multipart/\(subtype) (default)")
+                components.0.append(
+                    EmailAttachment(
+                        data: data,
+                        contentType: contentType,
+                        contentDisposition: contentDisposition
+                    ))
             }
-        case .text(let subtype, let characterSet):
-            let string: String = try String(
-                contentTransferEncoding,
-                data: data,
-                encoding: characterSet?.encoding ?? .utf8
-            )
-            switch subtype {
-            case .html:
-                components.html.append(string)
-            case .plain:
-                fallthrough
-            default:
-                components.text.append(string)
-            }
-        case .message(let subtype):
-            print("*** subtype: \(subtype)")
-            let string: String = try String(contentTransferEncoding, data: data)
-            components.text.append(string)
-        default:
-            print("*** \(contentType) (default)")
+        } catch {
+            throw error
         }
-        print("*** --------")
+        // TODO: Encode inline attachments into HTML as base64 strings
         return components
     }
 }
@@ -111,13 +110,23 @@ extension MIME.CharacterSet {
 }
 
 extension String {
+
+    // Decode `MIME.Part` data with any `ContentTransferEncoding` to `String` of any `String.Encoding`
     init(_ transferEncoding: ContentTransferEncoding?, data: Data, encoding: Encoding = .utf8) throws {
         switch transferEncoding {
         case .base64:
-            try self.init(base64: data, encoding: encoding)
+            do {
+                try self.init(base64: data, encoding: encoding)  // Try strict decode first
+            } catch {
+                try self.init(nil, data: data, encoding: encoding)  // Try fuzzy (default) decode
+            }
         case .quotedPrintable:
-            try self.init(quotedPrintable: data, encoding: encoding)
-        default:
+            do {
+                try self.init(quotedPrintable: data, encoding: encoding)  // Try strict decode first
+            } catch {
+                try self.init(nil, data: data, encoding: encoding)  // Try fuzzy (default) decode
+            }
+        default:  // ASCII and unknown content transfer encodings
             guard let string: Self = Self(data: data, encoding: encoding) else {
                 throw MIMEError.dataNotDecoded(data, encoding: encoding)
             }
