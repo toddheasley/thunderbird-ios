@@ -1,5 +1,6 @@
 import Core
 import SwiftUI
+import WebKit
 
 struct EmailView: View {
     init(_ email: Email? = nil, account: Account? = nil) {
@@ -12,7 +13,10 @@ struct EmailView: View {
     @Environment(AccountManager.self) private var accountManager: AccountManager
     @State private var emailManager: EmailManager?
     @State private var isRefreshing: Bool = false
+    @State private var page: WebPage = WebPage()
     private let id: UUID?
+
+    private var email: Email? { emailManager?.email }
 
     private var account: Account? {
         guard let id else {
@@ -21,40 +25,43 @@ struct EmailView: View {
         return accountManager.account(for: id)
     }
 
+    private var html: String {
+        email?.body?.html ?? email?.body?.text ?? ""
+    }
+
     private func refresh() async {
         guard let emailManager else { return }
         isRefreshing = true
         await emailManager.refreshEmail()
         isRefreshing = false
+        page.load(html: html)
     }
 
     // MARK: View
     var body: some View {
-        VStack {
-            if let email: Email = emailManager?.email {
+        if let email {
+            VStack {
                 EmailListItem(email)
                     .padding()
                 Divider()
-            }
-            ScrollView {
-                if let email: Email = emailManager?.email {
-                    Text(email.body?.description ?? "")
+                ScrollView {
+                    WebView(page)
+                        .containerRelativeFrame([.vertical, .horizontal])
                 }
+                .ignoresSafeArea()
+                .refreshable {
+                    await refresh()
+                }
+
             }
-            .refreshable {
+            .task {
                 await refresh()
             }
-        }
-        .overlay {
-            if emailManager == nil {
-                ContentUnavailableView {
-                    Label("Email not found", systemImage: "questionmark.folder")
-                }
-                .background()
+        } else {
+            ContentUnavailableView {
+                Label("Email not found", systemImage: "questionmark.folder")
             }
-        }
-        .task {
-            await refresh()
+            .background()
         }
     }
 }
