@@ -8,7 +8,6 @@ import Testing
 
 struct PartTests {
     @Test func headers() {
-        /*
         #expect(
             Part.html.headers == [
                 try! Header(.contentDisposition, "inline"),
