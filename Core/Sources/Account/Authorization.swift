@@ -31,8 +31,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
         switch self {
         case .basic(let user, let password): return "\(user.components(separatedBy: " ")[0]):\(password)".data(using: .utf8)!.base64EncodedString()
         case .oauth(_, let token, let refreshToken):
-            let passwordString = "\(token.description):\(token.tokenExpiration?.timeIntervalSince1970, default: "0"):\(refreshToken.description)"
-            return passwordString.data(using: .utf8)!.base64EncodedString()
+            return "\(token.description)"
 
         case .none: return ""
         }
@@ -49,7 +48,11 @@ public enum Authorization: CustomStringConvertible, Equatable {
     /// Derive appropriate authorization case from naked `URLCredential` user/password strings.
     init(user: String, password: String?) {
         let password: String = password ?? ""
-        let data: Data = Data(base64Encoded: password)!
+        let data: Data? = Data(base64Encoded: password)
+        guard let data else {
+            self = .none
+            return
+        }
         if let components: [String] = String(data: data, encoding: .utf8)?.components(separatedBy: ":"),
             components.count == 2, components.first == user.components(separatedBy: " ")[0]
         {
