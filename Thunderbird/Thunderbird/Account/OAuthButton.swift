@@ -88,12 +88,6 @@ struct OAuthButton: View {
     }
 }
 
-struct TokenResponse: Codable {
-    let access_token: String
-    let expires_in: Int
-    let refresh_token: String
-}
-
 #Preview("OAuth Button") {
     @Previewable @State var token: Token?
     @Previewable @State var refreshToken: Token?

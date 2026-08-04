@@ -30,7 +30,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
     var password: String {
         switch self {
         case .basic(let user, let password): return "\(user.components(separatedBy: " ")[0]):\(password)".data(using: .utf8)!.base64EncodedString()
-        case .oauth(_, let token, let refreshToken):
+        case .oauth(_, let token, _):
             return "\(token.description)"
 
         case .none: return ""
