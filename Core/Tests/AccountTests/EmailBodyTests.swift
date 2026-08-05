@@ -70,39 +70,7 @@ extension EmailBodyTests {
     }
 }
 
-/*
-let body: Body = try Body(.mock(uuid))
-switch uuid {
-case "2EA571DD":
-    #expect(body.contentType == .multipart(.alternative, try! Boundary("-=Part.d96da9.c8ced2f941b41333.19beaf8523d.267666a9a62272b=-")))
-    #expect(body.contentTransferEncoding == nil)
-    #expect(try body.part.parts.first?.contentType == .text(.html, .utf8))
-    #expect(try body.part.parts.count == 1)
-case "1759430F":
-    #expect(body.contentType == .multipart(.alternative, try! Boundary("_----------=_17617196041979919223967")))
-    #expect(body.contentTransferEncoding == .data)
-    #expect(try body.part.parts.first?.contentType == .text(.plain, .utf8))
-    #expect(try body.part.parts.count == 2)
-case "89526045":
-    #expect(body.contentType == .multipart(.alternative, try! Boundary("----=_Part_15950895_843396275.1764942606546")))
-    #expect(body.contentTransferEncoding == nil)
-    #expect(try body.part.parts.first?.contentType == .text(.html, .iso8859))
-    #expect(try body.part.parts.count == 1)
-case "BFA06D93":
-    #expect(body.contentType == .multipart(.alternative, try! Boundary("b1_dd99cd789bcc10ebb82bcc39304a9664")))
-    #expect(body.contentTransferEncoding == nil)
-    #expect(try body.part.parts.first?.contentType == .text(.plain, .utf8))
-    #expect(try body.part.parts.count == 2)
-case "F02140B7":
-    #expect(body.contentType == .multipart(.alternative, try! Boundary("MULTIPART-MIXED-BOUNDARY")))
-    #expect(body.contentTransferEncoding == nil)
-    #expect(try body.part.parts.first?.contentType == .text(.html, .utf8))
-    #expect(try body.part.parts.count == 2)
-default:
-    break
-} */
-
-private extension Data {
+extension Data {
     static func mock(_ uuid: String) throws -> Self {
         try Bundle.module.data(forResource: "mime-body-\(uuid).eml")
     }
