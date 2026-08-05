@@ -11,6 +11,10 @@
 import Foundation
 import SwiftUI
 
+///Catch all for functions needed across the app
+
+///- Parameters:
+///  - displayName: One or two word string expected, though more than two words is handled
 func createAvatarText(displayName: String) -> String {
     let splitName = displayName.split(separator: " ")
     if splitName.count >= 2 {
@@ -23,6 +27,7 @@ func createAvatarText(displayName: String) -> String {
     }
 }
 
+/// Select color from design approved color list
 func randomizeAvatarColor() -> String {
     let userColors: [String] = [
         "user-red", "user-orange", "user-yellow", "user-green", "user-blue", "user-pink",

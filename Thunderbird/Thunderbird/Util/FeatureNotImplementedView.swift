@@ -10,6 +10,8 @@
 
 import SwiftUI
 
+/// As development progresses, buttons and features will appear incomplete.
+/// This provides a stopgap to allow users to see functionality and know something isn't broken, just under construction
 struct FeatureNotImplementedView: View {
     init() {
         featureName = AlertManager.shared.alertTitle ?? ""

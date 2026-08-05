@@ -10,6 +10,9 @@
 
 import SwiftUI
 
+///- Parameters:
+///  - unreadCount: number of unread messages
+///  - hasNew: do any of the unread messages qualify as 'new'
 struct UnreadCounter: View {
     @State var unreadCount: Int = 0
     @State var hasNew: Bool = false
