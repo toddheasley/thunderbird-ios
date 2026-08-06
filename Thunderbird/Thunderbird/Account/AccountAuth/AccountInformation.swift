@@ -27,12 +27,14 @@ struct AccountInformation: View {
     @State private var password: String = ""
     @State private var error: Error?
     @State private var loginServer: Server = Server(.imap)
+    @State private var loginAuth: Authorization = Server(.imap).authorization
 
     private func refreshAccount() {
         account = emailAddress.isEmailAddress ? Account(emailAddress, provider: config?.emailProvider) : nil
         guard let account = account else { return }
         guard let incomingServer = account.incomingServer else { return }
         loginServer = incomingServer
+        loginAuth = loginServer.authorization
     }
 
     var body: some View {
@@ -63,16 +65,18 @@ struct AccountInformation: View {
                     .buttonStyle(.plain)
                 if account?.incomingServer?.authenticationType != nil {
                     AuthorizationView(
-                        $loginServer.authorization,
+                        $loginAuth,
                         error: $error,
                         for: loginServer.username,
                         authenticationType: loginServer.authenticationType
-                    ).onChange(of: loginServer.authorization) {
+                    ).onChange(of: loginAuth) {
                         guard var account = account else { return }
-                        var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
-                        var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
-                        incomingServerInfo.authorization = loginServer.authorization
-                        outgoingServerInfo.authorization = loginServer.authorization
+                        var incomingServerInfo = account.incomingServer ?? Server(.imap)
+                        var outgoingServerInfo = account.outgoingServer ?? Server(.smtp)
+                        incomingServerInfo.authorization = loginAuth
+                        outgoingServerInfo.authorization = loginAuth
+                        incomingServerInfo.username = emailAddress
+                        outgoingServerInfo.username = emailAddress
                         account.servers = [incomingServerInfo, outgoingServerInfo]
                         accounts.set(account)
                     }

@@ -24,15 +24,21 @@ struct ServerTests {
             hostname: "imap.example.com"
         )
         #expect(server.authorization == .none)
-        server.authorization = .oauth(user: "user@example.com", token: "zemhu8-omdRiz-zisbov")
+        server.authorization =
+            .oauth(
+                user: "user@example.com",
+                token: .bearer("zemhu8-omdRiz-zisbov", Date()),
+                refresh: .refresh("fakeRefreshToken")
+            )
         #expect(server.user == "user@example.com IMAP:\(server.id.uuidString.components(separatedBy: "-")[0])")
         #expect(URLCredentialStorage.shared.authorization(for: server.user) != nil)
         #expect(server.authorization.user == "user@example.com")
         #expect(server.authorization.password == "zemhu8-omdRiz-zisbov")
         switch server.authorization {
-        case .oauth(let user, let token):
+        case .oauth(let user, let token, let refresh):
             #expect(user == "user@example.com")
-            #expect(token == "zemhu8-omdRiz-zisbov")
+            #expect(token.value == "zemhu8-omdRiz-zisbov")
+            #expect(refresh.value == "fakeRefreshToken")
         default:
             throw URLError(.redirectToNonExistentLocation)
         }

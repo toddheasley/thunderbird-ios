@@ -70,7 +70,6 @@ struct ManualServerSetup: View {
 
             } else {
                 Section(header: Text("account_incoming_server_label")) {
-
                     TextEntryWrapper("account_server_settings_server_label", "server.example.com", $incomingHostname)
                     NumEntryWrapper("account_server_settings_port_label", "443", $incomingPort)
                     Picker("account_server_settings_authentication_label", selection: $incomingServer.authenticationType) {
@@ -135,7 +134,6 @@ struct ManualServerSetup: View {
             Button(
                 action: {
                     // TODO: Need validation
-
                     incomingServer.connectionSecurity = inSelectedSecurity ? ConnectionSecurity.tls : ConnectionSecurity.none
                     incomingServer.hostname = incomingHostname
                     incomingServer.port = incomingPort ?? 443
@@ -192,7 +190,10 @@ public extension Server {
         )
         switch authorization {
         case .basic(let user, let password): print("basic(user: \(user); password: \(password))")
-        case .oauth(let user, let password): print("oauth(user: \(user); password: \(password))")
+        case .oauth(let user, let password, let refresh):
+            print(
+                "oauth(user: \(user); password: \(password) ; \(refresh)"
+            )
         case .none: print("none")
         }
         server.authorization = authorization
