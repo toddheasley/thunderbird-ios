@@ -60,8 +60,8 @@ struct OAuthButton: View {
             for _ in 0..<retries {
                 let (data, _) = try await URLSession.shared.data(for: tokenRequest)
                 let response = try JSONDecoder().decode(TokenResponse.self, from: data)
-                token = .bearer(response.access_token, Date(timeIntervalSinceNow: TimeInterval(response.expires_in)))
-                refreshToken = .refresh(response.refresh_token)
+                token = .bearer(response.accessToken, Date(timeIntervalSinceNow: TimeInterval(response.expiresIn)))
+                refreshToken = .refresh(response.refreshToken)
             }
 
         } catch {
