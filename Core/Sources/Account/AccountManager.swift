@@ -33,6 +33,7 @@ public final class AccountManager {
             } else {
                 accounts.append(account)  // Append to end of array
             }
+            allAccounts = accounts
             try FileManager.default.write(accounts, to: .accounts)
             allAccounts = try FileManager.default.readAccounts(from: .accounts)
         } catch {
