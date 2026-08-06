@@ -18,8 +18,9 @@ struct AuthorizationView: View {
         switch authorization.wrappedValue {
         case .basic(_, let password):
             self.password = password
-        case .oauth(_, let token):
+        case .oauth(_, let token, let refreshToken):
             self.token = token
+            self.refreshToken = refreshToken
         case .none:
             break
         }
@@ -30,6 +31,7 @@ struct AuthorizationView: View {
     @Binding private var error: Error?
     @State private var password: String = ""
     @State private var token: Token?
+    @State private var refreshToken: Token?
 
     // MARK: View
     var body: some View {
@@ -40,10 +42,10 @@ struct AuthorizationView: View {
                     authorization = .basic(user: username, password: password)
                 }
         case .oAuth2:
-            OAuthButton(username, token: $token, error: $error)
+            OAuthButton(username, token: $token, refreshToken: $refreshToken, error: $error)
                 .onChange(of: token, initial: true) {
-                    if let token {
-                        authorization = .oauth(user: username, token: token)
+                    if let token, let refreshToken {
+                        authorization = .oauth(user: username, token: token, refresh: refreshToken)
                     } else {
                         authorization = .none
                     }

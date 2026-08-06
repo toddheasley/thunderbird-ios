@@ -20,4 +20,20 @@ extension URLRequest {
         request.httpBody = httpBody
         return request
     }
+
+    public static func refreshToken(_ request: OAuth2.Request, refreshToken: String) throws -> Self {
+        guard
+            var components: URLComponents = URLComponents(
+                url: request.refreshTokenURL(refreshToken),
+                resolvingAgainstBaseURL: false
+            ), let httpBody: Data = components.percentEncodedQuery?.data(using: .utf8)
+        else {
+            throw URLError(.badURL)
+        }
+        components.queryItems = nil
+        var request: Self = Self(url: components.url!)
+        request.httpMethod = "POST"
+        request.httpBody = httpBody
+        return request
+    }
 }

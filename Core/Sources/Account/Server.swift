@@ -192,7 +192,7 @@ private extension Authorization {
     var rawValue: String {
         switch self {
         case .basic(_, let password): password
-        case .oauth(_, let token): token.value
+        case .oauth(_, let token, _): token.value
         case .none: ""
         }
     }

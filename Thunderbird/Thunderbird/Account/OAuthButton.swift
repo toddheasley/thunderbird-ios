@@ -10,31 +10,36 @@ import SwiftUI
 struct OAuthButton: View {
     let emailAddress: String
 
-    init(_ emailAddress: String = "", token: Binding<Token?>, error: Binding<Error?>) {
+    init(_ emailAddress: String = "", token: Binding<Token?>, refreshToken: Binding<Token?>, error: Binding<Error?>) {
         self.emailAddress = emailAddress
         _token = token
         _error = error
+        _refreshToken = refreshToken
     }
 
     @Binding private var token: Token?
     @Binding private var error: Error?
+    @Binding private var refreshToken: Token?
     @Environment(\.webAuthenticationSession) private var webAuthenticationSession
     @State private var request: OAuth2.Request?
 
     private func authenticate() async {
-        do {
-            error = nil
-            guard let request else { return }
-            let _: URL = try await webAuthenticationSession.authenticate(
-                using: request.authURL(hint: emailAddress),
-                callback: .customScheme("\(Bundle.main.schemes.first!)"),
-                additionalHeaderFields: [:])
-
-            // TODO: Exchange auth code for bearer or access/refresh token; for now, succeed here and return fake bearer token...
-            token = .bearer("fake-1e911257e86b1f194daa-0-a89faae5c11f")
-        } catch {
-            self.error = error
+        let retries = 2
+        for _ in 0..<retries {
+            do {
+                error = nil
+                guard let request else { return }
+                let authURL: URL = try await webAuthenticationSession.authenticate(
+                    using: request.authURL(hint: emailAddress),
+                    callback: .customScheme("\(Bundle.main.schemes.first!)"), additionalHeaderFields: [:])
+                let queryItems = URLComponents(string: authURL.absoluteString)?.queryItems
+                let code = (queryItems?.filter({ $0.name == "code" }).first?.value)!
+                await getToken(code: code)
+            } catch {
+                self.error = error
+            }
         }
+
     }
 
     private func configure() async {
@@ -44,6 +49,25 @@ struct OAuthButton: View {
         } catch {
             self.error = error
         }
+    }
+
+    private func getToken(code: String) async {
+        let retries = 3
+        error = nil
+        guard let request else { return }
+        do {
+            let tokenRequest = try URLRequest.token(request, code: code)
+            for _ in 0..<retries {
+                let (data, _) = try await URLSession.shared.data(for: tokenRequest)
+                let response = try JSONDecoder().decode(TokenResponse.self, from: data)
+                token = .bearer(response.accessToken, Date(timeIntervalSinceNow: TimeInterval(response.expiresIn)))
+                refreshToken = .refresh(response.refreshToken)
+            }
+
+        } catch {
+            self.error = error
+        }
+
     }
 
     // MARK: View
@@ -66,7 +90,8 @@ struct OAuthButton: View {
 
 #Preview("OAuth Button") {
     @Previewable @State var token: Token?
+    @Previewable @State var refreshToken: Token?
     @Previewable @State var error: Error?
 
-    OAuthButton("example@thunderbird.net", token: $token, error: $error)
+    OAuthButton("example@thunderbird.net", token: $token, refreshToken: $refreshToken, error: $error)
 }
