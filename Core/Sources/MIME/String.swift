@@ -189,6 +189,17 @@ extension String {
         return string
     }
 
+    func unwrapping(_ prefix: String, _ suffix: String) -> Self {
+        var string: Self = "\(self)"
+        if hasPrefix(prefix) {
+            string = "\(string.dropFirst(prefix.count))"
+        }
+        if hasSuffix(suffix) {
+            string = "\(string.dropLast(suffix.count))"
+        }
+        return string
+    }
+
     func trimmed() -> Self {
         trimmingCharacters(in: .whitespacesAndNewlines)
     }
