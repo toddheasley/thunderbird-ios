@@ -25,6 +25,7 @@ public enum Flag: String {
     public var allowRemote: Bool = true
     private var defaultsKey: String
 
+    // Allow user to turn off/on feature flags pulled from Github
     public init(distribution: Distribution) {
         allowRemote = (UserDefaults.standard.value(forKey: allowRemoteFlags) ?? true) as! Bool
         defaultsKey = distribution.defaultsKey
@@ -63,6 +64,8 @@ public enum Flag: String {
         UserDefaults.standard.setValue(allowRemote, forKey: allowRemoteFlags)
     }
 
+    /// Pull current feature flag settings from json URL based on current distribution
+    /// Using JSON file in github for visibility
     private func getURLSettings(distribution: Distribution) async -> [String: Bool] {
         var url: URL
 

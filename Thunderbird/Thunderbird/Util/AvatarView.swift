@@ -14,7 +14,9 @@ import EmailAddress
 struct AvatarView: View {
     private var avatarText: String = ""
     private var bubbleColor: Color = .clear
-
+    /// - Parameters:
+    ///  - displayName: Either an email address string or a display name string to base the text of the Avatar on
+    ///  - bubbleColor: Color chosen from an approved set
     init(displayName: String, bubbleColor: Color) {
         if (!displayName.isEmpty && !displayName.isEmailAddress) {
             avatarText = createAvatarText(displayName: displayName)
