@@ -100,6 +100,16 @@ struct StringTests {
             try "4p2k77iP4p2k77iPw6nDhvCfpJYi4j+KdpO+4jw==".decodingBase64()
         }
     }
+
+    @Test func unwrapping() {
+        #expect("<1762463150.A51D5B17@example.com>".unwrapping("<", ">") == "1762463150.A51D5B17@example.com")
+        #expect("<1762463150.A51D5B17@example.com>".unwrapping("<", "") == "1762463150.A51D5B17@example.com>")
+        #expect("<1762463150.A51D5B17@example.com>".unwrapping("", ">") == "<1762463150.A51D5B17@example.com")
+        #expect("<1762463150.A51D5B17@example.com>".unwrapping("[", "]") == "<1762463150.A51D5B17@example.com>")
+        #expect("1762463150.A51D5B17@example.com>".unwrapping("<", ">") == "1762463150.A51D5B17@example.com")
+        #expect("<1762463150.A51D5B17@example.com".unwrapping("<", ">") == "1762463150.A51D5B17@example.com")
+        #expect("<1762463150.A51D5B17@example.com>".unwrapping("", "") == "<1762463150.A51D5B17@example.com>")
+    }
 }
 
 private extension Data {
