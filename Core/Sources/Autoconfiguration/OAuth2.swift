@@ -5,7 +5,7 @@
 import Foundation
 
 public struct OAuth2: Decodable {
-    public struct Request: Equatable {
+    public struct Request: Equatable, Sendable, Decodable, Encodable, Hashable {
         public let authURI: String
         public let tokenURI: String
         public let redirectURI: String

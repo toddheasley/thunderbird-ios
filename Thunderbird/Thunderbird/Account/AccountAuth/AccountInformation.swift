@@ -28,6 +28,7 @@ struct AccountInformation: View {
     @State private var error: Error?
     @State private var loginServer: Server = Server(.imap)
     @State private var loginAuth: Authorization = Server(.imap).authorization
+    @State private var loginAuthConfig: OAuth2.Request?
 
     private func refreshAccount() {
         account = emailAddress.isEmailAddress ? Account(emailAddress, provider: config?.emailProvider) : nil
@@ -68,7 +69,8 @@ struct AccountInformation: View {
                         $loginAuth,
                         error: $error,
                         for: loginServer.username,
-                        authenticationType: loginServer.authenticationType
+                        authenticationType: loginServer.authenticationType,
+                        authConfig: $loginAuthConfig
                     ).onChange(of: loginAuth) {
                         guard var account = account else { return }
                         var incomingServerInfo = account.incomingServer ?? Server(.imap)
@@ -77,6 +79,8 @@ struct AccountInformation: View {
                         outgoingServerInfo.authorization = loginAuth
                         incomingServerInfo.username = emailAddress
                         outgoingServerInfo.username = emailAddress
+                        incomingServerInfo.authConfig = loginAuthConfig!
+                        outgoingServerInfo.authConfig = loginAuthConfig!
                         account.servers = [incomingServerInfo, outgoingServerInfo]
                         accounts.set(account)
                     }
@@ -102,10 +106,10 @@ struct AccountInformation: View {
             //TEMP DEMO BUTTON
             Button(
                 action: {
-                    account = Account("demoEmail.gmail.com", provider: config?.emailProvider)
+                    account = Account("demoEmail@gmail.com", provider: config?.emailProvider)
                     guard var account = account else { return }
-                    let incomingServer = Server(.imap)
-                    loginServer = incomingServer
+                    loginServer = Server(.imap)
+                    loginServer.authConfig = .google
                     var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
                     var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
                     incomingServerInfo.authorization = loginServer.authorization
