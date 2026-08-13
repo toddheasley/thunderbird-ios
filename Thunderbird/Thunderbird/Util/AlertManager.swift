@@ -10,6 +10,9 @@
 
 import Foundation
 
+///While Alerts may have different UIs we will most likely not want more than one appearing at a time
+///A single manager across the app prevents overlap or hidden alerts and allows for a unified format
+
 @MainActor
 @Observable class AlertManager {
 

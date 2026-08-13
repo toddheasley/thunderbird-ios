@@ -5,7 +5,8 @@
 import Autoconfiguration
 import Foundation
 
-// Add canned configurations for supported OAuth providers.
+/// Thunderbird iOS specific OAuth2 Request objects for expected email providers
+/// > Note: TODO: Replace current Android ids and secrets with iOS specific ones as they are received
 extension OAuth2.Request: @retroactive CaseIterable {
 
     // MARK: AOL

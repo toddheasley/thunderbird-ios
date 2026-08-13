@@ -11,6 +11,11 @@
 import SwiftUI
 
 struct TextEntryWrapper: View {
+
+    /// - Parameters:
+    ///  - header: The name attached to the entry box
+    ///  - suggestionText: The placeholder value for the entry box to give context to the entry field
+    ///  - entryText: Binding string to pass data outside wrapper
     init(
         _ header: LocalizedStringResource = "",
         _ suggestion: String = "",
