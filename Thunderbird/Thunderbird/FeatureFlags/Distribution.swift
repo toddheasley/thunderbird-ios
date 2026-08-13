@@ -8,6 +8,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+/// Enable different features, load different settings, etc, based on build settings
+
 public enum Distribution: Sendable {
     case debug
     case appstore

@@ -10,6 +10,13 @@
 
 import SwiftUI
 
+///Wrapping horizontal views do not exist in SwiftUI. This fills the gap
+///- Parameters:
+///  - horizontalSpacing: defaults to 6 pixels but customizeable
+///  - verticalSpacing: defaults to 5 pixels but customizeable
+///- Returns:
+///Layout for subviews based on the spacing and size limitations
+
 struct HStackWrap: Layout {
     private let horizontalSpacing: CGFloat
     private let verticalSpacing: CGFloat
