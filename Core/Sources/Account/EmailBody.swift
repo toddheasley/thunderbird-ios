@@ -6,21 +6,54 @@ import Foundation
 import JMAP
 import MIME
 
+/// Common email body interface decoded from either `IMAP.Message` or `JMAP.Email`, encodable to `SMTP.Email`.
 public struct EmailBody: CustomStringConvertible, Sendable {
-    public let attachments: [EmailAttachment]  // Both inline and attached dispositions
-    public let preview: String?
-    public let html: String?  // Base64-encoded inline media attachments
+
+    /// Format HTML body value with media attachments inlined as base64 data.
+    public enum HTMLFormat: String, CustomStringConvertible {
+        case inlineAttachments = "base64-encoded inline media attachments"
+        case stripped = "HTML tags stripped"
+        case none = "unmodified source"
+
+        // MARK: CustomStringConvertible
+        public var description: String { rawValue }
+    }
+
+    /// Every ``EmailAttachment`` decoded from `MIME.Body`, including both `ContentDisposition.attached` and `.inline`
+    public let attachments: [EmailAttachment]
+
+    /// Plain-text only or alternative message body
     public let text: String?
+
+    /// HTML source decoded from message body with formatting options
+    ///
+    /// By default, related media attachments are inlined as base64-encoded data attributes`.
+    public func html(_ format: HTMLFormat = .inlineAttachments) -> String? {
+        switch format {
+        case .inlineAttachments: _html?.inlining(attachments: attachments)
+        case .stripped: _html?.htmlTagsStripped().htmlEntitiesDecoded()
+        case .none: _html
+        }
+    }
+
+    /// Plain text excerpt or summary of body contents, currently limited to server-provided values, described in [RFC 8970](https://www.rfc-editor.org/info/rfc8970)
+    public var preview: String? {
+        // TODO: For messages without a server-provided preview, derive excerpt locally
+        _preview
+    }
 
     public init(html: String? = nil, text: String? = nil, attachments: [EmailAttachment] = [], preview: String? = nil) {
         self.attachments = attachments
-        self.preview = preview
-        self.html = html
         self.text = text
+        _preview = preview
+        _html = html
     }
 
+    private let _preview: String?
+    private let _html: String?
+
     // MARK: CustomStringConvertible
-    public var description: String { text ?? html ?? "" }
+    public var description: String { "" }
 }
 
 extension EmailBody {
@@ -87,7 +120,8 @@ extension MIME.Part {
                     EmailAttachment(
                         data: data,
                         contentType: contentType,
-                        contentDisposition: contentDisposition
+                        contentDisposition: contentDisposition,
+                        contentID: contentID
                     ))
             }
         } catch {

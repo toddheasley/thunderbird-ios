@@ -26,7 +26,13 @@ struct EmailView: View {
     }
 
     private var html: String {
-        email?.body?.html ?? email?.body?.text ?? ""
+        if let html: String = email?.body?.html() {
+            return html
+        } else if let text: String = email?.body?.text {
+            return "\(text)"
+        } else {
+            return ""
+        }
     }
 
     private func refresh() async {

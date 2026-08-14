@@ -30,4 +30,15 @@ extension URL {
         }
         self = url
     }
+
+    /// Use ``ContentDisposition`` filename as URI
+    public init(contentDisposition: ContentDisposition) throws {
+        guard let filename: String = contentDisposition.file?.filename,
+            !filename.isEmpty,
+            let url: Self = Self(string: filename)
+        else {
+            throw URLError(.fileDoesNotExist)
+        }
+        self = url
+    }
 }
