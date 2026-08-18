@@ -34,6 +34,65 @@ extension String {
         }
     }
 
+    /// Decode common HTML entities to `Character` equivalents.
+    public func htmlEntitiesDecoded() -> Self {
+
+        // Source - https://stackoverflow.com/a/30141700
+        // Posted by Martin R, modified by community
+        // Retrieved 2026-08-11, License - CC BY-SA 4.0
+
+        // Convert the number in the string to the corresponding Unicode character.
+        // Example: decodeNumeric("64", 10)   --> "@"
+        //          decodeNumeric("20ac", 16) --> "€"
+        func decodeNumeric(_ substring: Substring, base: Int) -> Character? {
+            guard let value: UInt32 = UInt32(substring, radix: base),
+                let scalar: UnicodeScalar = UnicodeScalar(value)
+            else {
+                return nil
+            }
+            return Character(scalar)
+        }
+
+        // Decode the HTML character entity to the corresponding Unicode character.
+        // Example: decode("&#64;")    --> "@"
+        //          decode("&#x20ac;") --> "€"
+        //          decode("&lt;")     --> "<"
+        //          decode("&foo;")    --> nil
+        func decode(_ substring: Substring) -> Character? {
+            if substring.lowercased().hasPrefix("&#x") {
+                return decodeNumeric(substring.dropFirst(3).dropLast(), base: 16)
+            } else if substring.hasPrefix("&#") {
+                return decodeNumeric(substring.dropFirst(2).dropLast(), base: 10)
+            } else {
+                return Character(entity: "\(substring)")
+            }
+        }
+
+        var result: Self = ""
+        var position: Index = startIndex
+
+        // Find next ampersand; copy characters preceding it to result
+        while let ampRange: Range<Index> = self[position...].range(of: "&") {
+            result.append(contentsOf: self[position..<ampRange.lowerBound])
+            position = ampRange.lowerBound
+
+            // Find next semicolon; copy characters between "&" and ";"
+            guard let semiRange: Range<Index> = self[position...].range(of: ";") else {
+                continue
+            }
+            let entity: Substring = self[position..<semiRange.upperBound]
+            if let character: Character = decode(entity) {
+                result.append(character)
+                position = semiRange.upperBound
+            } else {
+                result.append(contentsOf: self[ampRange])
+                position = ampRange.upperBound
+            }
+        }
+        result.append(contentsOf: self[position...])  // Copy remaining characters to result:
+        return result
+    }
+
     /// Break email header value string into parameter keys and values.
     public var parameters: [Self: Self] {
         var parameters: [Self: Self] = [:]
@@ -149,8 +208,9 @@ extension String {
     }
 
     func decodingQuotedPrintableEncoding(to encoding: Encoding = .utf8) throws -> Self {
+
         // Source - https://stackoverflow.com/a/32827598
-        // Posted by Martin R, modified by community.
+        // Posted by Martin R, modified by community
         // Retrieved 2026-07-28, License - CC BY-SA 4.0
         var result: Self = ""
         var position: Index = startIndex
