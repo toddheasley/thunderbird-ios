@@ -118,7 +118,7 @@ extension MIME.Part {
             default:
                 components.0.append(
                     EmailAttachment(
-                        data: data,
+                        data: try data.decoded(from: contentTransferEncoding),
                         contentType: contentType,
                         contentDisposition: contentDisposition,
                         contentID: contentID

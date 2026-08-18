@@ -10,8 +10,6 @@ extension String {
         for attachment in attachments {
             string = string.inlining(attachment: attachment)
         }
-        print("")
-        print(string)
         return string
     }
 

@@ -42,15 +42,21 @@ public struct EmailAttachment: Sendable {
 }
 
 extension Data {
-    func base64EncodedURLString() -> String {
-        base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
+    func decoded(from contentTransferEncoding: MIME.ContentTransferEncoding?) throws -> Self {
+        switch contentTransferEncoding {
+        case .base64:
+            guard let data: Self = Self(base64Encoded: self, options: .ignoreUnknownCharacters) else {
+                throw MIMEError.dataNotDecoded(self)
+            }
+            return data
+        default:
+            return self
+        }
     }
 }
 
 extension URL {
     init(attachment: EmailAttachment) {
-        self.init(string: "data:\(attachment.contentType);base64,\(attachment.data.base64EncodedURLString())")!
+        self.init(string: "data:\(attachment.contentType);base64,\(attachment.data.base64EncodedString())")!
     }
 }
