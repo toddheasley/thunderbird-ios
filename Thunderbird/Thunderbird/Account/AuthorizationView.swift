@@ -16,7 +16,7 @@ struct AuthorizationView: View {
         error: Binding<Error?>,
         for username: String,
         authenticationType: AuthenticationType = .oAuth2,
-        authConfig: Binding<OAuth2.Request?>
+        authConfig: Binding<OAuth2.Request?> = .constant(nil)
     ) {
         self.username = username
         self.authenticationType = authenticationType

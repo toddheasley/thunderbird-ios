@@ -30,7 +30,7 @@ struct AuthorizationTests {
                     user: "user@example.com IMAP:E621E1F8",
                     token: .bearer("fmu1-1e911257e86b1f194daa-0-a89faae5c11f", testExpirDate),
                     refresh: .refresh("fakeRefreshToken")
-                ).value == "Bearer fmu1-1e911257e86b1f194daa-0-a89faae5c11f"
+                ).value == "Bearer Zm11MS0xZTkxMTI1N2U4NmIxZjE5NGRhYS0wLWE4OWZhYWU1YzExZjowLjA6ZmFrZVJlZnJlc2hUb2tlbg=="
         )
         #expect(Authorization.none.value == "")
     }
@@ -44,7 +44,7 @@ struct AuthorizationTests {
                     token:
                         .bearer("fmu1-1e911257e86b1f194daa-0-a89faae5c11f", testExpirDate),
                     refresh: .refresh("fakeRefreshToken")
-                ).password == "fmu1-1e911257e86b1f194daa-0-a89faae5c11f"
+                ).password == "Zm11MS0xZTkxMTI1N2U4NmIxZjE5NGRhYS0wLWE4OWZhYWU1YzExZjowLjA6ZmFrZVJlZnJlc2hUb2tlbg=="
         )
         #expect(Authorization.none.password == "")
     }
