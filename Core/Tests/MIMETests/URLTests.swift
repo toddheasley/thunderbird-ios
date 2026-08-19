@@ -27,4 +27,12 @@ struct URLTests {
             try URL(contentID: ContentID("not.æscii"))
         }
     }
+
+    @Test func contentDispositionInit() throws {
+        #expect(try URL(contentDisposition: .attachment(ContentDisposition.File(filename: "example-filename.zip"))).absoluteString == "example-filename.zip")
+        #expect(try URL(contentDisposition: .inline(ContentDisposition.File(filename: "A51D5B17"))).absoluteString == "A51D5B17")
+        #expect(throws: URLError.self) {
+            try URL(contentDisposition: .attachment)
+        }
+    }
 }

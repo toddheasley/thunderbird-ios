@@ -28,6 +28,14 @@ struct StringTests {
         #expect("when i was little".capitalized == "When I Was Little")
     }
 
+    @Test func htmlEntitiesDecoded() {
+        #expect("– &ndash; &#8211; &#x2013; en dash".htmlEntitiesDecoded() == "– – – – en dash")
+        #expect("• &bull; &#8226; &#x2022; bullet".htmlEntitiesDecoded() == "• • • • bullet")
+        #expect("& &amp; &#38; &#x26; ampersand".htmlEntitiesDecoded() == "& & & & ampersand")
+        #expect("< &lt; &#60; &#x3C; less-than sign".htmlEntitiesDecoded() == "< < < < less-than sign")
+        #expect("".htmlEntitiesDecoded() == "")
+    }
+
     @Test func parameters() {
         #expect(
             "multipart/alternative; boundary=\"_----------=_17617196041979919223967\"".parameters == [
