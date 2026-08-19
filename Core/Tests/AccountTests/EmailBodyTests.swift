@@ -14,55 +14,55 @@ extension EmailBodyTests {
         switch uuid {
         case "2EA571DD":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html?.count == 4239)
+            #expect(body.html(.none)?.count == 4239)
             #expect(body.text == nil)
         case "976C6A94":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html?.count == 27271)
+            #expect(body.html(.none)?.count == 27271)
             #expect(body.text?.count == 1842)
         case "86925F24":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html?.count == 3243)
+            #expect(body.html(.none)?.count == 3243)
             #expect(body.text?.count == 2172)
         case "7A690F43":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html == nil)
+            #expect(body.html(.none) == nil)
             #expect(body.text?.count == 1591)
         case "60EB5CAE":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html == nil)
+            #expect(body.html(.none) == nil)
             #expect(body.text?.count == 2387)
         case "F02140B7":
             #expect(body.attachments.count == 1)
-            #expect(body.html?.count == 2741)
+            #expect(body.html(.none)?.count == 2741)
             #expect(body.text == nil)
         case "BFA06D93":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html?.count == 65621)
+            #expect(body.html(.none)?.count == 65621)
             #expect(body.text?.count == 599)
         case "89526045":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html?.count == 8072)
+            #expect(body.html(.none)?.count == 8072)
             #expect(body.text == nil)
         case "E18BEE81":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html?.count == 18084)
+            #expect(body.html(.none)?.count == 18084)
             #expect(body.text?.count == 962)
         case "2874E3C9":
             #expect(body.attachments.count == 1)
-            #expect(body.html?.count == 34165)
+            #expect(body.html(.none)?.count == 34165)
             #expect(body.text == nil)
         case "1759430F":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html?.count == 15687)
+            #expect(body.html(.none)?.count == 15687)
             #expect(body.text?.count == 2916)
         case "E1FA0690":
             #expect(body.attachments.isEmpty == true)
-            #expect(body.html?.count == 126076)
+            #expect(body.html(.none)?.count == 126076)
             #expect(body.text?.count == 15450)
         case "CFD4D3A3":
             #expect(body.attachments.count == 5)
-            #expect(body.html?.count == 5644)
+            #expect(body.html(.none)?.count == 5644)
             #expect(body.text?.count == 1492)
         default:
             throw URLError(.fileDoesNotExist)
