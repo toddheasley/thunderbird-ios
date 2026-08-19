@@ -5,7 +5,7 @@
 @testable import Account
 import Testing
 import Foundation
-
+@MainActor
 struct AccountManagerTests {
     @Test func set() {
         lock.lock()

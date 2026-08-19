@@ -16,7 +16,6 @@ struct ContentView: View {
             if hasAuthorization {
                 EmailListView()
                     .environment(accounts)
-
             } else {
                 NavigationStack {
                     WelcomeScreen($isPresented)
@@ -40,6 +39,13 @@ struct ContentView: View {
                 && accounts
                     .allAccounts[0].outgoingServer?.authorization != nil
             isPresented = false
+        }.task {
+            do {
+                try await accounts.checkAndRenewExpirations()
+            } catch {
+                print("OAuth Expiration refresh error: \(error)")
+            }
+
         }
     }
 }

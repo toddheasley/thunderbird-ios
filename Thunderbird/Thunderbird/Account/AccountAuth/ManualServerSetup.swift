@@ -25,6 +25,8 @@ struct ManualServerSetup: View {
         self.incomingPort = tempAccount.incomingServer?.port
         self.outGoingHostname = tempAccount.outgoingServer?.hostname ?? ""
         self.outGoingPort = tempAccount.outgoingServer?.port
+        self.incomingAuth = tempAccount.incomingServer?.authConfig
+        self.outgoingAuth = tempAccount.outgoingServer?.authConfig
     }
 
     @Environment(Accounts.self) private var accounts: Accounts
@@ -40,6 +42,8 @@ struct ManualServerSetup: View {
     @State private var manualConfig: Bool
     @State private var account: Account
     @State private var error: Error?
+    @State private var incomingAuth: OAuth2.Request?
+    @State private var outgoingAuth: OAuth2.Request?
 
     // MARK: View
     var body: some View {
@@ -59,7 +63,7 @@ struct ManualServerSetup: View {
                         $incomingServer.authorization,
                         error: $error,
                         for: incomingServer.username,
-                        authenticationType: incomingServer.authenticationType
+                        authenticationType: incomingServer.authenticationType, authConfig: $incomingAuth
                     )
 
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
@@ -85,7 +89,7 @@ struct ManualServerSetup: View {
                         $incomingServer.authorization,
                         error: $error,
                         for: incomingServer.username,
-                        authenticationType: incomingServer.authenticationType
+                        authenticationType: incomingServer.authenticationType, authConfig: $incomingAuth
                     )
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
@@ -109,7 +113,8 @@ struct ManualServerSetup: View {
                         $outgoingServer.authorization,
                         error: $error,
                         for: outgoingServer.username,
-                        authenticationType: outgoingServer.authenticationType
+                        authenticationType: outgoingServer.authenticationType,
+                        authConfig: $outgoingAuth
                     )
                     Toggle("account_server_settings_security_label", isOn: $outSelectedSecurity)
                         .tint(.accent)
