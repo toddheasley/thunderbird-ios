@@ -11,7 +11,7 @@ struct EmailBodyView: View {
     @State var html = String.sampleHTML
 
     @State private var selection = ""
-    @StateObject private var textAttributes = TextAttributes()
+    @State private var textAttributes = TextAttributes()
     @FocusState private var keyboardShown: Bool
     let editable: Bool
 
