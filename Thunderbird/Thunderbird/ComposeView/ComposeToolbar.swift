@@ -6,7 +6,7 @@ import SwiftUI
 import InfomaniakRichHTMLEditor
 
 struct ComposeToolbar: View {
-    @ObservedObject var textAttributes: TextAttributes
+    @State var textAttributes: TextAttributes
     @State private var isShowingLinkAlert: Bool = false
     @State private var linkText: String = ""
     @State private var linkUrl: String = "https://www.google.com"
@@ -180,7 +180,7 @@ struct EditorToolbarButton: View {
 }
 
 #Preview {
-    @Previewable @StateObject var textAttributes = TextAttributes()
+    @Previewable @State var textAttributes = TextAttributes()
     @Previewable @State var keyboardShown = false
     @Previewable @State var selection = ""
     ComposeToolbar(textAttributes: textAttributes, keyboardShown: $keyboardShown, selection: $selection)
