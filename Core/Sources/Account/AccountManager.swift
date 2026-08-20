@@ -111,7 +111,6 @@ public final class AccountManager {
         do {
             for _ in 0..<3 {
                 let (data, _) = try await URLSession.shared.data(for: tokenRequest)
-                let json = String(data: data, encoding: .utf8)
                 let response: RefreshTokenResponse = try JSONDecoder().decode(RefreshTokenResponse.self, from: data)
                 let token = Token.bearer(
                     response.accessToken,

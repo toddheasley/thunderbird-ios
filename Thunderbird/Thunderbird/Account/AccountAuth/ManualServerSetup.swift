@@ -183,7 +183,7 @@ struct ManualServerSetup: View {
 
 public extension Server {
     func clone() -> Self {
-        var server: Self = Server(
+        let server: Self = Server(
             serverProtocol,
             connectionSecurity: connectionSecurity,
             authenticationType: authenticationType,

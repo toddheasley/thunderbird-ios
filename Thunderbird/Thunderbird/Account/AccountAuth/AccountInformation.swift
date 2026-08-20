@@ -107,12 +107,8 @@ struct AccountInformation: View {
                 action: {
                     account = Account("demoEmail@gmail.com", provider: config?.emailProvider)
                     guard var account = account else { return }
-                    loginServer = Server(.imap)
                     account.authConfig = .google
-                    var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
-                    var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
                     account.authorization = loginAuth
-                    account.servers = [incomingServerInfo, outgoingServerInfo]
                     accounts.set(account)
 
                 }) {
