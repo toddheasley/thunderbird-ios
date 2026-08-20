@@ -10,31 +10,42 @@ import SwiftUI
 struct OAuthButton: View {
     let emailAddress: String
 
-    init(_ emailAddress: String = "", token: Binding<Token?>, refreshToken: Binding<Token?>, error: Binding<Error?>) {
+    init(
+        _ emailAddress: String = "",
+        token: Binding<Token?>,
+        refreshToken: Binding<Token?>,
+        authConfig: Binding<OAuth2.Request?>,
+        error: Binding<Error?>
+    ) {
         self.emailAddress = emailAddress
         _token = token
         _error = error
         _refreshToken = refreshToken
+        _authConfig = authConfig
     }
 
     @Binding private var token: Token?
     @Binding private var error: Error?
     @Binding private var refreshToken: Token?
+    @Binding private var authConfig: OAuth2.Request?
     @Environment(\.webAuthenticationSession) private var webAuthenticationSession
-    @State private var request: OAuth2.Request?
 
     private func authenticate() async {
         let retries = 2
+        var hasSucceeded = false
         for _ in 0..<retries {
             do {
                 error = nil
-                guard let request else { return }
-                let authURL: URL = try await webAuthenticationSession.authenticate(
-                    using: request.authURL(hint: emailAddress),
-                    callback: .customScheme("\(Bundle.main.schemes.first!)"), additionalHeaderFields: [:])
-                let queryItems = URLComponents(string: authURL.absoluteString)?.queryItems
-                let code = (queryItems?.filter({ $0.name == "code" }).first?.value)!
-                await getToken(code: code)
+                guard let authConfig else { return }
+                if !hasSucceeded {
+                    let authURL: URL = try await webAuthenticationSession.authenticate(
+                        using: authConfig.authURL(hint: emailAddress),
+                        callback: .customScheme("\(Bundle.main.schemes.first!)"), additionalHeaderFields: [:])
+                    let queryItems = URLComponents(string: authURL.absoluteString)?.queryItems
+                    let code = (queryItems?.filter({ $0.name == "code" }).first?.value)!
+                    await getToken(code: code)
+                    hasSucceeded = true
+                }
             } catch {
                 self.error = error
             }
@@ -45,7 +56,7 @@ struct OAuthButton: View {
     private func configure() async {
         do {
             error = nil
-            request = try await OAuth2.request(emailAddress)
+            authConfig = try await OAuth2.request(emailAddress)
         } catch {
             self.error = error
         }
@@ -54,20 +65,19 @@ struct OAuthButton: View {
     private func getToken(code: String) async {
         let retries = 3
         error = nil
-        guard let request else { return }
-        do {
-            let tokenRequest = try URLRequest.token(request, code: code)
-            for _ in 0..<retries {
+        guard let authConfig else { return }
+        for _ in 0..<retries {
+            do {
+                let tokenRequest = try URLRequest.token(authConfig, code: code)
                 let (data, _) = try await URLSession.shared.data(for: tokenRequest)
                 let response = try JSONDecoder().decode(TokenResponse.self, from: data)
                 token = .bearer(response.accessToken, Date(timeIntervalSinceNow: TimeInterval(response.expiresIn)))
                 refreshToken = .refresh(response.refreshToken)
+            } catch {
+                self.error = error
             }
-
-        } catch {
-            self.error = error
+            break
         }
-
     }
 
     // MARK: View
@@ -81,7 +91,7 @@ struct OAuthButton: View {
         }
         .buttonStyle(.borderedProminent)
         .tint(.accent)
-        .disabled(request == nil)
+        .disabled(authConfig == nil)
         .task {
             await configure()
         }
@@ -92,6 +102,13 @@ struct OAuthButton: View {
     @Previewable @State var token: Token?
     @Previewable @State var refreshToken: Token?
     @Previewable @State var error: Error?
+    @Previewable @State var authConfig: OAuth2.Request?
 
-    OAuthButton("example@thunderbird.net", token: $token, refreshToken: $refreshToken, error: $error)
+    OAuthButton(
+        "example@thunderbird.net",
+        token: $token,
+        refreshToken: $refreshToken,
+        authConfig: $authConfig,
+        error: $error
+    )
 }
