@@ -8,11 +8,13 @@ import SwiftUI
 struct EditServerView: View {
     init(_ server: Binding<Server>) {
         _server = server
+        self.serverAuth = server.wrappedValue.authConfig
     }
 
     @Binding private var server: Server
     @State private var password: String = ""
     @State private var error: Error?
+    @State private var serverAuth: OAuth2.Request?
 
     // MARK: View
     var body: some View {
@@ -78,7 +80,8 @@ struct EditServerView: View {
                 $server.authorization,
                 error: $error,
                 for: server.username,
-                authenticationType: server.authenticationType
+                authenticationType: server.authenticationType,
+                authConfig: $serverAuth,
             )
         }
         .textFieldStyle(.roundedBorder)

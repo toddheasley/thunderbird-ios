@@ -33,6 +33,7 @@ public struct Server: Codable, Equatable, Hashable, Identifiable, Sendable {
     public var username: String
     public var hostname: String
     public var port: Int
+    public var authConfig: OAuth2.Request?
 
     /// Store server credentials locally in the [Apple keychain.](https://developer.apple.com/documentation/security/storing-keys-in-the-keychain)
     public var authorization: Authorization {

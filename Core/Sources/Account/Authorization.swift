@@ -27,7 +27,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
     }
 
     /// Encoded `URLCredential` password value (for keychain storage)
-    var password: String {
+    public var password: String {
         switch self {
         case .basic(let user, let password): return "\(user.components(separatedBy: " ")[0]):\(password)".data(using: .utf8)!.base64EncodedString()
         case .oauth(_, let token, _):
@@ -37,11 +37,18 @@ public enum Authorization: CustomStringConvertible, Equatable {
         }
     }
 
-    var isExpired: Bool {
+    public var isExpired: Bool {
         switch self {
         case .basic(_, _): return false
         case .oauth(_, let token, _): return token.isExpired
         case .none: return false
+        }
+    }
+    public var refreshToken: String {
+        switch self {
+        case .basic: return ""
+        case .oauth(_, _, let refreshToken): return refreshToken.value
+        case .none: return ""
         }
     }
 
