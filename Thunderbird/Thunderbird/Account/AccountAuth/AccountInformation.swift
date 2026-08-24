@@ -1,16 +1,10 @@
-//
-//  AcccountInformation.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 8/28/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import SwiftUI
 import Account
 import Autoconfiguration
+import SwiftUI
 
 struct AccountInformation: View {
     init(_ path: Binding<NavigationPath>) {
@@ -18,7 +12,7 @@ struct AccountInformation: View {
     }
 
     @Binding var path: NavigationPath
-    @Environment(Accounts.self) private var accounts: Accounts
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(LoginDetails.self) private var loginDetails: LoginDetails
     @State private var showManual: Bool = true
     @State private var emailAddress: String = ""
@@ -81,7 +75,7 @@ struct AccountInformation: View {
                         account.authorization = loginAuth
                         account.authConfig = loginAuthConfig
                         account.servers = [incomingServerInfo, outgoingServerInfo]
-                        accounts.set(account)
+                        accountManager.set(account)
                     }
                 }
             }
@@ -109,8 +103,7 @@ struct AccountInformation: View {
                     guard var account = account else { return }
                     account.authConfig = .google
                     account.authorization = loginAuth
-                    accounts.set(account)
-
+                    accountManager.set(account)
                 }) {
                     Text("Demo")
                         .padding(5.5)

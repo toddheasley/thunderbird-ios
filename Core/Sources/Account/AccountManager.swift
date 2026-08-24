@@ -5,8 +5,6 @@
 import Foundation
 import AuthenticationServices
 
-public typealias Accounts = AccountManager
-
 /// Globally manage shared, persistent accounts from the SwiftUI environment.
 @MainActor
 @Observable

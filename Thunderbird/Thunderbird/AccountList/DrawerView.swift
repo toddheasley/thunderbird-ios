@@ -1,9 +1,3 @@
-//
-//  Drawer.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 4/10/26.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
@@ -12,7 +6,7 @@ import Account
 import SwiftUI
 
 struct DrawerView: View {
-    @Environment(Accounts.self) private var accounts: Accounts
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Binding var showDrawer: Bool
 
     // MARK: View
@@ -58,19 +52,23 @@ struct DrawerView: View {
 }
 
 #Preview("Account Drawer") {
-    @Previewable @State var accounts: Accounts = Accounts()
+    @Previewable @State var accountManager: AccountManager = AccountManager()
     @Previewable @State var showDrawer: Bool = true
-    DrawerView(showDrawer: $showDrawer).environment(accounts)
+
+    DrawerView(showDrawer: $showDrawer)
+        .environment(accountManager)
 }
 
 struct DrawerContent: View {
-    @Environment(Accounts.self) private var accounts: Accounts
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Binding var showDrawer: Bool
+
     var body: some View {
         VStack(alignment: .leading) {
-            ForEach(accounts.allAccounts) { account in
+            ForEach(accountManager.allAccounts) { account in
                 let mailboxes: MailboxManager = MailboxManager(account: account)
-                AccountFolderDisclosureView().environment(mailboxes)
+                AccountFolderDisclosureView()
+                    .environment(mailboxes)
             }
         }
     }

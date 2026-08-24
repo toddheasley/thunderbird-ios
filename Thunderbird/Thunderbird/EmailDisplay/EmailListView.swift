@@ -1,23 +1,18 @@
-//
-//  EmailListView.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 10/20/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import SwiftUI
 import Account
+import SwiftUI
 
 struct EmailListView: View {
-    @Environment(Accounts.self) private var accounts: Accounts
-    let tempEmails = TempEmail.sampleData
+    @Environment(AccountManager.self) private var accountManager: AccountManager
+    @State private var selections: Set<UUID> = []
+    @State private var showDrawer: Bool = false
+    @State private var path: NavigationPath = NavigationPath()
+
     @State var editMode: EditMode = .inactive
-    @State private var selections = Set<UUID>()
-    @State private var showDrawer = false
-    @State private var path = NavigationPath()
+    let tempEmails = TempEmail.sampleData
 
     //Hardcoded for testing
     let attributedString = try? NSMutableAttributedString(
@@ -175,7 +170,7 @@ struct EmailListView: View {
                         Button(
                             "account_sign_out_button",
                             action: {
-                                accounts.deleteAccounts()
+                                accountManager.deleteAccounts()
                             })
                     } label: {
                         Label("options_button", systemImage: "ellipsis")
@@ -188,8 +183,9 @@ struct EmailListView: View {
 
 #Preview("Email List") {
     @Previewable @State var flags: FeatureFlags = FeatureFlags(distribution: .current)
-    @Previewable @State var accounts: Accounts = Accounts()
+    @Previewable @State var accountManager: AccountManager = AccountManager()
+
     EmailListView()
         .environment(flags)
-        .environment(accounts)
+        .environment(accountManager)
 }

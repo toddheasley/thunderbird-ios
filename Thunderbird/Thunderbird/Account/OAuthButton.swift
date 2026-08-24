@@ -24,11 +24,11 @@ struct OAuthButton: View {
         _authConfig = authConfig
     }
 
+    @Environment(\.webAuthenticationSession) private var webAuthenticationSession: WebAuthenticationSession
+    @Binding private var authConfig: OAuth2.Request?
+    @Binding private var refreshToken: Token?
     @Binding private var token: Token?
     @Binding private var error: Error?
-    @Binding private var refreshToken: Token?
-    @Binding private var authConfig: OAuth2.Request?
-    @Environment(\.webAuthenticationSession) private var webAuthenticationSession
 
     private func authenticate() async {
         let retries = 2

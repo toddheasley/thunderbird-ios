@@ -35,11 +35,11 @@ struct AuthorizationView: View {
     }
 
     @Binding private var authorization: Authorization
+    @Binding private var authConfig: OAuth2.Request?
     @Binding private var error: Error?
     @State private var password: String = ""
     @State private var token: Token?
     @State private var refreshToken: Token?
-    @Binding private var authConfig: OAuth2.Request?
 
     // MARK: View
     var body: some View {

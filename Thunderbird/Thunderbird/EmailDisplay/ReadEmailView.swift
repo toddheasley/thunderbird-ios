@@ -1,21 +1,16 @@
-//
-//  ReadEmailView.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 10/20/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import EmailAddress
 import SwiftUI
 import WebKit
-import EmailAddress
 
 struct ReadEmailView: View {
     init(_ email: TempEmail) {
         self.email = email
     }
+
     private var email: TempEmail
 
     var body: some View {
@@ -162,7 +157,9 @@ struct AttachmentBlockView: View {
     init(_ attachments: [Data]) {
         self.attachments = attachments
     }
+
     private var attachments: [Data]
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("^[\(attachments.count) attachment](inflect: true)")
@@ -179,6 +176,7 @@ struct SingleAttachment: View {
     init() {
         //Do Stuff
     }
+
     var body: some View {
         HStack {
             Image(systemName: "photo")
@@ -623,5 +621,4 @@ struct ContactCellView: View {
     ReadEmailView(
         tempEmail
     )
-
 }

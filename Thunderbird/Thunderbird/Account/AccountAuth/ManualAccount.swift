@@ -1,28 +1,22 @@
-//
-//  ManualAccount.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 7/22/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import SwiftUI
 import Account
+import SwiftUI
 
 struct ManualAccount: View {
-    @Environment(Accounts.self) private var accounts: Accounts
-    @Environment(\.dismiss) private var dismiss
+    @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Environment(\.dismiss) private var dismiss: DismissAction
     @State private var loginDetails: LoginDetails = LoginDetails()
-    @State private var path = NavigationPath()
+    @State private var path: NavigationPath = NavigationPath()
 
     // MARK: View
     var body: some View {
         NavigationStack(path: $path) {
             AccountInformation($path)
                 .environment(loginDetails)
-                .environment(accounts)
+                .environment(accountManager)
                 .toolbarRole(.editor)
                 .toolbar {
                     ToolbarItem(id: "navBar", placement: .cancellationAction) {
@@ -33,7 +27,7 @@ struct ManualAccount: View {
                             })
                     }
                 }
-                .onChange(of: accounts.allAccounts.count) {
+                .onChange(of: accountManager.allAccounts.count) {
                     dismiss()
                 }
                 .navigationBarBackButtonHidden()
@@ -45,15 +39,14 @@ struct ManualAccount: View {
                         if loginDetails.inProgressAccount == nil {
                             ManualServerSetup(loginDetails)
                                 .toolbarRole(.editor)
-                                .environment(accounts)
+                                .environment(accountManager)
                                 .environment(loginDetails)
                         } else {
                             ManualServerSetup(loginDetails)
                                 .toolbarRole(.editor)
-                                .environment(accounts)
+                                .environment(accountManager)
                                 .environment(loginDetails)
                         }
-
                     }
                 }
         }.accentColor(.gray)
@@ -61,11 +54,11 @@ struct ManualAccount: View {
 }
 
 #Preview("Manual Account Setup") {
+    @Previewable @State var accountManager: AccountManager = AccountManager()
     @Previewable @State var getStarted: Bool = false
-    @Previewable @State var accounts: Accounts = Accounts()
 
     ManualAccount()
-        .environment(accounts)
+        .environment(accountManager)
         .sheet(isPresented: $getStarted) {
             EmptyView()
                 .presentationDragIndicator(.visible)

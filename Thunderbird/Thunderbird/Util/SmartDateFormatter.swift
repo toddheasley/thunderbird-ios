@@ -1,9 +1,3 @@
-//
-//  SmartDateFormatter.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 3/6/26.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
@@ -13,10 +7,8 @@ import SwiftUI
 ///Email dates may be absolute or relative to current date based on app settings
 ///Smart Dates are relative to the current date, localized
 ///Today, Yesterday, Month Day, and Month Day Year
-
 @MainActor
 public struct SmartDateFormatter {
-
     func dateFormatter(date: Date, isSmartDate: Bool) -> String {
         if isSmartDate {
             return smartDate(date: date)
@@ -44,5 +36,4 @@ public struct SmartDateFormatter {
             return date.formatted(.dateTime.month(.abbreviated).day())
         }
     }
-
 }
