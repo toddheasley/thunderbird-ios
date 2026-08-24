@@ -101,7 +101,7 @@ struct MultiAddressBar: View {
                 TextField("", text: $entryString)
                     .textFieldStyle(.automatic)
                     #if os(iOS)
-                    .autocapitalization(.none)
+                .autocapitalization(.none)
                     #endif
                     .autocorrectionDisabled()
                     .focusable()
