@@ -29,10 +29,12 @@ struct TextEntryWrapper: View {
         Text(headerText)
             .listRowSeparator(.visible, edges: .bottom)
         TextField(suggestionText, text: $entryText)
-            .listRowSeparator(.hidden)
             .textFieldStyle(.plain)
-            .autocorrectionDisabled()
+            .listRowSeparator(.hidden)
+            #if os(iOS)
             .autocapitalization(.none)
+            #endif
+            .autocorrectionDisabled()
             .focusable()
     }
 }

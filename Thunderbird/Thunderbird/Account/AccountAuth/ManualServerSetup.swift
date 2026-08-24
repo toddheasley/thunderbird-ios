@@ -159,7 +159,9 @@ struct ManualServerSetup: View {
                 .padding()
         }
         .scrollContentBackground(.hidden)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
+        #endif
         .navigationTitle("account_server_manual_configuration")
     }
 }

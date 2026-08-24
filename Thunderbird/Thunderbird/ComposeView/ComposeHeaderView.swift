@@ -100,8 +100,10 @@ struct MultiAddressBar: View {
                     .fixedSize()
                 TextField("", text: $entryString)
                     .textFieldStyle(.automatic)
-                    .autocorrectionDisabled()
+                    #if os(iOS)
                     .autocapitalization(.none)
+                    #endif
+                    .autocorrectionDisabled()
                     .focusable()
                     .onSubmit {
                         if entryString.isEmailAddress {

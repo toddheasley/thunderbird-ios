@@ -34,16 +34,12 @@ struct ComposeToolbar: View {
         // within `TextAttributes`, and still respond to events.
         let foregroundColor = Binding<Color>(
             get: { textAttributes.foregroundColor ?? .black },
-            set: { newValue in
-                textAttributes.setForegroundColor(UIColor(newValue))
-            }
+            set: { textAttributes.setForegroundColor(PlatformColor($0)) }
         )
 
         let backgroundColor = Binding<Color>(
             get: { textAttributes.backgroundColor ?? .white },
-            set: { newValue in
-                textAttributes.setBackgroundColor(UIColor(newValue))
-            }
+            set: { textAttributes.setBackgroundColor(PlatformColor($0)) }
         )
 
         ScrollView(.horizontal) {

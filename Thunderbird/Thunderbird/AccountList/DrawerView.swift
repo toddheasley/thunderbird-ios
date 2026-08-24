@@ -28,13 +28,13 @@ struct DrawerView: View {
                         ScrollView {
                             DrawerContent(showDrawer: $showDrawer)
                         }.toolbar {
-                            ToolbarItem(id: "settings", placement: .bottomBar) {
+                            ToolbarItem(id: "settings", placement: .bottom) {
                                 NavigationLink(destination: GeneralSettingsView()) {
                                     Text("settings_header")
                                         .foregroundStyle(.black)
                                 }
                             }
-                            ToolbarItem(placement: .bottomBar) {
+                            ToolbarItem(placement: .bottom) {
                                 Spacer()
                             }
                         }
@@ -47,7 +47,7 @@ struct DrawerView: View {
             }
         }
         .animation(.easeInOut, value: showDrawer)
-        .toolbar(showDrawer ? .hidden : .visible, for: .navigationBar)
+        .toolbar(showDrawer ? .hidden : .visible, for: .navigation)
     }
 }
 
@@ -71,5 +71,25 @@ struct DrawerContent: View {
                     .environment(mailboxes)
             }
         }
+    }
+}
+
+private extension ToolbarPlacement {
+    static var navigation: Self {
+        #if os(iOS)
+        .navigationBar
+        #else
+        .automatic
+        #endif
+    }
+}
+
+private extension ToolbarItemPlacement {
+    static var bottom: Self {
+        #if os(iOS)
+        .bottomBar
+        #else
+        .automatic
+        #endif
     }
 }

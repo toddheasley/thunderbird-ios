@@ -11,7 +11,9 @@ struct EmailListView: View {
     @State private var showDrawer: Bool = false
     @State private var path: NavigationPath = NavigationPath()
 
+    #if os(iOS)
     @State var editMode: EditMode = .inactive
+    #endif
     let tempEmails = TempEmail.sampleData
 
     //Hardcoded for testing
@@ -75,6 +77,7 @@ struct EmailListView: View {
                                 EmailCellView(email: email)
                             }
                             .contentShape(Rectangle())
+                            #if os(iOS)
                             .simultaneousGesture(
                                 LongPressGesture().onEnded { _ in
                                     withAnimation {
@@ -82,12 +85,16 @@ struct EmailListView: View {
                                     }
                                 }
                             )
+                            #endif
                             .listRowSeparator(.hidden)
                             .navigationLinkIndicatorVisibility(.hidden)
                         }
-                    }.environment(\.editMode, $editMode)
-                        .listStyle(.plain)
-                        .scrollContentBackground(.hidden)
+                    }
+                    #if os(iOS)
+                    .environment(\.editMode, $editMode)
+                    #endif
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
                 Button {
                     path.append("compose")
@@ -110,16 +117,18 @@ struct EmailListView: View {
                 DrawerView(showDrawer: $showDrawer)
             }
             .navigationTitle("inbox_header")
-
+            #if os(iOS)
             .navigationBarBackButtonHidden(editMode.isEditing)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .leading) {
                     Button {
                         showDrawer = true
                     } label: {
                         Label("Account", systemImage: "line.3.horizontal").labelStyle(.iconOnly)
                     }
                 }
+                #if os(iOS)
                 ToolbarItem(placement: .cancellationAction) {
                     if editMode.isEditing == true {
                         Button(
@@ -131,7 +140,8 @@ struct EmailListView: View {
                             })
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                #endif
+                ToolbarItem(placement: .trailing) {
                     Menu {
                         Button(
                             "date_sort_button",
@@ -152,8 +162,9 @@ struct EmailListView: View {
                         Label("sort_button", systemImage: "line.3.horizontal.decrease", )
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .trailing) {
                     Menu {
+                        #if os(iOS)
                         Button(
                             editMode.isEditing ? "done_button" : "select_all_button",
                             action: {
@@ -162,6 +173,7 @@ struct EmailListView: View {
                                 }
                                 selectAll()
                             })
+                        #endif
                         Button(
                             "mark_all_read_button",
                             action: {
@@ -188,4 +200,22 @@ struct EmailListView: View {
     EmailListView()
         .environment(flags)
         .environment(accountManager)
+}
+
+private extension ToolbarItemPlacement {
+    static var leading: Self {
+        #if os(iOS)
+        .topBarLeading
+        #else
+        .automatic
+        #endif
+    }
+
+    static var trailing: Self {
+        #if os(iOS)
+        .topBarTrailing
+        #else
+        .automatic
+        #endif
+    }
 }
