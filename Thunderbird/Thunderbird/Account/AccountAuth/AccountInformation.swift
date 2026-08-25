@@ -27,7 +27,7 @@ struct AccountInformation: View {
     @State private var password: String = ""
     @State private var error: Error?
     @State private var loginServer: Server = Server(.imap)
-    @State private var loginAuth: Authorization = Server(.imap).authorization
+    @State private var loginAuth: Authorization = .none
     @State private var loginAuthConfig: OAuth2.Request?
 
     private func refreshAccount() {
@@ -35,7 +35,7 @@ struct AccountInformation: View {
         guard let account = account else { return }
         guard let incomingServer = account.incomingServer else { return }
         loginServer = incomingServer
-        loginAuth = loginServer.authorization
+        loginAuth = account.authorization
     }
 
     var body: some View {
@@ -73,14 +73,13 @@ struct AccountInformation: View {
                         authConfig: $loginAuthConfig
                     ).onChange(of: loginAuth) {
                         guard var account = account else { return }
+                        account.avatarColor = randomizeAvatarColor()
                         var incomingServerInfo = account.incomingServer ?? Server(.imap)
                         var outgoingServerInfo = account.outgoingServer ?? Server(.smtp)
-                        incomingServerInfo.authorization = loginAuth
-                        outgoingServerInfo.authorization = loginAuth
                         incomingServerInfo.username = emailAddress
                         outgoingServerInfo.username = emailAddress
-                        incomingServerInfo.authConfig = loginAuthConfig!
-                        outgoingServerInfo.authConfig = loginAuthConfig!
+                        account.authorization = loginAuth
+                        account.authConfig = loginAuthConfig
                         account.servers = [incomingServerInfo, outgoingServerInfo]
                         accounts.set(account)
                     }
@@ -108,13 +107,8 @@ struct AccountInformation: View {
                 action: {
                     account = Account("demoEmail@gmail.com", provider: config?.emailProvider)
                     guard var account = account else { return }
-                    loginServer = Server(.imap)
-                    loginServer.authConfig = .google
-                    var incomingServerInfo = account.incomingServer?.clone() ?? Server(.imap)
-                    var outgoingServerInfo = account.outgoingServer?.clone() ?? Server(.smtp)
-                    incomingServerInfo.authorization = loginServer.authorization
-                    outgoingServerInfo.authorization = loginServer.authorization
-                    account.servers = [incomingServerInfo, outgoingServerInfo]
+                    account.authConfig = .google
+                    account.authorization = loginAuth
                     accounts.set(account)
 
                 }) {

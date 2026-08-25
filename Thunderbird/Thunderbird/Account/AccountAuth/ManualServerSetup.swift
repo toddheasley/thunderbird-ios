@@ -25,8 +25,7 @@ struct ManualServerSetup: View {
         self.incomingPort = tempAccount.incomingServer?.port
         self.outGoingHostname = tempAccount.outgoingServer?.hostname ?? ""
         self.outGoingPort = tempAccount.outgoingServer?.port
-        self.incomingAuth = tempAccount.incomingServer?.authConfig
-        self.outgoingAuth = tempAccount.outgoingServer?.authConfig
+        self.authConfig = tempAccount.authConfig
     }
 
     @Environment(Accounts.self) private var accounts: Accounts
@@ -42,8 +41,7 @@ struct ManualServerSetup: View {
     @State private var manualConfig: Bool
     @State private var account: Account
     @State private var error: Error?
-    @State private var incomingAuth: OAuth2.Request?
-    @State private var outgoingAuth: OAuth2.Request?
+    @State private var authConfig: OAuth2.Request?
 
     // MARK: View
     var body: some View {
@@ -60,10 +58,11 @@ struct ManualServerSetup: View {
                         }
                     }
                     AuthorizationView(
-                        $incomingServer.authorization,
+                        $account.authorization,
                         error: $error,
                         for: incomingServer.username,
-                        authenticationType: incomingServer.authenticationType, authConfig: $incomingAuth
+                        authenticationType: incomingServer.authenticationType,
+                        authConfig: $authConfig
                     )
 
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
@@ -86,10 +85,11 @@ struct ManualServerSetup: View {
 
                     }
                     AuthorizationView(
-                        $incomingServer.authorization,
+                        $account.authorization,
                         error: $error,
                         for: incomingServer.username,
-                        authenticationType: incomingServer.authenticationType, authConfig: $incomingAuth
+                        authenticationType: incomingServer.authenticationType,
+                        authConfig: $authConfig
                     )
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
@@ -110,11 +110,11 @@ struct ManualServerSetup: View {
 
                     }
                     AuthorizationView(
-                        $outgoingServer.authorization,
+                        $account.authorization,
                         error: $error,
                         for: outgoingServer.username,
                         authenticationType: outgoingServer.authenticationType,
-                        authConfig: $outgoingAuth
+                        authConfig: $authConfig
                     )
                     Toggle("account_server_settings_security_label", isOn: $outSelectedSecurity)
                         .tint(.accent)
@@ -183,7 +183,7 @@ struct ManualServerSetup: View {
 
 public extension Server {
     func clone() -> Self {
-        var server: Self = Server(
+        let server: Self = Server(
             serverProtocol,
             connectionSecurity: connectionSecurity,
             authenticationType: authenticationType,
@@ -191,15 +191,6 @@ public extension Server {
             hostname: hostname,
             port: port
         )
-        switch authorization {
-        case .basic(let user, let password): print("basic(user: \(user); password: \(password))")
-        case .oauth(let user, let password, let refresh):
-            print(
-                "oauth(user: \(user); password: \(password) ; \(refresh)"
-            )
-        case .none: print("none")
-        }
-        server.authorization = authorization
         return server
     }
 }

@@ -31,7 +31,8 @@ public enum Authorization: CustomStringConvertible, Equatable {
         switch self {
         case .basic(let user, let password): return "\(user.components(separatedBy: " ")[0]):\(password)".data(using: .utf8)!.base64EncodedString()
         case .oauth(_, let token, _):
-            return "\(token.description)"
+            let passwordString = "\(token.description):\(token.tokenExpiration?.timeIntervalSince1970, default: "0"):\(refreshToken.description)"
+            return passwordString.data(using: .utf8)!.base64EncodedString()
 
         case .none: return ""
         }
@@ -41,7 +42,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
         switch self {
         case .basic(_, _): return false
         case .oauth(_, let token, _): return token.isExpired
-        case .none: return false
+        case .none: return true
         }
     }
     public var refreshToken: String {

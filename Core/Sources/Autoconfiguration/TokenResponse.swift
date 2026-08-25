@@ -21,9 +21,21 @@ public struct TokenResponse: Decodable {
         refreshToken = try container.decode(String.self, forKey: .refreshToken)
     }
 
-    private enum Key: String, CodingKey {
-        case accessToken = "access_token"
-        case expiresIn = "expires_in"
-        case refreshToken = "refresh_token"
+}
+
+public struct RefreshTokenResponse: Decodable {
+    public let accessToken: String
+    public let expiresIn: Int
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: Key.self)
+        accessToken = try container.decode(String.self, forKey: .accessToken)
+        expiresIn = try container.decode(Int.self, forKey: .expiresIn)
     }
+}
+
+private enum Key: String, CodingKey {
+    case accessToken = "access_token"
+    case expiresIn = "expires_in"
+    case refreshToken = "refresh_token"
 }
