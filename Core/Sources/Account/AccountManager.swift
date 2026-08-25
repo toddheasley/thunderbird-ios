@@ -43,9 +43,19 @@ public final class AccountManager {
         }
     }
 
+    public func hasLoggedInAccount() -> Bool {
+        for account in allAccounts {
+            if account.authorization.isExpired == false {
+                return true
+            }
+        }
+        return false
+    }
+
     public func delete(_ account: Account) {
         error = nil
         do {
+            account.deleteAuthorization()
             let updatedAccounts = allAccounts.filter { $0.id != account.id }
             try FileManager.default.write(updatedAccounts, to: .accounts)
             allAccounts = updatedAccounts
@@ -58,6 +68,7 @@ public final class AccountManager {
     public func deleteAccounts() {
         error = nil
         do {
+            URLCredentialStorage.shared.deleteAuthorizations()
             try FileManager.default.write([], to: .accounts)
             allAccounts = []
         } catch {
@@ -68,32 +79,18 @@ public final class AccountManager {
     public func checkAndRenewExpirations() async throws {
         var updatedAccounts: [Account] = []
         for account in allAccounts {
-            var incomingServerAuth = account.incomingServer!.authorization
-            var outgoingServerAuth = account.outgoingServer!.authorization
+            var serverAuth = account.authorization
             if account.incomingServer?.authenticationType == .oAuth2 {
-                if incomingServerAuth.isExpired || outgoingServerAuth.isExpired {
+                if serverAuth.isExpired {
                     do {
-                        incomingServerAuth = try await renewExpiredToken(
-                            authConfig: account.incomingServer!.authConfig!,
-                            refreshToken: incomingServerAuth.refreshToken,
-                            user: incomingServerAuth.user
+                        serverAuth = try await renewExpiredToken(
+                            authConfig: account.authConfig!,
+                            refreshToken: serverAuth.refreshToken,
+                            user: serverAuth.user
                         )!
 
-                        outgoingServerAuth = try await renewExpiredToken(
-                            authConfig: account.outgoingServer!.authConfig!,
-                            refreshToken: outgoingServerAuth.refreshToken,
-                            user: outgoingServerAuth.user
-                        )!
                         var account = account
-                        var incomingServerInfo = account.incomingServer!
-                        var outgoingServerInfo = account.outgoingServer!
-                        incomingServerInfo.authorization = incomingServerAuth
-                        outgoingServerInfo.authorization = outgoingServerAuth
-                        incomingServerInfo.username = account.incomingServer!.username
-                        outgoingServerInfo.username = account.outgoingServer!.username
-                        incomingServerInfo.authConfig = account.incomingServer!.authConfig
-                        outgoingServerInfo.authConfig = account.outgoingServer!.authConfig
-                        account.servers = [incomingServerInfo, outgoingServerInfo]
+                        account.authorization = serverAuth
                         updatedAccounts.append(account)
                     } catch {
                         throw URLError(.unknown)
@@ -114,13 +111,12 @@ public final class AccountManager {
         do {
             for _ in 0..<3 {
                 let (data, _) = try await URLSession.shared.data(for: tokenRequest)
-                let response: TokenResponse = try JSONDecoder().decode(TokenResponse.self, from: data)
+                let response: RefreshTokenResponse = try JSONDecoder().decode(RefreshTokenResponse.self, from: data)
                 let token = Token.bearer(
                     response.accessToken,
                     Date(timeIntervalSinceNow: TimeInterval(response.expiresIn))
                 )
-                let refreshToken = Token.refresh(response.refreshToken)
-                return .oauth(user: user, token: token, refresh: refreshToken)
+                return .oauth(user: user, token: token, refresh: .refresh(refreshToken))
             }
         } catch {
             throw URLError(.unknown)

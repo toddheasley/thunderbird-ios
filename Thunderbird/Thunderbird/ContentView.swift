@@ -24,24 +24,17 @@ struct ContentView: View {
                     ManualAccount()
                 }
                 .presentationDragIndicator(.visible)
-
             }
-
         }
         .onChange(of: accounts.allAccounts, initial: true) {
-            guard !accounts.allAccounts.isEmpty else {
-                hasAuthorization = false
-                return
+            if (isPresented && hasAuthorization != accounts.hasLoggedInAccount()) {
+                isPresented = false
             }
-            hasAuthorization =
-                accounts
-                .allAccounts[0].incomingServer?.authorization != nil
-                && accounts
-                    .allAccounts[0].outgoingServer?.authorization != nil
-            isPresented = false
+            hasAuthorization = accounts.hasLoggedInAccount()
         }.task {
             do {
                 try await accounts.checkAndRenewExpirations()
+                hasAuthorization = accounts.hasLoggedInAccount()
             } catch {
                 print("OAuth Expiration refresh error: \(error)")
             }

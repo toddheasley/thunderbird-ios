@@ -115,7 +115,7 @@ struct EmailCellView: View {
 #Preview("Email Cell") {
     @Previewable @State var flags: FeatureFlags = FeatureFlags(distribution: .current)
 
-    var tempEmail = TempEmail(
+    let tempEmail = TempEmail(
         from: [EmailAddress("sender1@test.com", label: "Sender1")],
         sender: [EmailAddress("sender1@test.com", label: "Sender1")],
         reply: [EmailAddress("sender1@test.com", label: "Sender1")],
