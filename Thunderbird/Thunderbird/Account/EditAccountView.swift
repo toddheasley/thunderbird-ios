@@ -24,11 +24,11 @@ struct EditAccountView: View {
             VStack(alignment: .leading) {
                 Text("Incoming Server")
                     .font(.headline)
-                EditServerView($incomingServer)
+                EditServerView($incomingServer, $account)
                 Divider()
                 Text("Outgoing Server")
                     .font(.headline)
-                EditServerView($outgoingServer)
+                EditServerView($outgoingServer, $account)
 
             }
             .padding()
