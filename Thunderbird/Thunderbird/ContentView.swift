@@ -12,7 +12,7 @@ struct ContentView: View {
     // MARK: View
     var body: some View {
         VStack {
-            if accounts.allAccounts.count > 0 {
+            if accountManager.allAccounts.count > 0 {
                 EmailListView()
                     .environment(accountManager)
             } else {
