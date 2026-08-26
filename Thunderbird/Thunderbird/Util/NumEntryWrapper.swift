@@ -1,9 +1,3 @@
-//
-//  NumEntryWrapper.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 8/26/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
@@ -25,6 +19,7 @@ struct NumEntryWrapper: View {
         suggestionText = suggestion
         _entryText = entryText
     }
+
     private var headerText: LocalizedStringResource
     private var suggestionText: String
     @Binding private var entryText: Int?
@@ -34,12 +29,13 @@ struct NumEntryWrapper: View {
         Text(headerText)
             .listRowSeparator(.visible, edges: .bottom)
         TextField(suggestionText, value: $entryText, formatter: NumberFormatter())
-            .keyboardType(.numberPad)
-            .listRowSeparator(.hidden)
-            .textFieldStyle(.plain)
+            #if os(iOS)
+        .keyboardType(.numberPad)
+        .listRowSeparator(.hidden)
+        .textFieldStyle(.plain)
+        .autocapitalization(.none)
+            #endif
             .autocorrectionDisabled()
-            .autocapitalization(.none)
             .focusable()
-
     }
 }

@@ -2,20 +2,19 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import SwiftUI
 import Account
+import SwiftUI
 
 struct ContentView: View {
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @State private var isPresented: Bool = false
-    @State private var hasAuthorization: Bool = false
-    @Environment(Accounts.self) private var accounts: Accounts
 
     // MARK: View
     var body: some View {
         VStack {
-            if hasAuthorization {
+            if accountManager.allAccounts.count > 0 {
                 EmailListView()
-                    .environment(accounts)
+                    .environment(accountManager)
             } else {
                 NavigationStack {
                     WelcomeScreen($isPresented)
@@ -26,25 +25,23 @@ struct ContentView: View {
                 .presentationDragIndicator(.visible)
             }
         }
-        .onChange(of: accounts.allAccounts, initial: true) {
-            if (isPresented && hasAuthorization != accounts.hasLoggedInAccount()) {
+        .onChange(of: accountManager.allAccounts, initial: true) {
+            if (isPresented) {
                 isPresented = false
             }
-            hasAuthorization = accounts.hasLoggedInAccount()
         }.task {
             do {
-                try await accounts.checkAndRenewExpirations()
-                hasAuthorization = accounts.hasLoggedInAccount()
+                try await accountManager.checkAndRenewExpirations()
             } catch {
                 print("OAuth Expiration refresh error: \(error)")
             }
-
         }
     }
 }
 
 #Preview("Content View") {
-    @Previewable @State var accounts: Accounts = Accounts()
+    @Previewable @State var accountManager: AccountManager = AccountManager()
 
-    ContentView().environment(accounts)
+    ContentView()
+        .environment(accountManager)
 }
