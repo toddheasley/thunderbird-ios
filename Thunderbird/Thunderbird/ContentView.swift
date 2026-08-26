@@ -7,13 +7,12 @@ import Account
 
 struct ContentView: View {
     @State private var isPresented: Bool = false
-    @State private var hasAuthorization: Bool = false
     @Environment(Accounts.self) private var accounts: Accounts
 
     // MARK: View
     var body: some View {
         VStack {
-            if hasAuthorization {
+            if accounts.allAccounts.count > 0 {
                 EmailListView()
                     .environment(accounts)
             } else {
@@ -27,14 +26,12 @@ struct ContentView: View {
             }
         }
         .onChange(of: accounts.allAccounts, initial: true) {
-            if (isPresented && hasAuthorization != accounts.hasLoggedInAccount()) {
+            if (isPresented) {
                 isPresented = false
             }
-            hasAuthorization = accounts.hasLoggedInAccount()
         }.task {
             do {
                 try await accounts.checkAndRenewExpirations()
-                hasAuthorization = accounts.hasLoggedInAccount()
             } catch {
                 print("OAuth Expiration refresh error: \(error)")
             }
