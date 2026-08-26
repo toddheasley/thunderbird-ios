@@ -1,21 +1,16 @@
-//
-//  ReadEmailView.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 10/20/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import EmailAddress
 import SwiftUI
 import WebKit
-import EmailAddress
 
 struct ReadEmailView: View {
     init(_ email: TempEmail) {
         self.email = email
     }
+
     private var email: TempEmail
 
     var body: some View {
@@ -44,7 +39,7 @@ struct ReadEmailView: View {
 
             }.padding()
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .trailing) {
                         Button(action: {
                             AlertManager.shared.showAlert = true
                             AlertManager.shared.alertTitle = "Archive"
@@ -53,7 +48,7 @@ struct ReadEmailView: View {
                                 .foregroundStyle(.foreground)
                         }
                     }
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .trailing) {
                         Menu {
                             Button(
                                 "delete_button",
@@ -109,7 +104,7 @@ struct ReadEmailView: View {
                             Label("options_button", systemImage: "ellipsis")
                         }
                     }
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .bottom) {
                         Button(action: {
                             AlertManager.shared.showAlert = true
                             AlertManager.shared.alertTitle = "Reply"
@@ -118,7 +113,7 @@ struct ReadEmailView: View {
                                 .foregroundStyle(.foreground)
                         }
                     }
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .bottom) {
                         Button(action: {
                             AlertManager.shared.showAlert = true
                             AlertManager.shared.alertTitle = "Reply All"
@@ -127,7 +122,7 @@ struct ReadEmailView: View {
                                 .foregroundStyle(.foreground)
                         }
                     }
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .bottom) {
                         Button(action: {
                             AlertManager.shared.showAlert = true
                             AlertManager.shared.alertTitle = "Trash"
@@ -136,7 +131,7 @@ struct ReadEmailView: View {
                                 .foregroundStyle(.foreground)
                         }
                     }
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .bottom) {
                         Button(action: {
                             AlertManager.shared.showAlert = true
                             AlertManager.shared.alertTitle = "Forward"
@@ -145,7 +140,7 @@ struct ReadEmailView: View {
                                 .foregroundStyle(.foreground)
                         }
                     }
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .bottom) {
                         Button(action: {
                             AlertManager.shared.showAlert = true
                             AlertManager.shared.alertTitle = "More"
@@ -162,7 +157,9 @@ struct AttachmentBlockView: View {
     init(_ attachments: [Data]) {
         self.attachments = attachments
     }
+
     private var attachments: [Data]
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("^[\(attachments.count) attachment](inflect: true)")
@@ -179,6 +176,7 @@ struct SingleAttachment: View {
     init() {
         //Do Stuff
     }
+
     var body: some View {
         HStack {
             Image(systemName: "photo")
@@ -193,17 +191,33 @@ struct SingleAttachment: View {
     }
 }
 
+#if os(macOS)
+struct WebView: NSViewRepresentable {
+    let htmlString: String
+
+    // MARK: NSViewRepresentable
+    func updateNSView(_ view: WKWebView, context: Context) {
+        view.loadHTMLString(htmlString, baseURL: nil)
+    }
+
+    func makeNSView(context: Context) -> WKWebView {
+        WKWebView()
+    }
+}
+#elseif os(iOS)
 struct WebView: UIViewRepresentable {
     let htmlString: String
 
-    func makeUIView(context: Context) -> WKWebView {
-        return WKWebView()
+    // MARK: UIViewRepresentable
+    func updateUIView(_ view: WKWebView, context: Context) {
+        view.loadHTMLString(htmlString, baseURL: nil)
     }
 
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        webView.loadHTMLString(htmlString, baseURL: nil)
+    func makeUIView(context: Context) -> WKWebView {
+        WKWebView()
     }
 }
+#endif
 
 struct SenderView: View {
     init(email: TempEmail) {
@@ -337,7 +351,9 @@ struct SenderView: View {
                     }.listRowSeparator(.hidden)
 
                 }
+                #if os(iOS)
                 .listSectionSpacing(.compact)
+                #endif
             }
             .presentationDetents([.medium])
 
@@ -623,5 +639,22 @@ struct ContactCellView: View {
     ReadEmailView(
         tempEmail
     )
+}
 
+private extension ToolbarItemPlacement {
+    static var trailing: Self {
+        #if os(iOS)
+        .topBarTrailing
+        #else
+        .automatic
+        #endif
+    }
+
+    static var bottom: Self {
+        #if os(iOS)
+        .bottomBar
+        #else
+        .automatic
+        #endif
+    }
 }

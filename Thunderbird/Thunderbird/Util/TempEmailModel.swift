@@ -1,16 +1,10 @@
-//
-//  TempEmailModel.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 12/5/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import EmailAddress
 import Foundation
 import SwiftData
-import EmailAddress
 
 /// Prior to connecting the UI/UX with actual email storage it was necessary to prototype what form the data woud take
 /// in order to test displays and develop what would be needed from the database. As the backend and UI expectations
@@ -335,5 +329,4 @@ class TempEmail: Identifiable {
             pinned: false
         )
     ]
-
 }

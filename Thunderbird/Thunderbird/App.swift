@@ -7,17 +7,19 @@ import SwiftUI
 
 @main
 struct App: SwiftUI.App {
-    @State private var accounts: Accounts = Accounts()
-    @State private var mailboxManagers: UnifiedMailboxManager = UnifiedMailboxManager()
-    @State private var showAlert = false
+    @State private var accountManager: AccountManager = AccountManager()
+    @State private var mailboxManager: UnifiedMailboxManager = UnifiedMailboxManager()
     @State private var featureFlags: FeatureFlags = FeatureFlags(distribution: .current)
+    @State private var showAlert = false
 
     // MARK: App
     var body: some Scene {
         WindowGroup {
             ZStack {
                 ContentView()
-                    .environment(accounts).environment(featureFlags).environment(mailboxManagers)
+                    .environment(accountManager)
+                    .environment(mailboxManager)
+                    .environment(featureFlags)
                 if showAlert {
                     FeatureNotImplementedView()
                 }

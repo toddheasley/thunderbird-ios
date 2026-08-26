@@ -1,16 +1,10 @@
-//
-//  ManualServerSetup.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 8/18/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import SwiftUI
 import Account
 import Autoconfiguration
+import SwiftUI
 
 struct ManualServerSetup: View {
     init(_ loginDetails: LoginDetails) {
@@ -28,7 +22,7 @@ struct ManualServerSetup: View {
         self.authConfig = tempAccount.authConfig
     }
 
-    @Environment(Accounts.self) private var accounts: Accounts
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(LoginDetails.self) private var loginDetails: LoginDetails
     @State private var incomingServer: Server
     @State private var outgoingServer: Server
@@ -48,7 +42,6 @@ struct ManualServerSetup: View {
         Form {
             if loginDetails.serverProtocol == .jmap {
                 Section(header: Text("account_server_edit_configuration")) {
-
                     TextEntryWrapper("account_server_settings_server_label", "server.example.com", $incomingHostname)
                     NumEntryWrapper("account_server_settings_port_label", "443", $incomingPort)
                     Picker("account_server_settings_authentication_label", selection: $incomingServer.authenticationType) {
@@ -64,13 +57,10 @@ struct ManualServerSetup: View {
                         authenticationType: incomingServer.authenticationType,
                         authConfig: $authConfig
                     )
-
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)
-
                 }
-
             } else {
                 Section(header: Text("account_incoming_server_label")) {
                     TextEntryWrapper("account_server_settings_server_label", "server.example.com", $incomingHostname)
@@ -157,7 +147,7 @@ struct ManualServerSetup: View {
                             outgoingServer
                         ]
                     }
-                    accounts.set(account)
+                    accountManager.set(account)
                 }) {
                     Text("account_oauth_sign_in_button")
                         .padding(5.5)
@@ -169,16 +159,20 @@ struct ManualServerSetup: View {
                 .padding()
         }
         .scrollContentBackground(.hidden)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
+        #endif
         .navigationTitle("account_server_manual_configuration")
-
     }
 }
 
 #Preview("Manual Server Account Setup") {
-    @Previewable @State var accounts: Accounts = Accounts()
+    @Previewable @State var accountManager: AccountManager = AccountManager()
     @Previewable @State var loginDetails: LoginDetails = LoginDetails()
-    ManualServerSetup(loginDetails).environment(accounts).environment(loginDetails)
+
+    ManualServerSetup(loginDetails)
+        .environment(accountManager)
+        .environment(loginDetails)
 }
 
 public extension Server {

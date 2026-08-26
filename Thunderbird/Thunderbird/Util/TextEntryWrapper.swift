@@ -1,9 +1,3 @@
-//
-//  TextEntryWrapper.swift
-//  Thunderbird
-//
-//  Created by Ashley Soucar on 8/26/25.
-//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
@@ -25,6 +19,7 @@ struct TextEntryWrapper: View {
         suggestionText = suggestion
         _entryText = entryText
     }
+
     private var headerText: LocalizedStringResource
     private var suggestionText: String
     @Binding private var entryText: String
@@ -34,11 +29,12 @@ struct TextEntryWrapper: View {
         Text(headerText)
             .listRowSeparator(.visible, edges: .bottom)
         TextField(suggestionText, text: $entryText)
-            .listRowSeparator(.hidden)
             .textFieldStyle(.plain)
+            .listRowSeparator(.hidden)
+            #if os(iOS)
+        .autocapitalization(.none)
+            #endif
             .autocorrectionDisabled()
-            .autocapitalization(.none)
             .focusable()
-
     }
 }
