@@ -48,7 +48,7 @@ public struct Folder: CustomStringConvertible, Hashable, Identifiable {
 
 public extension Folder {
     func aggregatedUnreadCount() -> Int {
-        var total = totalEmails ?? 0
+        var total = unreadEmails ?? 0
         for subfolder in subfolders {
             total += subfolder.aggregatedUnreadCount()
         }
