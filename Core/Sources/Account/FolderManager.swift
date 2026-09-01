@@ -34,7 +34,6 @@ public final class FolderManager {
     }
 
     /// Organize folders into a nested structure based on their mailbox paths.
-    // TODO: LOGAN - LIMIT the level of mailbox parentage to 3
     // TEMP: Due to display limitations folders should be limited to a depth of 3.
     // Any folders with a depth exceeding 3 should appear at level 3.
     // i.e. Folder > Subfolder > Child Subfolder AND Folder > Subfolder > Child Subfolder > Grandchild Subfolder appear at the same level
