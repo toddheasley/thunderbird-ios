@@ -10,9 +10,11 @@ public final class MailboxManager {
     public let account: Account
     public private(set) var mailboxes: [Mailbox] = []
     public var error: AccountError?
+    public let folderManager: FolderManager
 
     public init(account: Account) {
         self.account = account
+        self.folderManager = FolderManager(account: account)
     }
 
     public func mailbox(_ name: String) -> Mailbox? {
@@ -135,6 +137,8 @@ public final class MailboxManager {
                 let mailboxes: [JMAP.Mailbox] = try await client.mailboxes()
                 self.mailboxes = mailboxes.map { Mailbox($0) }
             }
+
+            await folderManager.refreshFolders(mailboxes: mailboxes)
         } catch {
             self.error = AccountError(error)
         }
