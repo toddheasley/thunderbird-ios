@@ -11,30 +11,18 @@ struct ContentView: View {
 
     // MARK: View
     var body: some View {
-        VStack {
-            if accountManager.allAccounts.count > 0 {
-                EmailListView()
-                    .environment(accountManager)
-            } else {
-                NavigationStack {
-                    WelcomeScreen($isPresented)
-                }
+        if accountManager.allAccounts.isEmpty {
+            WelcomeScreen($isPresented)
                 .sheet(isPresented: $isPresented) {
                     ManualAccount()
+                        .presentationDragIndicator(.visible)
                 }
-                .presentationDragIndicator(.visible)
-            }
-        }
-        .onChange(of: accountManager.allAccounts, initial: true) {
-            if (isPresented) {
-                isPresented = false
-            }
-        }.task {
-            do {
-                try await accountManager.checkAndRenewExpirations()
-            } catch {
-                print("OAuth Expiration refresh error: \(error)")
-            }
+        } else {
+            EmailListView()
+                .task {
+                    isPresented = false
+                    await accountManager.checkAndRenewExpirations()
+                }
         }
     }
 }

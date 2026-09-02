@@ -29,9 +29,6 @@ public enum Token: CustomStringConvertible, Equatable {
         }
     }
 
-    // MARK: CustomStringConvertible
-    public var description: String { value }
-
     public init(value: String, expiration: Date) {
         self = .bearer(value, expiration)
     }
@@ -39,4 +36,7 @@ public enum Token: CustomStringConvertible, Equatable {
     public init(value: String) {
         self = .refresh(value)
     }
+
+    // MARK: CustomStringConvertible
+    public var description: String { value }
 }
