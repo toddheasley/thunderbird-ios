@@ -41,11 +41,49 @@ struct URLCredentialStorageTests {
     }
 
     @Test(.enabled(if: isKeychainAvailable)) func deleteAuthorication() {
-
+        let space: URLProtectionSpace = URLProtectionSpace(host: "net.example")
+        URLCredentialStorage.shared.deleteAuthorizations(space: space)
+        #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
+        URLCredentialStorage.shared
+            .set(
+                authorization: .basic(user: "example@netscape.net", password: "correct horse battery staple"),
+                persistence: .permanent,
+                space: space
+            )
+        URLCredentialStorage.shared
+            .set(
+                authorization: .basic(user: "user@icloud.com", password: "abcd1234"),
+                persistence: .forSession,
+                space: space
+            )
+        URLCredentialStorage.shared
+            .set(
+                authorization: .basic(user: "user@icloud.com", password: "abcd1234"),
+                persistence: .permanent,
+                space: space
+            )  // Duplicate credential
+        URLCredentialStorage.shared
+            .set(
+                authorization:
+                    .oauth(
+                        user: "user@example.com",
+                        token: .bearer("gAAAAUTHtoKENb3arerJWe", Date()),
+                        refresh: .refresh("fakerefreshtokens")
+                    ),
+                persistence: .forSession,
+                space: space
+            )
+        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 3)  // Credentials are equatable and de-duplicated by by `username`
+        URLCredentialStorage.shared.deleteAuthorization(for: "user@icloud.com", space: space)
+        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 2)
+        URLCredentialStorage.shared.deleteAuthorization(for: "example@netscape.net", space: space)
+        #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 1)
+        URLCredentialStorage.shared.deleteAuthorization(for: "user@example.com", space: space)
+        #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
     }
 
     @Test(.enabled(if: isKeychainAvailable)) func deleteAuthorizations() {
-        let space: URLProtectionSpace = URLProtectionSpace(host: "net.example")
+        let space: URLProtectionSpace = URLProtectionSpace(host: "biz.example")
         URLCredentialStorage.shared.deleteAuthorizations(space: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
         URLCredentialStorage.shared
