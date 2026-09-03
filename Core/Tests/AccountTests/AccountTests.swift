@@ -72,7 +72,6 @@ extension AccountTests {
                 token: .bearer("zemhu8-omdRiz-zisbov", Date(timeIntervalSince1970: 0.0)),
                 refresh: .refresh("fakeRefreshToken")
             )
-        // #expect(URLCredentialStorage.shared.authorization(for: account.incomingServer!.user) != nil)
         #expect(account.authorization.user == "example@fastmail.com")
         #expect(account.authorization.password == "emVtaHU4LW9tZFJpei16aXNib3Y6MC4wOmZha2VSZWZyZXNoVG9rZW4=")
         switch account.authorization {
@@ -94,7 +93,8 @@ extension AccountTests {
             throw URLError(.redirectToNonExistentLocation)
         }
         account.authorization = .none
-        // #expect(URLCredentialStorage.shared.authorization(for: account.incomingServer!.user) == nil)
+        #expect(account.authorization == .none)
+        #expect(URLCredentialStorage.shared.authorization(for: account.emailAddress!.value) == nil)
     }
 }
 

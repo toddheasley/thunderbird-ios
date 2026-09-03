@@ -37,6 +37,8 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
     public var authorization: Authorization {
         set {
             guard let user: String = emailAddress?.value, !user.isEmpty else { return }
+            URLCredentialStorage.shared.deleteAuthorization(for: user)
+            guard !newValue.password.isEmpty else { return }
             URLCredentialStorage.shared.set(authorization: Authorization(user: user, password: newValue.password), persistence: .permanent)
         }
         get {
@@ -51,7 +53,7 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
 
     public func deleteAuthorization() {
         guard let user: String = emailAddress?.value, !user.isEmpty else { return }
-        URLCredentialStorage.shared.set(authorization: Authorization(user: user, password: nil))
+        URLCredentialStorage.shared.deleteAuthorization(for: user)
     }
 
     public var emailProtocol: EmailProtocol {

@@ -32,7 +32,7 @@ public enum Authorization: CustomStringConvertible, Equatable {
         case .basic(let user, let password):
             "\(user):\(password)".data(using: .utf8)!.base64EncodedString()
         case .oauth(_, let token, let refreshToken):
-            "\(token.description):\(token.tokenExpiration?.timeIntervalSince1970, default: "0"):\(refreshToken.description)"
+            "\(token):\(token.tokenExpiration?.timeIntervalSince1970, default: "0"):\(refreshToken)"
                 .data(using: .utf8)!
                 .base64EncodedString()
         case .none:
