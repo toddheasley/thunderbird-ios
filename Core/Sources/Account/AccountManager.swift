@@ -85,7 +85,7 @@ public final class AccountManager {
                 var account = account
                 account.authorization = try await renewExpiredToken(
                     authConfig: account.authConfig!,
-                    refreshToken: serverAuth.refreshToken,
+                    refreshToken: serverAuth.refreshToken!,
                     user: serverAuth.user
                 )
                 updatedAccounts.append(account)

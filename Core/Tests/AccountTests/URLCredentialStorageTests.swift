@@ -23,29 +23,25 @@ struct URLCredentialStorageTests {
         URLCredentialStorage.shared.deleteAuthorizations(space: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
         URLCredentialStorage.shared.set(authorization: .basic(user: "user.name@gmail.com", password: "12345678"), space: space)
+        #expect(URLCredentialStorage.shared.authorization(for: "user.name@gmail.com", space: space)?.password == "dXNlci5uYW1lQGdtYWlsLmNvbToxMjM0NTY3OA==")
         URLCredentialStorage.shared
             .set(
                 authorization:
                     .oauth(
                         user: "user.name@gmail.com",
-                        token: .bearer("zemhu8-omdRiz-zisbov", Date()),
+                        token: .bearer("zemhu8-omdRiz-zisbov", Date(timeIntervalSince1970: 0.0)),
                         refresh: .refresh("zemhu8-omdRiz-zisbov-refresh")
                     ),
                 space: space
             )  // Duplicate user
         #expect(URLCredentialStorage.shared.credentials(for: space)?.count == 1)  // One credential stored per user
-        #expect(URLCredentialStorage.shared.authorization(for: "user.name@gmail.com", space: space)?.password == "zemhu8-omdRiz-zisbov")
-        URLCredentialStorage.shared
-            .set(
-                authorization:
-                    .oauth(
-                        user: "user.name@gmail.com",
-                        token: .bearer("zemhu8-omdRiz-zisbov", Date()),
-                        refresh: .refresh("zemhu8-omdRiz-zisbov-refresh")
-                    ),
-                space: space
-            )
+        #expect(URLCredentialStorage.shared.authorization(for: "user.name@gmail.com", space: space)?.password == "emVtaHU4LW9tZFJpei16aXNib3Y6MC4wOnplbWh1OC1vbWRSaXotemlzYm92LXJlZnJlc2g=")
+        URLCredentialStorage.shared.deleteAuthorization(for: "user.name@gmail.com", space: space)
         #expect(URLCredentialStorage.shared.credentials(for: space) == nil)
+    }
+
+    @Test(.enabled(if: isKeychainAvailable)) func deleteAuthorication() {
+
     }
 
     @Test(.enabled(if: isKeychainAvailable)) func deleteAuthorizations() {
