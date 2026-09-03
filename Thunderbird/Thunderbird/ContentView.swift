@@ -14,15 +14,20 @@ struct ContentView: View {
         if accountManager.allAccounts.isEmpty {
             WelcomeScreen($isPresented)
                 .sheet(isPresented: $isPresented) {
-                    ManualAccount()
+                    // ManualAccount()
+                    AccountAddView()
                         .presentationDragIndicator(.visible)
                 }
         } else {
-            EmailListView()
-                .task {
-                    isPresented = false
-                    await accountManager.checkAndRenewExpirations()
-                }
+            NavigationStack {
+                ContentUnavailableView("Account", image: "person")
+                //AccountListView()
+            }
+            .task {
+                isPresented = false
+                await accountManager.checkAndRenewExpirations()
+            }
+            .error()
         }
     }
 }
