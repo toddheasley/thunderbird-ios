@@ -65,26 +65,6 @@ struct ManualAccount: View {
         }
 }
 
-private struct Background: View {
-
-    // MARK: View
-    var body: some View {
-        GeometryReader { proxy in
-            Image.background
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: proxy.size.width, height: proxy.size.height)
-                .opacity(proxy.size.width > 444.0 ? 0.0 : 1.0)
-        }
-        .ignoresSafeArea()
-    }
-}
-
-private extension Image {
-    static var background: Self { Self("Welcome/Background") }
-    static var logo: Self { Self("Welcome/Logo") }
-}
-
 @Observable
 class LoginDetails {
     var inProgressAccount: Account?

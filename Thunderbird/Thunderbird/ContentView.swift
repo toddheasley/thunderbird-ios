@@ -14,14 +14,12 @@ struct ContentView: View {
         if accountManager.allAccounts.isEmpty {
             WelcomeScreen($isPresented)
                 .sheet(isPresented: $isPresented) {
-                    // ManualAccount()
-                    AccountAddView()
+                    AccountView()
                         .presentationDragIndicator(.visible)
                 }
         } else {
             NavigationStack {
-                ContentUnavailableView("Account", image: "person")
-                //AccountListView()
+                EmailListView()
             }
             .task {
                 isPresented = false

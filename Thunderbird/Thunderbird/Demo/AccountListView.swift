@@ -53,7 +53,7 @@ struct AccountListView: View {
         }
         .sheet(isPresented: $isPresented) {
             NavigationStack {
-                AccountAddView()
+                AccountView()
             }
             .presentationDragIndicator(.visible)
         }

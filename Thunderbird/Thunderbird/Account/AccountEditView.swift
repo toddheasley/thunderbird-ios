@@ -1,7 +1,25 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Bolt
 import Core
 import SwiftUI
 
 struct AccountEditView: View {
+    @Binding private var account: Account
+
+    init(_ account: Binding<Account>) {
+        _account = account
+    }
+
+    // MARK: View
+    var body: some View {
+
+    }
+}
+
+struct _AccountEditView: View {
     var account: Account {
         Account(
             name: name,
@@ -73,7 +91,7 @@ struct AccountEditView: View {
                 .foregroundStyle(.secondary)
                 .padding(.top)
                 TextField("\(emailAddress)", text: $name)
-                    .disableAutoFormatting()
+                    .autoFormattingDisabled()
                 HStack {
                     Text("Email Address")
                     Spacer()
@@ -82,7 +100,7 @@ struct AccountEditView: View {
                 .foregroundStyle(.secondary)
                 .padding(.top)
                 TextField("name@example.com", text: $emailAddress)
-                    .disableAutoFormatting()
+                    .autoFormattingDisabled()
                     #if os(iOS)
                 .keyboardType(.emailAddress)
                     #endif
@@ -165,11 +183,11 @@ struct ServerEditView: View {
             .foregroundStyle(.secondary)
             HStack {
                 TextField(server.titleKey, text: $server.hostname)
-                    .disableAutoFormatting()
+                    .autoFormattingDisabled()
                 Spacer()
                 TextField("\(server.serverProtocol.defaultPort)", value: $server.port, format: .number)
                     .multilineTextAlignment(.trailing)
-                    .disableAutoFormatting()
+                    .autoFormattingDisabled()
                     .frame(maxWidth: 64.0)
             }
             ConnectionSecurityView($server.connectionSecurity)
@@ -347,7 +365,7 @@ struct PasswordField: View {
                     .monospaced()
                     .opacity(isSecure ? 1.0 : 0.0)
                 TextField(titleKey, text: $text)
-                    .disableAutoFormatting()
+                    .autoFormattingDisabled()
                     .monospaced()
                     .opacity(isSecure ? 0.0 : 1.0)
             }
