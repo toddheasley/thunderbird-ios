@@ -28,10 +28,10 @@ extension CGFloat {
     }
 
     public static func padding(_ density: Density = .default) -> Self {
-        density.rawValue * 12.0
+        density.rawValue * 16.0
     }
 
     public static func spacing(_ density: Density = .default) -> Self {
-        density.rawValue * 16.0
+        density.rawValue * 24.0
     }
 }

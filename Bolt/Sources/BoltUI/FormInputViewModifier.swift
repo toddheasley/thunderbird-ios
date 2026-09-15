@@ -43,7 +43,7 @@ struct FormInputViewModifier: ViewModifier {
                 FormInputLabel(label, isRequired: isRequired)
                 Spacer()
                 content
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.automatic)
                     .labelsHidden()
             }
         case .vertical:
@@ -51,7 +51,7 @@ struct FormInputViewModifier: ViewModifier {
                 FormInputLabel(label, isRequired: isRequired)
                 Divider()
                 content
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.automatic)
                     .labelsHidden()
             }
         }
