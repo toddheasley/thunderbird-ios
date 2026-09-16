@@ -10,7 +10,7 @@
 @_exported import SMTP
 import Foundation
 
-public struct Account: Codable, Equatable, Hashable, Identifiable {
+public struct Account: Codable, Equatable, Hashable, Identifiable, Sendable {
     public enum EmailProtocol: String, CaseIterable, CustomStringConvertible, Identifiable {
         case imap = "IMAP/SMTP"
         case jmap = "JMAP"
@@ -64,25 +64,22 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
         servers.filter { $0.serverProtocol == serverProtocol }.first
     }
 
-    /// Configure an `Account` using ``Autoconfiguration.EmailProvider``.
-    public init(_ emailAddress: String, provider: EmailProvider? = nil) {
-        self.init(EmailAddress(emailAddress), provider: provider)
+    public init(_ emailAddress: String) {
+        self.init(EmailAddress(emailAddress))
     }
 
-    /// Configure an `Account` using ``Autoconfiguration.EmailProvider``.
-    public init(_ emailAddress: EmailAddress, provider: EmailProvider? = nil) {
+    public init(_ emailAddress: EmailAddress) {
         self.init(
             name: emailAddress.value,
             identities: [
                 emailAddress
-            ],
-            servers: (provider?.servers ?? []).compactMap { Server($0) }
+            ]
         )
     }
 
     /// Configure an `Account` using memberwise initializer.
     public init(
-        name: String,
+        name: String = "",
         deletePolicy: DeletePolicy = .never,
         identities: [EmailAddress] = [],
         servers: [Server] = [],
@@ -102,30 +99,31 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
 }
 
 extension Account {
+    /// Autoconfigure a new account from an email address `String`.
+    public static func autoconfigured(_ emailAddress: String) async throws -> Self {
+        try await Self(EmailAddress(emailAddress)).autoconfigured()
+    }
 
-    /// Autoconfigure a new `Account`.
-    public static func autoconfig(_ emailAddress: String, isJMAPAvailable: Bool = false) async throws -> Self {
+    /// Autoconfigure a new account from an `EmailAddress`.
+    public static func autoconfigured(_ emailAddress: EmailAddress) async throws -> Self {
+        try await Self(emailAddress).autoconfigured()
+    }
+
+    /// Autoconfigure a new account using its ``EmailAddress``.
+    public func autoconfigured() async throws -> Self {
         do {
-            if isJMAPAvailable, try emailAddress.host == "fastmail.com" {
-                return Account(
-                    name: emailAddress,
-                    identities: [
-                        EmailAddress(emailAddress)
-                    ],
-                    servers: [
-                        Server(
-                            .jmap,
-                            connectionSecurity: .tls,
-                            authenticationType: .password,
-                            username: emailAddress,
-                            hostname: "api.fastmail.com"
-                        )
-                    ]
-                )
-            } else {
-                let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress).config
-                return Account(emailAddress, provider: config.emailProvider)
+            guard let emailAddress else {
+                throw AccountError.autoconfigRequiresEmail
             }
+            let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress.value).config
+            return Self(
+                name: emailAddress.value,
+                identities: [
+                    emailAddress
+                ],
+                servers: (config.emailProvider?.servers ?? []).compactMap { Server($0) },
+                id: id
+            )
         } catch {
             throw AccountError.autoconfig(error)
         }

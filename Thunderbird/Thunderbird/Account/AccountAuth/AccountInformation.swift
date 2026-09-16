@@ -25,7 +25,7 @@ struct AccountInformation: View {
     @State private var loginAuthConfig: OAuth2.Request?
 
     private func refreshAccount() {
-        account = emailAddress.isEmailAddress ? Account(emailAddress, provider: config?.emailProvider) : nil
+        account = emailAddress.isEmailAddress ? Account(emailAddress) : nil
         guard let account = account else { return }
         guard let incomingServer = account.incomingServer else { return }
         loginServer = incomingServer
@@ -99,7 +99,7 @@ struct AccountInformation: View {
             //TEMP DEMO BUTTON
             Button(
                 action: {
-                    account = Account("demoEmail@gmail.com", provider: config?.emailProvider)
+                    account = Account("demoEmail@gmail.com")
                     guard var account = account else { return }
                     account.authConfig = .google
                     account.authorization = loginAuth

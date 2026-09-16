@@ -4,6 +4,7 @@
 
 public enum AccountError: CustomStringConvertible, Error, Equatable {
     case authorization(Error)
+    case autoconfigRequiresEmail
     case autoconfig(Error)
     case fileManager(Error)
     case imap(IMAPError)
@@ -35,6 +36,7 @@ public enum AccountError: CustomStringConvertible, Error, Equatable {
         switch self {
         case .authorization(let error): "Authorization: \(error)"
         case .autoconfig(let error): "Autoconfiguration: \(error)"
+        case .autoconfigRequiresEmail: "Autoconfiguration requires account email address"
         case .fileManager(let error): "FileManager: \(error)"
         case .imap(let error): "IMAP: \(error)"
         case .jmap(let error): "JMAP: \(error)"

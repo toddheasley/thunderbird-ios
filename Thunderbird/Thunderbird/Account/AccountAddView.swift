@@ -7,31 +7,45 @@ import Core
 import SwiftUI
 
 struct AccountAddView: View {
-    @Binding private var account: Account
-
-    init(_ account: Binding<Account>, autofocus: Bool = false) {
+    init(
+        _ account: Binding<Account>,
+        path: Binding<NavigationPath> = .constant(NavigationPath()),
+        autofocus: Bool = false
+    ) {
         _account = account
+        _path = path
         self.autofocus = autofocus
     }
 
+    @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Binding private var account: Account
+    @Binding private var path: NavigationPath
     @State private var valueText: String = ""
     @State private var labelText: String = ""
     @FocusState private var isValueFocused: Bool
     @FocusState private var isLabelFocused: Bool
+    @State private var isSearching: Bool = false
     private let autofocus: Bool
 
-    private var emailAddress: EmailAddress? {
-        set {
-            if let newValue, newValue.value.isEmailAddress {
-                account.identities = [newValue]
-            } else {
-                account.identities = []
-            }
-        }
-        get { account.emailAddress }
+    private var isDisabled: Bool { !valueText.isEmailAddress || isSearching }
+
+    private func refreshEmailAddress() {
+        account.identities = [
+            EmailAddress(valueText, label: labelText)
+        ]
     }
 
-    private var isDisabled: Bool { !valueText.isEmailAddress }
+    private func autoconfigure() async {
+        accountManager.error = nil
+        isSearching = true
+        do {
+            account = try await account.autoconfigured()
+            path.append(AccountDestination.auto)
+        } catch {
+            accountManager.error = AccountError(error) ?? .autoconfig(error)
+        }
+        isSearching = false
+    }
 
     // MARK: View
     var body: some View {
@@ -56,12 +70,12 @@ struct AccountAddView: View {
                 #endif
                 .focused($isLabelFocused, equals: true)
                 .onSubmit {
-                    //Task { await search() }
+                    Task { await autoconfigure() }
                 }
             HStack {
                 Spacer()
-                NavigationLink(destination: {
-                    ContentUnavailableView("TBD", systemImage: "burst.fill")
+                Button(action: {
+                    Task { await autoconfigure() }
                 }) {
                     Text("next_button")
                         .padding(.horizontal, density: .compact)
@@ -71,22 +85,22 @@ struct AccountAddView: View {
             }
             Spacer()
             Spacer()
-            NavigationLink(destination: {
-                ContentUnavailableView("TBD", systemImage: "burst.fill")
+            Button(action: {
+                path.append(AccountDestination.edit)
             }) {
                 Text("account_server_manual_configuration")
             }
         }
-        .navigationTitle("Add Account")
+        .navigationTitle("add_account_header")
         .onChange(of: valueText) {
-
+            refreshEmailAddress()
         }
         .onChange(of: labelText) {
-
+            refreshEmailAddress()
         }
         .onAppear {
-            valueText = emailAddress?.value ?? ""
-            labelText = emailAddress?.label ?? ""
+            valueText = account.emailAddress?.value ?? ""
+            labelText = account.emailAddress?.label ?? ""
             isValueFocused = autofocus
         }
         .padding(density: .default)
@@ -94,9 +108,12 @@ struct AccountAddView: View {
 }
 
 #Preview("Account Add View") {
+    @Previewable @State var accountManager: AccountManager = AccountManager()
     @Previewable @State var account: Account = Account("Pat Example <your.email@example.com>")
+    @Previewable @State var path: NavigationPath = NavigationPath()
 
-    NavigationStack {
-        AccountAddView($account)
+    NavigationStack(path: $path) {
+        AccountAddView($account, path: $path)
+            .environment(accountManager)
     }
 }

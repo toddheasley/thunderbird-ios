@@ -76,6 +76,7 @@
 "empty_inbox" = "Your inbox is empty";
 "new_messages_will_appear" = "New messages will appear here as they arrive";
 "add_another_account" = "Add another account";
+"add_account_header" = "Add Account";
 
 //Action buttons
 "delete_button" = "Delete";

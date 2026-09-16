@@ -15,7 +15,10 @@ struct AccountEditView: View {
 
     // MARK: View
     var body: some View {
-
+        ContentUnavailableView("EDIT", systemImage: "burst.fill")
+            .onAppear {
+                print(account.emailAddress?.description ?? "nil")
+            }
     }
 }
 
