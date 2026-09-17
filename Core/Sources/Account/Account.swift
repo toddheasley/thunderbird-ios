@@ -27,7 +27,7 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
     public var identities: [EmailAddress]
     public var servers: [Server]
     public var avatarColor: String
-    public var authConfig: OAuth2.Request?
+    public var authConfig: OAuth2.Configuration?
 
     public var incomingServer: Server? { server(.jmap) ?? server(.imap) ?? nil }
     public var outgoingServer: Server? { server(.jmap) ?? server(.smtp) ?? nil }
