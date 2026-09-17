@@ -5,9 +5,9 @@
 import Autoconfiguration
 import Foundation
 
-/// Thunderbird iOS specific OAuth2 Request objects for expected email providers
+/// Thunderbird-specific OAuth2 configuration objects for expected email providers
 /// > Note: TODO: Replace current Android ids and secrets with iOS specific ones as they are received
-extension OAuth2.Request: @retroactive CaseIterable {
+extension OAuth2.Configuration: @retroactive CaseIterable {
 
     // MARK: AOL
     static var aol: Self {
@@ -139,12 +139,12 @@ extension OAuth2.Request: @retroactive CaseIterable {
 }
 
 extension OAuth2 {
-    static func request(_ emailAddress: String) async throws -> Self.Request {
+    static func configuration(_ emailAddress: String) async throws -> Self.Configuration {
         let records: [MXRecord] = try await DNSResolver.queryMX(emailAddress)
         for record in records {
-            for request in Request.allCases {
-                guard request.matches(record.host) else { continue }
-                return request
+            for configuration in Configuration.allCases {
+                guard configuration.matches(record.host) else { continue }
+                return configuration
             }
         }
         throw URLError(.unsupportedURL)

@@ -95,7 +95,7 @@ public final class AccountManager {
         }
     }
 
-    private func renewExpiredToken(authConfig: OAuth2.Request, refreshToken: String, user: String, retry attempts: Int = 2) async throws -> Authorization {
+    private func renewExpiredToken(authConfig: OAuth2.Configuration, refreshToken: String, user: String, retry attempts: Int = 2) async throws -> Authorization {
         do {
             let tokenRequest: URLRequest = try .refreshToken(
                 authConfig,

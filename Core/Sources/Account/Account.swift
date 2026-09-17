@@ -27,11 +27,17 @@ public struct Account: Codable, Equatable, Hashable, Identifiable, Sendable {
     public var identities: [EmailAddress]
     public var servers: [Server]
     public var avatarColor: String
-    public var authConfig: OAuth2.Request?
+    public var autoconfigured: Source?
 
     public var incomingServer: Server? { server(.jmap) ?? server(.imap) ?? nil }
     public var outgoingServer: Server? { server(.jmap) ?? server(.smtp) ?? nil }
     public var emailAddress: EmailAddress? { identities.first }
+
+    public var authConfig: OAuth2.Configuration? {
+        get async throws {
+            fatalError()
+        }
+    }
 
     /// Store account credentials locally in the [Apple keychain.](https://developer.apple.com/documentation/security/storing-keys-in-the-keychain)
     public var authorization: Authorization {
@@ -115,15 +121,18 @@ extension Account {
             guard let emailAddress else {
                 throw AccountError.autoconfigRequiresEmail
             }
-            let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress.value).config
-            return Self(
+            let autoconfig: (ClientConfig, Source) = try await URLSession.shared.autoconfig(emailAddress.value)
+            var account: Self = Self(
                 name: emailAddress.value,
                 identities: [
                     emailAddress
                 ],
-                servers: (config.emailProvider?.servers ?? []).compactMap { Server($0) },
+                servers: (autoconfig.0.emailProvider?.servers ?? []).compactMap { Server($0) },
                 id: id
             )
+            // account.authConfig = try await OAuth2.configuration(emailAddress)
+            account.autoconfigured = autoconfig.1
+            return account
         } catch {
             throw AccountError.autoconfig(error)
         }

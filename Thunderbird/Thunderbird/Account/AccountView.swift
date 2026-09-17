@@ -46,3 +46,10 @@ struct AccountView: View {
         }
     }
 }
+
+#Preview("Account View") {
+    @Previewable @State var accountManager: AccountManager = AccountManager()
+
+    AccountView("Pat Example <example@thunderbird.net>")
+        .environment(accountManager)
+}

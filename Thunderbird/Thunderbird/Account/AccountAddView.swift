@@ -109,7 +109,7 @@ struct AccountAddView: View {
 
 #Preview("Account Add View") {
     @Previewable @State var accountManager: AccountManager = AccountManager()
-    @Previewable @State var account: Account = Account("Pat Example <your.email@example.com>")
+    @Previewable @State var account: Account = Account("Pat Example <example@thunderbird.net>")
     @Previewable @State var path: NavigationPath = NavigationPath()
 
     NavigationStack(path: $path) {

@@ -22,7 +22,7 @@ struct AccountInformation: View {
     @State private var error: Error?
     @State private var loginServer: Server = Server(.imap)
     @State private var loginAuth: Authorization = .none
-    @State private var loginAuthConfig: OAuth2.Request?
+    @State private var loginAuthConfig: OAuth2.Configuration?
 
     private func refreshAccount() {
         account = emailAddress.isEmailAddress ? Account(emailAddress) : nil
@@ -39,8 +39,7 @@ struct AccountInformation: View {
             .keyboardType(.emailAddress)
             .submitLabel(.search)
                 #endif
-            AutoconfigView($config, for: emailAddress)
-                .listRowSeparator(.hidden)
+            //AutoconfigView($config, for: emailAddress)
             if config != nil && account != nil {
                 Button(
                     action: {
@@ -73,7 +72,6 @@ struct AccountInformation: View {
                         incomingServerInfo.username = emailAddress
                         outgoingServerInfo.username = emailAddress
                         account.authorization = loginAuth
-                        account.authConfig = loginAuthConfig
                         account.servers = [incomingServerInfo, outgoingServerInfo]
                         accountManager.set(account)
                     }
@@ -101,7 +99,6 @@ struct AccountInformation: View {
                 action: {
                     account = Account("demoEmail@gmail.com")
                     guard var account = account else { return }
-                    account.authConfig = .google
                     account.authorization = loginAuth
                     accountManager.set(account)
                 }) {

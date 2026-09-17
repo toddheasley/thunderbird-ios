@@ -19,7 +19,6 @@ struct ManualServerSetup: View {
         self.incomingPort = tempAccount.incomingServer?.port
         self.outGoingHostname = tempAccount.outgoingServer?.hostname ?? ""
         self.outGoingPort = tempAccount.outgoingServer?.port
-        self.authConfig = tempAccount.authConfig
     }
 
     @Environment(AccountManager.self) private var accountManager: AccountManager
@@ -35,7 +34,7 @@ struct ManualServerSetup: View {
     @State private var manualConfig: Bool
     @State private var account: Account
     @State private var error: Error?
-    @State private var authConfig: OAuth2.Request?
+    @State private var authConfig: OAuth2.Configuration?
 
     // MARK: View
     var body: some View {
@@ -163,6 +162,9 @@ struct ManualServerSetup: View {
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
         #endif
         .navigationTitle("account_server_manual_configuration")
+        .task {
+            self.authConfig = try? await account.authConfig
+        }
     }
 }
 

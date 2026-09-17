@@ -13,6 +13,7 @@ struct AccountAutoView: View {
     }
 
     @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Environment(\.dismiss) private var dismiss: DismissAction
     @Binding private var account: Account
     @Binding private var path: NavigationPath
 
@@ -24,3 +25,14 @@ struct AccountAutoView: View {
             }
     }
 }
+
+/*
+let autoconfig: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig(emailAddress)
+isSearching = false
+config = autoconfig.config
+source = autoconfig.source */
+
+/*
+guard let account else { return }
+accountManager.set(account)
+dismiss() */
