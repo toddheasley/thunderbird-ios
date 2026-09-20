@@ -49,13 +49,14 @@ struct ManualServerSetup: View {
                                 .tag(authentication)
                         }
                     }
+                    /*
                     AuthorizationView(
                         $account.authorization,
                         error: $error,
                         for: incomingServer.username,
                         authenticationType: incomingServer.authenticationType,
                         authConfig: $authConfig
-                    )
+                    ) */
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)
@@ -73,13 +74,14 @@ struct ManualServerSetup: View {
                     .onChange(of: incomingServer.authenticationType, initial: true) {
 
                     }
+                    /*
                     AuthorizationView(
                         $account.authorization,
                         error: $error,
                         for: incomingServer.username,
                         authenticationType: incomingServer.authenticationType,
                         authConfig: $authConfig
-                    )
+                    ) */
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)
@@ -98,13 +100,14 @@ struct ManualServerSetup: View {
                     .onChange(of: incomingServer.authenticationType, initial: true) {
 
                     }
+                    /*
                     AuthorizationView(
                         $account.authorization,
                         error: $error,
                         for: outgoingServer.username,
                         authenticationType: outgoingServer.authenticationType,
                         authConfig: $authConfig
-                    )
+                    ) */
                     Toggle("account_server_settings_security_label", isOn: $outSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)

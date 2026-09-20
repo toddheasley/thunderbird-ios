@@ -25,7 +25,6 @@ struct ContentView: View {
                 isPresented = false
                 await accountManager.checkAndRenewExpirations()
             }
-            .error()
         }
     }
 }

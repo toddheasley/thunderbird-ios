@@ -7,21 +7,70 @@ import Core
 import SwiftUI
 
 struct AccountEditView: View {
-    @Binding private var account: Account
-
-    init(_ account: Binding<Account>) {
+    init(
+        _ account: Binding<Account>,
+        path: Binding<NavigationPath> = .constant(NavigationPath())
+    ) {
         _account = account
+        _path = path
     }
+
+    @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Binding private var account: Account
+    @Binding private var path: NavigationPath
 
     // MARK: View
     var body: some View {
-        ContentUnavailableView("EDIT", systemImage: "burst.fill")
-            .onAppear {
-                print(account.emailAddress?.description ?? "nil")
-            }
+        ScrollView {
+            ContentUnavailableView("EDIT", systemImage: "burst.fill")
+                .navigationTitle("edit_account_header")
+                .onAppear {
+                    print(account.emailAddress?.description ?? "nil")
+                }
+        }
     }
 }
 
+#Preview("Account Edit View") {
+    @Previewable @State var accountManager: AccountManager = AccountManager()
+    @Previewable @State var account: Account = Account("Pat Example <example@gmaail.com>")
+    @Previewable @State var path: NavigationPath = NavigationPath()
+
+    NavigationStack(path: $path) {
+        AccountEditView($account, path: $path)
+            .environment(accountManager)
+    }
+}
+
+struct ConnectionSecurityView: View {
+    init(_ connectionSecurity: Binding<Server.ConnectionSecurity>) {
+        _connectionSecurity = connectionSecurity
+    }
+
+    @Binding private var connectionSecurity: Server.ConnectionSecurity
+
+    // MARK: View
+    var body: some View {
+        Picker("account_server_settings_security_label", selection: $connectionSecurity) {
+            ForEach(Server.ConnectionSecurity.allCases, id: \.self) {
+                Text($0.description.capitalized(.sentence))
+            }
+        }
+        .formInput("account_server_settings_security_label", layout: .horizontal)
+    }
+}
+
+#Preview("Connection Security View") {
+    @Previewable @State var connectionSecurity: Server.ConnectionSecurity = .tls
+
+    ConnectionSecurityView($connectionSecurity)
+        .onChange(of: connectionSecurity, initial: true) {
+            print(connectionSecurity)
+        }
+        .padding()
+}
+
+/*
 struct _AccountEditView: View {
     var account: Account {
         Account(
@@ -155,12 +204,13 @@ struct _AccountEditView: View {
             .buttonStyle(.borderedProminent)
         }
         .sheet(isPresented: $isPresented) {
-            AccountTestView(account)
+            ContentUnavailableView("TBD", systemImage: "burst.fill")
+                // AccountTestView(account)
                 .presentationDragIndicator(.visible)
         }
         .error()
     }
-}
+} */
 
 struct ServerEditView: View {
     init(_ server: Binding<Server>) {
@@ -212,82 +262,6 @@ private extension Server {
     var titleKey: String {
         "\(serverProtocol.description.lowercased()).example.com"
     }
-}
-
-struct ConnectionSecurityView: View {
-    init(_ connectionSecurity: Binding<Server.ConnectionSecurity>) {
-        _connectionSecurity = connectionSecurity
-    }
-
-    @Binding private var connectionSecurity: Server.ConnectionSecurity
-
-    // MARK: View
-    var body: some View {
-        VStack {
-            HStack {
-                Text("Connection Security")
-                Spacer()
-            }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-            Picker("Connection Security", selection: $connectionSecurity) {
-                ForEach(Server.ConnectionSecurity.allCases, id: \.self) {
-                    Text($0.description.uppercased())
-                }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-        }
-        .padding(.vertical)
-    }
-}
-
-#Preview("ConnectionSecurityView") {
-    @Previewable @State var connectionSecurity: Server.ConnectionSecurity = .tls
-
-    ConnectionSecurityView($connectionSecurity)
-        .onChange(of: connectionSecurity, initial: true) {
-            print(connectionSecurity)
-        }
-        .padding()
-}
-
-struct AuthenticationTypeView: View {
-    init(_ authenticationType: Binding<AuthenticationType>) {
-        _authenticationType = authenticationType
-    }
-
-    @Binding private var authenticationType: AuthenticationType
-
-    // MARK: View
-    var body: some View {
-        VStack {
-            HStack {
-                Text("Authentication")
-                Spacer()
-            }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-            Picker("Authentication", selection: $authenticationType) {
-                ForEach(AuthenticationType.allCases, id: \.self) {
-                    Text($0.description.uppercased())
-                }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-        }
-        .padding(.vertical)
-    }
-}
-
-#Preview("AuthenticationTypeView") {
-    @Previewable @State var authenticationType: AuthenticationType = .oAuth2
-
-    AuthenticationTypeView($authenticationType)
-        .onChange(of: authenticationType, initial: true) {
-            print(authenticationType)
-        }
-        .padding()
 }
 
 struct AccountAuthorizationView: View {
@@ -344,50 +318,6 @@ struct AccountAuthorizationView: View {
         }
         .onChange(of: authorization, initial: true) {
             print(authorization)
-        }
-        .padding()
-}
-
-struct PasswordField: View {
-    let titleKey: LocalizedStringKey
-
-    init(_ titleKey: LocalizedStringKey = "Password", text: Binding<String>, isSecure: Bool = true) {
-        self.titleKey = titleKey
-        self.isSecure = isSecure
-        _text = text
-    }
-
-    @Binding private var text: String
-    @State private var isSecure: Bool
-
-    // MARK: View
-    var body: some View {
-        HStack(spacing: 10.0) {
-            ZStack(alignment: .trailing) {
-                SecureField(titleKey, text: $text)
-                    .monospaced()
-                    .opacity(isSecure ? 1.0 : 0.0)
-                TextField(titleKey, text: $text)
-                    .autoFormattingDisabled()
-                    .monospaced()
-                    .opacity(isSecure ? 0.0 : 1.0)
-            }
-            Button(action: {
-                isSecure.toggle()
-            }) {
-                Label("Toggle", systemImage: isSecure ? "eye.slash" : "eye.fill")
-                    .labelStyle(.iconOnly)
-            }
-        }
-    }
-}
-
-#Preview("PasswordField") {
-    @Previewable @State var text: String = "fake-appp-pass-word"
-
-    PasswordField(text: $text)
-        .onChange(of: text, initial: true) {
-            print(text)
         }
         .padding()
 }

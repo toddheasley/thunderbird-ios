@@ -13,26 +13,74 @@ struct AccountAutoView: View {
     }
 
     @Environment(AccountManager.self) private var accountManager: AccountManager
-    @Environment(\.dismiss) private var dismiss: DismissAction
     @Binding private var account: Account
     @Binding private var path: NavigationPath
+    @State private var jmapAccount: Account? = nil
+    @State private var isRefreshing: Bool = false
+    @State private var isJMAPSelected: Bool = false
+    @State private var isAutoSelected: Bool = true
+    @State private var error: Error? = nil {
+        didSet { accountManager.error = error != nil ? AccountError(error!) : nil }
+    }
+
+    private func refresh() async {
+        accountManager.error = nil
+        isRefreshing = true
+        do {
+            jmapAccount = try? await account.jmapConfigured()
+            account = try await account.autoconfigured()
+        } catch {
+            accountManager.error = AccountError(error) ?? .autoconfig(error)
+        }
+        isRefreshing = false
+    }
 
     // MARK: View
     var body: some View {
-        ContentUnavailableView("AUTO", systemImage: "burst.fill")
-            .onAppear {
-                print(account.emailAddress?.description ?? "nil")
+        ScrollView {
+            VStack(spacing: .spacing(.compact)) {
+                Spacer()
+                if let jmapAccount {
+                    Toggle(isOn: $isJMAPSelected) {
+                        Text("JMAP: \(jmapAccount.id)")
+                    }
+                    .fullToggleStyle()
+                    .onChange(of: isJMAPSelected) {
+                        isAutoSelected = !isJMAPSelected
+                    }
+                }
+                Toggle(isOn: $isAutoSelected) {
+                    Text("AUTO: \(account.id)")
+                }
+                .fullToggleStyle()
+                .onChange(of: isAutoSelected) {
+                    isJMAPSelected = !isAutoSelected
+                }
+                .padding(.bottom, density: .compact)
+                .disabled(jmapAccount == nil)
+                AuthorizationView($account, error: $error, isEditable: false)
+                Spacer()
+                Spacer()
             }
+            .padding(density: .default)
+        }
+        .navigationTitle("auto_account_header")
+        .refreshable(action: {
+            await refresh()
+        })
+        .task {
+            await refresh()
+        }
     }
 }
 
-/*
-let autoconfig: (config: ClientConfig, source: Source) = try await URLSession.shared.autoconfig(emailAddress)
-isSearching = false
-config = autoconfig.config
-source = autoconfig.source */
+#Preview("Account Auto View") {
+    @Previewable @State var accountManager: AccountManager = AccountManager()
+    @Previewable @State var account: Account = .example
+    @Previewable @State var path: NavigationPath = NavigationPath()
 
-/*
-guard let account else { return }
-accountManager.set(account)
-dismiss() */
+    NavigationStack(path: $path) {
+        AccountAutoView($account, path: $path)
+            .environment(accountManager)
+    }
+}

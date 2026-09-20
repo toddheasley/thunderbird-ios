@@ -31,17 +31,24 @@ struct AccountView: View {
     // MARK: View
     var body: some View {
         NavigationStack(path: $path) {
-            switch destination {
-            case .edit:
-                AccountEditView($account)
-            default:
-                AccountAddView($account, path: $path, autofocus: true)
-                    .navigationDestination(for: AccountDestination.self) { destination in
-                        switch destination {
-                        case .auto: AccountAutoView($account, path: $path)
-                        default: AccountEditView($account)
+            ZStack {
+                switch destination {
+                case .edit:
+                    AccountEditView($account)
+                default:
+                    AccountAddView($account, path: $path, autofocus: true)
+                        .navigationDestination(for: AccountDestination.self) { destination in
+                            switch destination {
+                            case .auto: AccountAutoView($account, path: $path)
+                            default: AccountEditView($account)
+                            }
                         }
-                    }
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    CloseButton("close_button")
+                }
             }
         }
     }

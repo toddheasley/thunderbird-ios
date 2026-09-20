@@ -33,9 +33,23 @@ public struct Account: Codable, Equatable, Hashable, Identifiable, Sendable {
     public var outgoingServer: Server? { server(.jmap) ?? server(.smtp) ?? nil }
     public var emailAddress: EmailAddress? { identities.first }
 
+    public var authenticationType: AuthenticationType {
+        set {
+            servers = servers.map { server in
+                var server: Server = server
+                server.authenticationType = newValue
+                return server
+            }
+        }
+        get { servers.first?.authenticationType ?? .none }
+    }
+
     public var authConfig: OAuth2.Configuration? {
         get async throws {
-            fatalError()
+            guard let emailAddress else {
+                throw AccountError.emailAddressNotFound
+            }
+            return try await OAuth2.configuration(emailAddress.value)
         }
     }
 
@@ -107,7 +121,7 @@ public struct Account: Codable, Equatable, Hashable, Identifiable, Sendable {
 extension Account {
     /// Autoconfigure a new account from an email address `String`.
     public static func autoconfigured(_ emailAddress: String) async throws -> Self {
-        try await Self(EmailAddress(emailAddress)).autoconfigured()
+        try await autoconfigured(EmailAddress(emailAddress))
     }
 
     /// Autoconfigure a new account from an `EmailAddress`.
@@ -119,7 +133,7 @@ extension Account {
     public func autoconfigured() async throws -> Self {
         do {
             guard let emailAddress else {
-                throw AccountError.autoconfigRequiresEmail
+                throw AccountError.emailAddressNotFound
             }
             let autoconfig: (ClientConfig, Source) = try await URLSession.shared.autoconfig(emailAddress.value)
             var account: Self = Self(
@@ -130,12 +144,49 @@ extension Account {
                 servers: (autoconfig.0.emailProvider?.servers ?? []).compactMap { Server($0) },
                 id: id
             )
-            // account.authConfig = try await OAuth2.configuration(emailAddress)
-            account.autoconfigured = autoconfig.1
+            account.autoconfigured = autoconfig.1  // Source
             return account
         } catch {
             throw AccountError.autoconfig(error)
         }
+    }
+}
+
+extension Account {
+    /// Configure a new account to use JMAP if email address uses Fastmail.
+    public static func jmapConfigured(_ emailAddress: String) async throws -> Self {
+        try await jmapConfigured(EmailAddress(emailAddress))
+    }
+
+    /// Configure a new account to use JMAP if `EmailAddress` uses Fastmail.
+    public static func jmapConfigured(_ emailAddress: EmailAddress) async throws -> Self {
+        try await Self(emailAddress).jmapConfigured()
+    }
+
+    /// Recoonfigure an account to use JMAP if ``EmailAddress`` uses Fastmail.
+    public func jmapConfigured() async throws -> Self {
+        guard let emailAddress else {
+            throw AccountError.emailAddressNotFound
+        }
+        guard try await emailAddress.isFastmail else {
+            throw AccountError.emailAddressNotSupported  // Early JMAP support is exclusive to Fastmail
+        }
+        return Account(
+            name: name,
+            identities: [
+                emailAddress
+            ],
+            servers: [
+                Server(
+                    .jmap,
+                    connectionSecurity: .tls,
+                    authenticationType: .password,
+                    username: emailAddress.value,
+                    hostname: "api.fastmail.com"
+                )
+            ],
+            id: id
+        )
     }
 }
 
@@ -184,4 +235,17 @@ extension Account {
 
     // Share existing IMAP and JMAP clients associated with account
     nonisolated(unsafe) private static var clients: [UUID: Any] = [:]
+}
+
+private extension EmailAddress {
+    var isFastmail: Bool {
+        get async throws {
+            let records: [MXRecord] = try await DNSResolver.queryMX(value)
+            for record in records {
+                guard record.host.hasSuffix("messagingengine.com") else { continue }
+                return true
+            }
+            return false
+        }
+    }
 }

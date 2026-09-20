@@ -57,6 +57,7 @@ struct AccountInformation: View {
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
                     .buttonStyle(.plain)
+                /*
                 if account?.incomingServer?.authenticationType != nil {
                     AuthorizationView(
                         $loginAuth,
@@ -75,7 +76,7 @@ struct AccountInformation: View {
                         account.servers = [incomingServerInfo, outgoingServerInfo]
                         accountManager.set(account)
                     }
-                }
+                } */
             }
             if error != nil || showManual {
                 Button(

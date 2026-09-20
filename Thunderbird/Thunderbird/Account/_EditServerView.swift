@@ -76,12 +76,12 @@ struct EditServerView: View {
 
                 }
             }
-            AuthorizationView(
+            /* AuthorizationView(
                 $account.authorization,
                 error: $error,
                 for: server.username,
                 authenticationType: server.authenticationType,
-            )
+            ) */
         }
         .textFieldStyle(.roundedBorder)
         #if os(iOS)

@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Account
+import BoltUI
 import SwiftUI
 
 struct ManualAccount: View {
@@ -19,12 +20,8 @@ struct ManualAccount: View {
                 .environment(accountManager)
                 .toolbarRole(.editor)
                 .toolbar {
-                    ToolbarItem(id: "navBar", placement: .cancellationAction) {
-                        Button(
-                            "close_button", systemImage: "xmark",
-                            action: {
-                                dismiss()
-                            })
+                    ToolbarItem(placement: .cancellationAction) {
+                        CloseButton("close_button")
                     }
                 }
                 .onChange(of: accountManager.allAccounts.count) {

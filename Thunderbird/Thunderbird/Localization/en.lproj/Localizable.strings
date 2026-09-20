@@ -17,7 +17,7 @@
 "account_server_settings_email_address_label" = "Email Address";
 "account_server_settings_email_label_label" = "Name";
 "account_server_settings_protocol_type_label" = "Protocol";
-"account_server_settings_security_label" = "Use SSL/TLS";
+"account_server_settings_security_label" = "Connection Security";
 "account_server_settings_port_label" = "Port";
 "imap_text" = "Internet Mail Access Protocol";
 "imap" = "IMAP";
@@ -77,6 +77,8 @@
 "new_messages_will_appear" = "New messages will appear here as they arrive";
 "add_another_account" = "Add another account";
 "add_account_header" = "Add Account";
+"auto_account_header" = "Connect Account";
+"edit_account_header" = "Configure Account";
 
 //Action buttons
 "delete_button" = "Delete";

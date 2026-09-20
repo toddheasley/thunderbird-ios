@@ -137,16 +137,3 @@ extension OAuth2.Configuration: @retroactive CaseIterable {
         ]
     }
 }
-
-extension OAuth2 {
-    static func configuration(_ emailAddress: String) async throws -> Self.Configuration {
-        let records: [MXRecord] = try await DNSResolver.queryMX(emailAddress)
-        for record in records {
-            for configuration in Configuration.allCases {
-                guard configuration.matches(record.host) else { continue }
-                return configuration
-            }
-        }
-        throw URLError(.unsupportedURL)
-    }
-}
