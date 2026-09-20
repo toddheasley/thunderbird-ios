@@ -105,19 +105,17 @@ struct ReadEmailView: View {
                         }
                     }
                     ToolbarItem(placement: .bottom) {
-                        Button(action: {
-                            AlertManager.shared.showAlert = true
-                            AlertManager.shared.alertTitle = "Reply"
-                        }) {
+                        NavigationLink {
+                            ComposeView(email: email.asEmail().asReply(all: false))
+                        } label: {
                             Image(systemName: "arrowshape.turn.up.left")
                                 .foregroundStyle(.foreground)
                         }
                     }
                     ToolbarItem(placement: .bottom) {
-                        Button(action: {
-                            AlertManager.shared.showAlert = true
-                            AlertManager.shared.alertTitle = "Reply All"
-                        }) {
+                        NavigationLink {
+                            ComposeView(email: email.asEmail().asReply(all: true))
+                        } label: {
                             Image(systemName: "arrowshape.turn.up.left.2")
                                 .foregroundStyle(.foreground)
                         }
