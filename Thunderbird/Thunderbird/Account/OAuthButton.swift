@@ -27,6 +27,7 @@ struct OAuthButton: View {
                 throw AccountError.emailAddressNotFound
             }
             authConfig = try await OAuth2.configuration(emailAddress.value)
+
         } catch {
             self.error = error
         }

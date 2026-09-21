@@ -6,7 +6,6 @@ import Autoconfiguration
 import Foundation
 
 /// Thunderbird-specific OAuth2 configuration objects for expected email providers
-/// > Note: TODO: Replace current Android ids and secrets with iOS specific ones as they are received
 extension OAuth2.Configuration: @retroactive CaseIterable {
 
     // MARK: AOL
@@ -14,14 +13,16 @@ extension OAuth2.Configuration: @retroactive CaseIterable {
         try! Self(
             authURI: "https://api.login.aol.com/oauth2/request_auth",
             tokenURI: "https://api.login.aol.com/oauth2/get_token",
-            redirectURI: "\(Bundle.main.schemes.first!)://oauth2redirect",
+            redirectURI: "\(Bundle.main.schemes.first!)://oauth2",
             responseType: "code",
             scope: [
                 "mail-w"
             ],
-            clientID: "dj0yJmk9MVJGcHpSejNUcTU3JmQ9WVdrOWMwMHhjSFZqTkhRbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWNk",
+            clientID: "dj0yJmk9aVN2UzU1S3N6UWlGJmQ9WVdrOVRXTnlla056U2swbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PTBi",
             hosts: [
-                "aol.com"
+                "imap.mail.aol.com",
+                "smtp.mail.aol.com",
+                "yahoodns.net"
             ]
         )
     }
@@ -113,14 +114,16 @@ extension OAuth2.Configuration: @retroactive CaseIterable {
         try! Self(
             authURI: "https://api.login.yahoo.com/oauth2/request_auth",
             tokenURI: "https://api.login.yahoo.com/oauth2/get_token",
-            redirectURI: "\(Bundle.main.schemes.first!)://oauth2redirect",
+            redirectURI: "\(Bundle.main.schemes.first!)://oauth2",
             responseType: "code",
             scope: [
                 "mail-w"
             ],
-            clientID: "dj0yJmk9bXRhTkZod2xmY3JrJmQ9WVdrOVUyUTRXRGQ0Tlc4bWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PTkx",
+            clientID: "dj0yJmk9emZqcDA4Q2w3QW9GJmQ9WVdrOVpYaG9Vak5KYjA4bWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PTA4",
             hosts: [
-                "yahoo.com"
+                "imap.mail.yahoo.com",
+                "smtp.mail.yahoo.com",
+                "yahoodns.net"
             ]
         )
     }

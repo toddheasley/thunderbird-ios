@@ -29,6 +29,7 @@ struct AccountInformation: View {
         guard let account = account else { return }
         guard let incomingServer = account.incomingServer else { return }
         loginServer = incomingServer
+        loginAuthConfig = account.authConfig
         loginAuth = account.authorization
     }
 
@@ -114,7 +115,7 @@ struct AccountInformation: View {
                 .buttonStyle(.borderedProminent)
         }
         .onChange(of: emailAddress, initial: true) {
-            refreshAccount()
+            config = nil
         }
         .onChange(of: config, initial: true) {
             refreshAccount()

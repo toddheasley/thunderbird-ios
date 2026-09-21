@@ -6,6 +6,26 @@ import Foundation
 import CryptoKit
 
 public struct OAuth2: Decodable {
+    public let authURL: URL
+    public let tokenURL: URL
+    public let scope: [String]
+    public let issuer: String
+
+    // MARK: Codable
+    public init(from decoder: any Decoder) throws {
+        let container: KeyedDecodingContainer = try decoder.container(keyedBy: Key.self)
+        self.tokenURL = try container.decode(URL.self, forKey: .tokenURL)
+        self.authURL = try container.decode(URL.self, forKey: .authURL)
+        self.issuer = try container.decode(String.self, forKey: .issuer)
+        self.scope = try container.decode(String.self, forKey: .scope).components(separatedBy: " ")
+    }
+
+    private enum Key: CodingKey {
+        case authURL, issuer, scope, tokenURL
+    }
+}
+
+extension OAuth2 {
     public struct PKCE: Equatable, Sendable {
         public let codeVerifier: String
         public let codeChallenge: String
