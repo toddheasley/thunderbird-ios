@@ -224,6 +224,7 @@ struct SenderView: View {
         toText = email.to
         date = email.dateSent
         replyTo = email.reply
+        fullEmail = email
     }
     private var from: [EmailAddress]
     private var sender: [EmailAddress]
@@ -231,6 +232,7 @@ struct SenderView: View {
     private var recipients: [EmailAddress]
     private var toText: [EmailAddress]
     private var date: Date
+    private var fullEmail: TempEmail
     @State private var showSenderRecipientInfo = false
     @State private var showEmailOptions = false
 
@@ -294,11 +296,11 @@ struct SenderView: View {
                         action: {
 
                         })
-                    Button(
-                        "edit_as_new_button",
-                        action: {
-
-                        })
+                    NavigationLink {
+                        ComposeView(email: fullEmail.asEmail())
+                    } label: {
+                        Text("edit_as_new_button")
+                    }
 
                 } label: {
                     Label("options_button", systemImage: "ellipsis")
