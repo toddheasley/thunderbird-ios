@@ -68,7 +68,7 @@ struct EmailListView: View {
                             .foregroundStyle(.black)
                         Spacer()
                     }.accessibilityHidden(showDrawer)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     VStack {
                         List(tempEmails, id: \.uuid, selection: $selections) { email in
@@ -109,13 +109,13 @@ struct EmailListView: View {
                         .foregroundColor(.muted)
                         .clipShape(Circle())
                 }.background(.clear)
-                .accessibilityHidden(showDrawer)
-                .padding()
-                .navigationDestination(for: String.self) { destination in
-                    if destination == "compose" {
-                        ComposeView()
+                    .accessibilityHidden(showDrawer)
+                    .padding()
+                    .navigationDestination(for: String.self) { destination in
+                        if destination == "compose" {
+                            ComposeView()
+                        }
                     }
-                }
                 DrawerView(showDrawer: $showDrawer)
                     .accessibilityHidden(!showDrawer)
             }
