@@ -12,6 +12,7 @@ struct AccountAutoView: View {
         _path = path
     }
 
+    @Environment(\.dismiss) private var dismiss: DismissAction
     @Environment(AccountManager.self) private var accountManager: AccountManager
     @Binding private var account: Account
     @Binding private var path: NavigationPath
@@ -19,6 +20,7 @@ struct AccountAutoView: View {
     @State private var isRefreshing: Bool = false
     @State private var isJMAPSelected: Bool = false
     @State private var isAutoSelected: Bool = true
+    @State private var isPresented: Bool = false
     @State private var error: Error? = nil {
         didSet { accountManager.error = error != nil ? AccountError(error!) : nil }
     }
@@ -35,14 +37,31 @@ struct AccountAutoView: View {
         isRefreshing = false
     }
 
+    private func save() {
+        if isJMAPSelected, let jmapAccount {
+            accountManager.set(jmapAccount)
+        } else {
+            accountManager.set(account)
+        }
+        dismiss()
+    }
+
+    private func test() {
+        isPresented = true
+    }
+
     // MARK: View
     var body: some View {
         ScrollView {
-            VStack(spacing: .spacing(.compact)) {
-                Spacer()
+            VStack(alignment: .leading, spacing: .spacing()) {
+                Text(account.emailAddress?.description ?? "")
+                    .bold()
                 if let jmapAccount {
                     Toggle(isOn: $isJMAPSelected) {
-                        Text("JMAP: \(jmapAccount.id)")
+                        ConfigurationView(jmapAccount) {
+                            self.account = jmapAccount
+                            path.append(AccountDestination.edit)
+                        }
                     }
                     .fullToggleStyle()
                     .onChange(of: isJMAPSelected) {
@@ -50,21 +69,42 @@ struct AccountAutoView: View {
                     }
                 }
                 Toggle(isOn: $isAutoSelected) {
-                    Text("AUTO: \(account.id)")
+                    ConfigurationView(account) {
+                        path.append(AccountDestination.edit)
+                    }
                 }
                 .fullToggleStyle()
                 .onChange(of: isAutoSelected) {
-                    isJMAPSelected = !isAutoSelected
+                    if jmapAccount != nil {
+                        isJMAPSelected = !isAutoSelected
+                    } else {
+                        isAutoSelected = true
+                    }
                 }
-                .padding(.bottom, density: .compact)
-                .disabled(jmapAccount == nil)
                 AuthorizationView($account, error: $error, isEditable: false)
-                Spacer()
-                Spacer()
+                    .padding(.vertical, density: .compact)
+                Divider()
+                HStack {
+                    Spacer()
+                    AccountTestButton { test() }
+                        .buttonStyle(.bordered)
+                    AccountSaveButton { save() }
+                        .buttonStyle(.borderedProminent)
+                        .labelStyle(.titleOnly)
+                }
             }
             .padding(density: .default)
         }
         .navigationTitle("auto_account_header")
+        .toolbar {
+            AccountTestButton { test() }
+            AccountSaveButton { save() }
+                .buttonStyle(.borderedProminent)
+        }
+        .sheet(isPresented: $isPresented) {
+            AccountTestView(account)
+                .presentationDragIndicator(.visible)
+        }
         .refreshable(action: {
             await refresh()
         })
@@ -76,11 +116,58 @@ struct AccountAutoView: View {
 
 #Preview("Account Auto View") {
     @Previewable @State var accountManager: AccountManager = AccountManager()
-    @Previewable @State var account: Account = .example
+    @Previewable @State var account: Account = Account("Pat Example <example@fastmail.com>")
     @Previewable @State var path: NavigationPath = NavigationPath()
 
     NavigationStack(path: $path) {
         AccountAutoView($account, path: $path)
             .environment(accountManager)
+    }
+}
+
+struct ConfigurationView: View {
+    let account: Account
+
+    init(_ account: Account, action: @escaping @MainActor () -> Void = {}) {
+        self.account = account
+        self.action = action
+    }
+
+    private let action: () -> Void
+
+    // MARK: View
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(account.emailProtocol.titleKey)
+                .font(.headline)
+            ForEach(account.servers) { server in
+                Text("\(server.hostname):\(server.port)")
+                    .font(.subheadline)
+                    .monospaced()
+            }
+            Text(account.servers.first?.connectionSecurity.description ?? "")
+                .font(.subheadline)
+            Button(action: action) {
+                Text("account_server_edit_configuration")
+                    .font(.caption)
+            }
+            .padding(.top, density: .compact)
+        }
+    }
+}
+
+#Preview("Configuration View") {
+    @Previewable @State var account: Account = Account("example@thunderbird.net")
+
+    ConfigurationView(account)
+        .padding()
+}
+
+private extension Account.EmailProtocol {
+    var titleKey: LocalizedStringKey {
+        switch self {
+        case .imap: "imap"
+        case .jmap: "jmap"
+        }
     }
 }

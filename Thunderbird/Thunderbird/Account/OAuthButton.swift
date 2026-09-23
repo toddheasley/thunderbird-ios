@@ -72,7 +72,6 @@ struct OAuthButton: View {
                 response.accessToken,
                 Date(timeIntervalSinceNow: TimeInterval(response.expiresIn))
             )
-            account.authenticationType = .oAuth2
             account.authorization = .oauth(user: emailAddress.value, token: token, refresh: refreshToken)
         } catch {
             self.error = error
@@ -82,20 +81,23 @@ struct OAuthButton: View {
     // MARK: View
     var body: some View {
         HStack {
-            switch account.authorization {
-            case .oauth(_, let token, let refresh):
-                Text("\(token.description) / \(refresh.description)")
-            default:
-                Text("No token stored")
-            }
+            Text(account.oauthStatus.localizedStringKey)
             Spacer()
-            Button(action: {
-                Task { await authenticate() }
-            }) {
-                Text("account_oauth_sign_in_button")
+            switch account.oauthStatus {
+            case .validToken:
+                Button("account_sign_out_button", role: .destructive) {
+                    account.authorization = .none
+                }
+                .buttonStyle(.borderedProminent)
+            case .expiredToken, .emptyToken:
+                Button(action: {
+                    Task { await authenticate() }
+                }) {
+                    Text("account_oauth_sign_in_button")
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(authConfig == nil)
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(authConfig == nil)
         }
         .task {
             await configure()
@@ -113,7 +115,32 @@ struct OAuthButton: View {
     .padding()
 }
 
+private extension Account {
+    enum OAuthStatus {
+        case validToken
+        case expiredToken
+        case emptyToken
+
+        var localizedStringKey: LocalizedStringKey {
+            switch self {
+            case .validToken: "account_oauth_token_valid"
+            case .expiredToken: "account_oauth_token_expired"
+            case .emptyToken: "account_oauth_token_empty"
+            }
+        }
+    }
+
+    var oauthStatus: OAuthStatus {
+        switch authorization {
+        case .oauth: authorization.isExpired ? .expiredToken : .validToken
+        default: .emptyToken
+        }
+    }
+}
+
 private extension URL {
+    static let help: Self = Self(string: "https://support.mozilla.org/kb/tb-oauth")!
+
     var code: String {
         get throws {
             guard let queryItems: [URLQueryItem] = URLComponents(string: absoluteString)?.queryItems,

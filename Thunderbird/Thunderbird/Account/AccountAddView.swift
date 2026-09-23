@@ -52,7 +52,7 @@ struct AccountAddView: View {
         VStack(spacing: .spacing()) {
             Spacer()
             TextField("your.email@example.com", text: $valueText)
-                .formInput("account_server_settings_email_address_label", isRequired: true)
+                .formInput("account_server_settings_email_value_label", isRequired: true)
                 .autoFormattingDisabled()
                 #if os(iOS)
             .keyboardType(.emailAddress)

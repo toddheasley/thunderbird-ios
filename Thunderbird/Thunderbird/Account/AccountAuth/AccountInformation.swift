@@ -29,13 +29,13 @@ struct AccountInformation: View {
         guard let account = account else { return }
         guard let incomingServer = account.incomingServer else { return }
         loginServer = incomingServer
-        loginAuthConfig = account.authConfig
+        //loginAuthConfig = account.authConfig
         loginAuth = account.authorization
     }
 
     var body: some View {
         Form {
-            TextEntryWrapper("account_server_settings_email_address_label", "your.email@example.com", $emailAddress)
+            TextEntryWrapper("account_server_settings_email_value_label", "your.email@example.com", $emailAddress)
                 #if os(iOS)
             .keyboardType(.emailAddress)
             .submitLabel(.search)

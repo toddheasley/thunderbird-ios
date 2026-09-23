@@ -28,15 +28,11 @@ struct AuthorizationView: View {
             }
             switch account.authenticationType {
             case .oAuth2:
-                OAuthButton($account, error: $error) {
-                    print("OAUTH2")
-                }
+                OAuthButton($account, error: $error)
             case .password:
-                PasswordView($password) {
-                    print("PASSWORD")
-                }
-                .onChange(of: password) { account.password = password }
-                .onAppear { password = account.password }
+                PasswordField("account_server_settings_authentication_password_cleartext", text: $password)
+                    .onChange(of: password) { account.password = password }
+                    .onAppear { password = account.password }
             case .none:
                 EmptyView()
             }
@@ -50,6 +46,7 @@ struct AuthorizationView: View {
 
     AuthorizationView($account, error: $error)
         .padding()
+    Divider()
     AuthorizationView($account, error: $error, isEditable: false)
         .padding()
 }
@@ -82,39 +79,7 @@ struct AuthenticationTypeView: View {
         .padding()
 }
 
-struct PasswordView: View {
-    init(_ password: Binding<String>, action: @escaping () -> Void = {}) {
-        self.action = action
-        _password = password
-    }
-
-    @Binding private var password: String
-    private let action: () -> Void
-
-    // MARK: View
-    var body: some View {
-        HStack {
-            PasswordField("account_server_settings_authentication_password_cleartext", text: $password)
-                .padding(.trailing, density: .compact)
-            Spacer()
-            Button(action: action) {
-                Text("account_oauth_sign_in_button")
-            }
-            .buttonStyle(.borderedProminent)
-        }
-    }
-}
-
-#Preview("Password View") {
-    @Previewable @State var password: String = "correct horse battery staple"
-
-    PasswordView($password) {
-        print(password)
-    }
-    .padding()
-}
-
-extension Account {
+private extension Account {
     static var example: Self {
         Account(
             identities: [
@@ -125,9 +90,7 @@ extension Account {
             ]
         )
     }
-}
 
-private extension Account {
     var password: String {
         set {
             guard let emailAddress else { return }

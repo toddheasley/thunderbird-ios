@@ -11,8 +11,8 @@
 import Foundation
 
 public struct Account: Codable, Equatable, Hashable, Identifiable, Sendable {
-    public enum EmailProtocol: String, CaseIterable, CustomStringConvertible, Identifiable {
-        case imap = "IMAP/SMTP"
+    public enum EmailProtocol: String, CaseIterable, CustomStringConvertible, Identifiable, Sendable {
+        case imap = "IMAP"
         case jmap = "JMAP"
 
         // MARK: CustomStringConvertible
@@ -32,17 +32,7 @@ public struct Account: Codable, Equatable, Hashable, Identifiable, Sendable {
     public var incomingServer: Server? { server(.jmap) ?? server(.imap) ?? nil }
     public var outgoingServer: Server? { server(.jmap) ?? server(.smtp) ?? nil }
     public var emailAddress: EmailAddress? { identities.first }
-
-    public var authenticationType: AuthenticationType {
-        set {
-            servers = servers.map { server in
-                var server: Server = server
-                server.authenticationType = newValue
-                return server
-            }
-        }
-        get { servers.first?.authenticationType ?? .none }
-    }
+    public private(set) var authChanged: Date?
 
     public var authConfig: OAuth2.Configuration? {
         get async throws {
@@ -53,13 +43,27 @@ public struct Account: Codable, Equatable, Hashable, Identifiable, Sendable {
         }
     }
 
+    public var authenticationType: AuthenticationType {
+        set {
+            servers = servers.map { server in
+                var server: Server = server
+                server.authenticationType = newValue
+                return server
+            }
+            authChanged = .now
+        }
+        get { servers.first?.authenticationType ?? .none }
+    }
+
     /// Store account credentials locally in the [Apple keychain.](https://developer.apple.com/documentation/security/storing-keys-in-the-keychain)
     public var authorization: Authorization {
         set {
             guard let user: String = emailAddress?.value, !user.isEmpty else { return }
             URLCredentialStorage.shared.deleteAuthorization(for: user)
+            authChanged = .now
             guard !newValue.password.isEmpty else { return }
             URLCredentialStorage.shared.set(authorization: Authorization(user: user, password: newValue.password), persistence: .permanent)
+            authChanged = .now
         }
         get {
             guard let user: String = emailAddress?.value, !user.isEmpty,

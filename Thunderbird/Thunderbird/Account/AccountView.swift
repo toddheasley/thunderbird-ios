@@ -60,3 +60,47 @@ struct AccountView: View {
     AccountView("Pat Example <example@thunderbird.net>")
         .environment(accountManager)
 }
+
+struct AccountSaveButton: View {
+    init(action: @escaping () -> Void) {
+        self.action = action
+    }
+
+    private let action: () -> Void
+
+    // MARK: View
+    var body: some View {
+        Button(action: action) {
+            Label("save_button", systemImage: "checkmark")
+        }
+    }
+}
+
+#Preview("Account Save Button") {
+    AccountSaveButton {
+        print("Save")
+    }
+    .padding()
+}
+
+struct AccountTestButton: View {
+    init(action: @escaping () -> Void) {
+        self.action = action
+    }
+
+    private let action: () -> Void
+
+    // MARK: View
+    var body: some View {
+        Button(action: action) {
+            Label("test_button", systemImage: "stethoscope")
+        }
+    }
+}
+
+#Preview("Account Test Button") {
+    AccountTestButton {
+        print("Test")
+    }
+    .padding()
+}
