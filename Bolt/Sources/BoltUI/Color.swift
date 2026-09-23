@@ -15,6 +15,39 @@ extension Color {
         let resolved: (Resolved, Resolved) = (resolve(for: .light), resolve(for: .dark))
         return (resolved.0, resolved.1 != resolved.0 ? resolved.1 : nil)
     }
+
+    // Programmatically create SwiftUI dynamic color
+    init(_ any: Self, _ dark: Self? = nil) {
+        #if os(watchOS)
+        self = dark ?? any  // Apple Watch uses dark color, if available
+        #else
+        if let dark, dark != any {
+            #if canImport(AppKit)
+            self.init(
+                nsColor: NSColor(name: nil) { appearance in
+                    switch appearance.name {
+                    case .darkAqua:
+                        return NSColor(dark)
+                    default:
+                        return NSColor(any)
+                    }
+                })
+            #elseif canImport(UIKit)
+            self.init(
+                uiColor: UIColor { traits in
+                    switch traits.userInterfaceStyle {
+                    case .dark:
+                        return UIColor(dark)
+                    default:
+                        return UIColor(any)
+                    }
+                })
+            #endif
+        } else {
+            self = any
+        }
+        #endif
+    }
 }
 
 private extension EnvironmentValues {
