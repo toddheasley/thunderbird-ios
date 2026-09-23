@@ -31,8 +31,9 @@ struct EmailBodyView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             ScrollView {
-                ComposeHeaderView(email: email)
-
+                if (editable) {
+                    ComposeHeaderView(email: email)
+                }
                 RichHTMLEditor(html: $html, selection: $selection, editable: editable, textAttributes: textAttributes)
                     .handleLinkOpening(perform: { URL in
                         Task { @MainActor in
