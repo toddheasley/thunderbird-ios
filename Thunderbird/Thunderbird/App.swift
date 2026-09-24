@@ -7,6 +7,10 @@ import SwiftUI
 
 @main
 struct App: SwiftUI.App {
+    init() {
+        OAuth2.configurations = OAuth2.Configuration.allCases
+    }
+
     @State private var accountManager: AccountManager = AccountManager()
     @State private var mailboxManager: UnifiedMailboxManager = UnifiedMailboxManager()
     @State private var featureFlags: FeatureFlags = FeatureFlags(distribution: .current)

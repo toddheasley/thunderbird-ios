@@ -19,7 +19,6 @@ struct ManualServerSetup: View {
         self.incomingPort = tempAccount.incomingServer?.port
         self.outGoingHostname = tempAccount.outgoingServer?.hostname ?? ""
         self.outGoingPort = tempAccount.outgoingServer?.port
-        self.authConfig = tempAccount.authConfig
     }
 
     @Environment(AccountManager.self) private var accountManager: AccountManager
@@ -35,7 +34,6 @@ struct ManualServerSetup: View {
     @State private var manualConfig: Bool
     @State private var account: Account
     @State private var error: Error?
-    @State private var authConfig: OAuth2.Configuration?
 
     // MARK: View
     var body: some View {
@@ -50,13 +48,7 @@ struct ManualServerSetup: View {
                                 .tag(authentication)
                         }
                     }
-                    AuthorizationView(
-                        $account.authorization,
-                        error: $error,
-                        for: incomingServer.username,
-                        authenticationType: incomingServer.authenticationType,
-                        authConfig: $authConfig
-                    )
+                    AuthorizationView($account, error: $error, isEditable: true)
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)
@@ -74,13 +66,7 @@ struct ManualServerSetup: View {
                     .onChange(of: incomingServer.authenticationType, initial: true) {
 
                     }
-                    AuthorizationView(
-                        $account.authorization,
-                        error: $error,
-                        for: incomingServer.username,
-                        authenticationType: incomingServer.authenticationType,
-                        authConfig: $authConfig
-                    )
+                    AuthorizationView($account, error: $error, isEditable: true)
                     Toggle("account_server_settings_security_label", isOn: $inSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)
@@ -99,13 +85,7 @@ struct ManualServerSetup: View {
                     .onChange(of: incomingServer.authenticationType, initial: true) {
 
                     }
-                    AuthorizationView(
-                        $account.authorization,
-                        error: $error,
-                        for: outgoingServer.username,
-                        authenticationType: outgoingServer.authenticationType,
-                        authConfig: $authConfig
-                    )
+                    AuthorizationView($account, error: $error, isEditable: true)
                     Toggle("account_server_settings_security_label", isOn: $outSelectedSecurity)
                         .tint(.accent)
                         .listRowSeparator(.hidden)

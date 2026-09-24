@@ -8,7 +8,7 @@ import Testing
 
 struct URLRequestTests {
     @Test func token() throws {
-        let request: OAuth2.Configuration = try OAuth2.Configuration(
+        let configuration: OAuth2.Configuration = try OAuth2.Configuration(
             authURI: "https://example.com/authorize",
             tokenURI: "https://example.com/token",
             redirectURI: "com.example:/oauth2redirect",
@@ -23,7 +23,7 @@ struct URLRequestTests {
             ]
         )
         let pkce = OAuth2.PKCE(codeVerifier: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk")
-        let tokenRequest = try URLRequest.token(request, code: "0123456789", pkce: pkce)
+        let tokenRequest = try URLRequest.token(configuration, code: "0123456789", pkce: pkce)
 
         #expect(tokenRequest.httpMethod == "POST")
         #expect(
@@ -35,7 +35,7 @@ struct URLRequestTests {
     }
 
     @Test func refreshToken() async throws {
-        let request: OAuth2.Configuration = try OAuth2.Configuration(
+        let configuration: OAuth2.Configuration = try OAuth2.Configuration(
             authURI: "https://example.com/authorize",
             tokenURI: "https://example.com/token",
             redirectURI: "com.example:/oauth2redirect",
@@ -49,7 +49,7 @@ struct URLRequestTests {
                 "examplemail.com"
             ]
         )
-        let tokenRequest = try URLRequest.refreshToken(request, refreshToken: "0123456789")
+        let tokenRequest = try URLRequest.refreshToken(configuration, refreshToken: "0123456789")
         #expect(tokenRequest.httpMethod == "POST")
         #expect(
             tokenRequest.httpBody

@@ -88,9 +88,6 @@ extension IMAP.Server {
         guard server.serverProtocol == .imap else {
             throw IMAPError.serverProtocolMismatch
         }
-        guard server.authenticationType != .oAuth2 else {
-            throw IMAPError.oAuth2NotSupported
-        }
         self.init(
             IMAP.ConnectionSecurity(server.connectionSecurity),
             hostname: server.hostname,
@@ -112,9 +109,6 @@ extension JMAP.Server {
     public init(_ server: Server, authorization: Authorization) throws {
         guard server.serverProtocol == .jmap else {
             throw JMAPError.serverProtocolMismatch
-        }
-        guard server.authenticationType != .oAuth2 else {
-            throw JMAPError.oAuth2NotSupported
         }
         self.init(authorization: .bearer(authorization.rawValue), host: server.hostname, port: server.port)
     }

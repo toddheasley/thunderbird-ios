@@ -10,9 +10,9 @@
 @_exported import SMTP
 import Foundation
 
-public struct Account: Codable, Equatable, Hashable, Identifiable {
-    public enum EmailProtocol: String, CaseIterable, CustomStringConvertible, Identifiable {
-        case imap = "IMAP/SMTP"
+public struct Account: Codable, Equatable, Hashable, Identifiable, Sendable {
+    public enum EmailProtocol: String, CaseIterable, CustomStringConvertible, Identifiable, Sendable {
+        case imap = "IMAP"
         case jmap = "JMAP"
 
         // MARK: CustomStringConvertible
@@ -27,19 +27,43 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
     public var identities: [EmailAddress]
     public var servers: [Server]
     public var avatarColor: String
-    public var authConfig: OAuth2.Configuration?
+    public var autoconfigured: Source?
 
     public var incomingServer: Server? { server(.jmap) ?? server(.imap) ?? nil }
     public var outgoingServer: Server? { server(.jmap) ?? server(.smtp) ?? nil }
     public var emailAddress: EmailAddress? { identities.first }
+    public private(set) var authChanged: Date?
+
+    public var authConfig: OAuth2.Configuration? {
+        get async throws {
+            guard let emailAddress else {
+                throw AccountError.emailAddressNotFound
+            }
+            return try await OAuth2.configuration(emailAddress.value)
+        }
+    }
+
+    public var authenticationType: AuthenticationType {
+        set {
+            servers = servers.map { server in
+                var server: Server = server
+                server.authenticationType = newValue
+                return server
+            }
+            authChanged = .now
+        }
+        get { servers.first?.authenticationType ?? .none }
+    }
 
     /// Store account credentials locally in the [Apple keychain.](https://developer.apple.com/documentation/security/storing-keys-in-the-keychain)
     public var authorization: Authorization {
         set {
             guard let user: String = emailAddress?.value, !user.isEmpty else { return }
             URLCredentialStorage.shared.deleteAuthorization(for: user)
+            authChanged = .now
             guard !newValue.password.isEmpty else { return }
             URLCredentialStorage.shared.set(authorization: Authorization(user: user, password: newValue.password), persistence: .permanent)
+            authChanged = .now
         }
         get {
             guard let user: String = emailAddress?.value, !user.isEmpty,
@@ -64,25 +88,22 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
         servers.filter { $0.serverProtocol == serverProtocol }.first
     }
 
-    /// Configure an `Account` using ``Autoconfiguration.EmailProvider``.
-    public init(_ emailAddress: String, provider: EmailProvider? = nil) {
-        self.init(EmailAddress(emailAddress), provider: provider)
+    public init(_ emailAddress: String) {
+        self.init(EmailAddress(emailAddress))
     }
 
-    /// Configure an `Account` using ``Autoconfiguration.EmailProvider``.
-    public init(_ emailAddress: EmailAddress, provider: EmailProvider? = nil) {
+    public init(_ emailAddress: EmailAddress) {
         self.init(
             name: emailAddress.value,
             identities: [
                 emailAddress
-            ],
-            servers: (provider?.servers ?? []).compactMap { Server($0) }
+            ]
         )
     }
 
     /// Configure an `Account` using memberwise initializer.
     public init(
-        name: String,
+        name: String = "",
         deletePolicy: DeletePolicy = .never,
         identities: [EmailAddress] = [],
         servers: [Server] = [],
@@ -102,33 +123,74 @@ public struct Account: Codable, Equatable, Hashable, Identifiable {
 }
 
 extension Account {
+    /// Autoconfigure a new account from an email address `String`.
+    public static func autoconfigured(_ emailAddress: String) async throws -> Self {
+        try await autoconfigured(EmailAddress(emailAddress))
+    }
 
-    /// Autoconfigure a new `Account`.
-    public static func autoconfig(_ emailAddress: String, isJMAPAvailable: Bool = false) async throws -> Self {
+    /// Autoconfigure a new account from an `EmailAddress`.
+    public static func autoconfigured(_ emailAddress: EmailAddress) async throws -> Self {
+        try await Self(emailAddress).autoconfigured()
+    }
+
+    /// Autoconfigure a new account using its ``EmailAddress``.
+    public func autoconfigured() async throws -> Self {
         do {
-            if isJMAPAvailable, try emailAddress.host == "fastmail.com" {
-                return Account(
-                    name: emailAddress,
-                    identities: [
-                        EmailAddress(emailAddress)
-                    ],
-                    servers: [
-                        Server(
-                            .jmap,
-                            connectionSecurity: .tls,
-                            authenticationType: .password,
-                            username: emailAddress,
-                            hostname: "api.fastmail.com"
-                        )
-                    ]
-                )
-            } else {
-                let config: ClientConfig = try await URLSession.shared.autoconfig(emailAddress).config
-                return Account(emailAddress, provider: config.emailProvider)
+            guard let emailAddress else {
+                throw AccountError.emailAddressNotFound
             }
+            let autoconfig: (ClientConfig, Source) = try await URLSession.shared.autoconfig(emailAddress.value)
+            var account: Self = Self(
+                name: emailAddress.value,
+                identities: [
+                    emailAddress
+                ],
+                servers: (autoconfig.0.emailProvider?.servers ?? []).compactMap { Server($0) },
+                id: id
+            )
+            account.autoconfigured = autoconfig.1  // Source
+            return account
         } catch {
             throw AccountError.autoconfig(error)
         }
+    }
+}
+
+extension Account {
+    /// Configure a new account to use JMAP if email address uses Fastmail.
+    public static func jmapConfigured(_ emailAddress: String) async throws -> Self {
+        try await jmapConfigured(EmailAddress(emailAddress))
+    }
+
+    /// Configure a new account to use JMAP if `EmailAddress` uses Fastmail.
+    public static func jmapConfigured(_ emailAddress: EmailAddress) async throws -> Self {
+        try await Self(emailAddress).jmapConfigured()
+    }
+
+    /// Recoonfigure an account to use JMAP if ``EmailAddress`` uses Fastmail.
+    public func jmapConfigured() async throws -> Self {
+        guard let emailAddress else {
+            throw AccountError.emailAddressNotFound
+        }
+        guard try await emailAddress.isFastmail else {
+            throw AccountError.emailAddressNotSupported  // Early JMAP support is exclusive to Fastmail
+        }
+        return Account(
+            name: name,
+            identities: [
+                emailAddress
+            ],
+            servers: [
+                Server(
+                    .jmap,
+                    connectionSecurity: .tls,
+                    authenticationType: .password,
+                    username: emailAddress.value,
+                    hostname: "api.fastmail.com"
+                )
+            ],
+            id: id
+        )
     }
 }
 
@@ -177,4 +239,17 @@ extension Account {
 
     // Share existing IMAP and JMAP clients associated with account
     nonisolated(unsafe) private static var clients: [UUID: Any] = [:]
+}
+
+private extension EmailAddress {
+    var isFastmail: Bool {
+        get async throws {
+            let records: [MXRecord] = try await DNSResolver.queryMX(value)
+            for record in records {
+                guard record.host.hasSuffix("messagingengine.com") else { continue }
+                return true
+            }
+            return false
+        }
+    }
 }

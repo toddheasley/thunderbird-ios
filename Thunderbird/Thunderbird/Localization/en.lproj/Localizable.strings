@@ -14,9 +14,15 @@
 "account_oauth_sign_in_description" = "We'll redirect you to your email provider to sign in. You need to grant the app access to your email account.";
 "account_oauth_loading_message" = "Signing in using OAuth";
 "account_oauth_loading_error" = "OAuth sign in failed";
-"account_server_settings_email_address_label" = "Email Address";
+"account_oauth_token_expired" = "OAuth token expired";
+"account_oauth_token_valid" = "OAuth token saved";
+"account_oauth_token_empty" = "OAuth token not found";
+"account_server_settings_name_label" = "Account Name";
+"account_server_settings_email_value_label" = "Email Address";
+"account_server_settings_email_label_label" = "Your Name";
 "account_server_settings_protocol_type_label" = "Protocol";
-"account_server_settings_security_label" = "Use SSL/TLS";
+"account_server_settings_security_label" = "Connection Security";
+"account_server_settings_host_label" = "Hostname";
 "account_server_settings_port_label" = "Port";
 "imap_text" = "Internet Mail Access Protocol";
 "imap" = "IMAP";
@@ -62,6 +68,8 @@
 
 // Other
 "next_button" = "Next";
+"save_button" = "Save";
+"test_button" = "Test";
 "donation_support" = "Donate";
 "close_button" = "Close";
 "all_remote_feature_flags" = "Allow remote feature flags";
@@ -75,6 +83,9 @@
 "empty_inbox" = "Your inbox is empty";
 "new_messages_will_appear" = "New messages will appear here as they arrive";
 "add_another_account" = "Add another account";
+"add_account_header" = "Add Account";
+"auto_account_header" = "Connect Account";
+"edit_account_header" = "Configure Account";
 
 //Action buttons
 "delete_button" = "Delete";

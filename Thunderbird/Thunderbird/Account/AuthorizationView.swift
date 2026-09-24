@@ -5,70 +5,102 @@
 import Account
 import AuthenticationServices
 import Autoconfiguration
+import BoltUI
 import SwiftUI
 
 struct AuthorizationView: View {
-    let username: String
-    let authenticationType: AuthenticationType
-
-    init(
-        _ authorization: Binding<Authorization>,
-        error: Binding<Error?>,
-        for username: String,
-        authenticationType: AuthenticationType = .oAuth2,
-        authConfig: Binding<OAuth2.Configuration?> = .constant(nil)
-    ) {
-        _authorization = authorization
-        _authConfig = authConfig
+    init(_ account: Binding<Account>, error: Binding<Error?> = .constant(nil), isEditable: Bool = true) {
+        self.isEditable = isEditable
+        _account = account
         _error = error
-        self.username = username
-        self.authenticationType = authenticationType
-        switch authorization.wrappedValue {
-        case .basic(_, let password):
-            self.password = password
-        case .oauth(_, let token, let refreshToken):
-            self.token = token
-            self.refreshToken = refreshToken
-        case .none:
-            break
-        }
     }
 
-    @Binding private var authorization: Authorization
-    @Binding private var authConfig: OAuth2.Configuration?
+    @Binding private var account: Account
     @Binding private var error: Error?
     @State private var password: String = ""
-    @State private var token: Token?
-    @State private var refreshToken: Token?
+    private let isEditable: Bool
 
     // MARK: View
     var body: some View {
-        switch authenticationType {
-        case .password:
-            SecureField("Password", text: $password)
-                .onChange(of: password) {
-                    authorization = .basic(user: username, password: password)
-                }
-        case .oAuth2:
-            OAuthButton(username, token: $token, refreshToken: $refreshToken, authConfig: $authConfig, error: $error)
-                .onChange(of: token, initial: true) {
-                    if let token, let refreshToken {
-                        authorization = .oauth(user: username, token: token, refresh: refreshToken)
-                    } else {
-                        authorization = .none
-                    }
-                }
-        case .none:
-            EmptyView()
+        VStack(spacing: .spacing(.compact)) {
+            if isEditable {
+                AuthenticationTypeView($account.authenticationType)
+            }
+            switch account.authenticationType {
+            case .oAuth2:
+                OAuthButton($account, error: $error)
+            case .password:
+                PasswordField("account_server_settings_authentication_password_cleartext", text: $password)
+                    .onChange(of: password) { account.password = password }
+                    .onAppear { password = account.password }
+            case .none:
+                EmptyView()
+            }
         }
     }
 }
 
 #Preview("Authorization View") {
-    @Previewable @State var authorization: Authorization = .none
+    @Previewable @State var account: Account = .example
     @Previewable @State var error: Error?
-    @Previewable @State var auth: OAuth2.Configuration? = .google
 
-    AuthorizationView($authorization, error: $error, for: "example@thunderbird.net", authConfig: $auth)
+    AuthorizationView($account, error: $error)
         .padding()
+    Divider()
+    AuthorizationView($account, error: $error, isEditable: false)
+        .padding()
+}
+
+struct AuthenticationTypeView: View {
+    init(_ authenticationType: Binding<AuthenticationType>) {
+        _authenticationType = authenticationType
+    }
+
+    @Binding private var authenticationType: AuthenticationType
+
+    // MARK: View
+    var body: some View {
+        Picker("account_server_settings_authentication_label", selection: $authenticationType) {
+            ForEach(AuthenticationType.allCases, id: \.self) {
+                Text($0.description.capitalized(.sentence))
+            }
+        }
+        .formInput("account_server_settings_authentication_label", layout: .horizontal)
+    }
+}
+
+#Preview("Authentication Type View") {
+    @Previewable @State var authenticationType: AuthenticationType = .oAuth2
+
+    AuthenticationTypeView($authenticationType)
+        .onChange(of: authenticationType, initial: true) {
+            print(authenticationType)
+        }
+        .padding()
+}
+
+private extension Account {
+    static var example: Self {
+        Account(
+            identities: [
+                "example@thunderbird.net"
+            ],
+            servers: [
+                Server(.imap, authenticationType: .oAuth2)
+            ]
+        )
+    }
+
+    var password: String {
+        set {
+            guard let emailAddress else { return }
+            authorization = .basic(user: emailAddress.value, password: newValue)
+        }
+        get {
+            switch authorization {
+            case .basic(_, let password): password
+            default: ""
+            }
+        }
+    }
 }
