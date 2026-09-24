@@ -20,7 +20,7 @@ struct AddAccountView: View {
     @State private var error: Error?
 
     private func refreshAccount() {
-        account = emailAddress.isEmailAddress ? Account(emailAddress, provider: config?.emailProvider) : nil
+        Task { account = try? await .autoconfigured(emailAddress) }
     }
 
     // MARK: View

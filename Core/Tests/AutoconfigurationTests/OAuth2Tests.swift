@@ -22,7 +22,7 @@ struct OAuth2Tests {
     }
 
     @Test func authURLIncludesPKCEChallenge() throws {
-        let request: OAuth2.Configuration = try OAuth2.Configuration(
+        let configuration: OAuth2.Configuration = try OAuth2.Configuration(
             authURI: "https://example.com/authorize",
             tokenURI: "https://example.com/token",
             redirectURI: "com.example:/oauth2redirect",
@@ -34,7 +34,7 @@ struct OAuth2Tests {
         )
         let pkce = OAuth2.PKCE(codeVerifier: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk")
         let queryItems = URLComponents(
-            url: request.authURL(hint: "user@example.com", pkce: pkce),
+            url: configuration.authURL(hint: "user@example.com", pkce: pkce),
             resolvingAgainstBaseURL: false
         )?.queryItems
 
@@ -44,7 +44,7 @@ struct OAuth2Tests {
     }
 
     @Test func matches() throws {
-        let request: OAuth2.Configuration = try OAuth2.Configuration(
+        let configuration: OAuth2.Configuration = try OAuth2.Configuration(
             authURI: "https://example.com/authorize",
             tokenURI: "https://example.com/token",
             redirectURI: "com.example:/oauth2redirect",
@@ -58,10 +58,10 @@ struct OAuth2Tests {
                 "examplemail.com"
             ]
         )
-        #expect(request.matches("google.com") == false)
-        #expect(request.matches("mail.example.com") == true)
-        #expect(request.matches("examplemail.com") == true)
-        #expect(request.matches("mail.com") == false)
+        #expect(configuration.matches("google.com") == false)
+        #expect(configuration.matches("mail.example.com") == true)
+        #expect(configuration.matches("examplemail.com") == true)
+        #expect(configuration.matches("mail.com") == false)
     }
     @Test func decoderInit() throws {
         let oauth2: [OAuth2] = try JSONDecoder().decode([OAuth2].self, from: data)
