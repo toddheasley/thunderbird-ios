@@ -14,7 +14,7 @@ struct ContentView: View {
         if accountManager.allAccounts.isEmpty {
             WelcomeScreen($isPresented)
                 .sheet(isPresented: $isPresented) {
-                    ManualAccount()
+                    AccountView()
                         .presentationDragIndicator(.visible)
                 }
         } else {
@@ -25,7 +25,6 @@ struct ContentView: View {
                 isPresented = false
                 await accountManager.checkAndRenewExpirations()
             }
-            .error()
         }
     }
 }
