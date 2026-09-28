@@ -22,41 +22,77 @@ struct AccountInformation: View {
     @State private var loginServer: Server = Server(.imap)
     @State private var loginAuth: Authorization = .none
 
+    private func autoconfigure() async {
+        accountManager.error = nil
+        do {
+            account = try await account.autoconfigured()
+        } catch {
+            accountManager.error = AccountError(error) ?? .autoconfig(error)
+        }
+    }
+
     var body: some View {
         Form {
-            TextEntryWrapper("account_server_settings_email_address_label", "your.email@example.com", $emailAddress)
+            TextEntryWrapper("account_server_settings_email_value_label", "your.email@example.com", $emailAddress)
                 #if os(iOS)
             .keyboardType(.emailAddress)
             .submitLabel(.search)
                 #endif
-                //AutoconfigView($config, for: emailAddress)
-                .listRowSeparator(.hidden)
+                .onChange(of: emailAddress) {
+                    account.identities = [
+                        EmailAddress(emailAddress)
+                    ]
+                    account.autoconfigured = nil
+                }
             Button(action: {
-                loginDetails.inProgressAccount = account
-                loginDetails.enteredEmail = emailAddress
-                path.append("ManualAccountSetup")
+                Task { await autoconfigure() }
             }) {
-                Text("account_server_edit_configuration")
-                    .padding(5.5)
-                    .frame(maxWidth: .infinity)
-                    .underline()
+                HStack {
+                    Spacer()
+                    Label("Search Configurations", systemImage: "magnifyingglass")
+                    Spacer()
+                }
+                .padding(5.5)
             }
-            .listRowBackground(Color.clear)
+            .buttonStyle(.borderedProminent)
+            .tint(.accent)
+            .disabled(!emailAddress.isEmailAddress)
             .listRowSeparator(.hidden)
-            .buttonStyle(.plain)
-            if account.incomingServer?.authenticationType != nil {
-                AuthorizationView($account, error: $error, isEditable: true)
-                    .onChange(of: loginAuth) {
-                        account.avatarColor = randomizeAvatarColor()
-                        var incomingServerInfo = account.incomingServer ?? Server(.imap)
-                        var outgoingServerInfo = account.outgoingServer ?? Server(.smtp)
-                        incomingServerInfo.username = emailAddress
-                        outgoingServerInfo.username = emailAddress
-                        account.authorization = loginAuth
-                        account.servers = [incomingServerInfo, outgoingServerInfo]
-                        accountManager.set(account)
+            if let source: Source = account.autoconfigured {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Label("Configuration found!", systemImage: "gearshape")
+                            .font(.headline)
+                        Spacer()
                     }
+                    HStack {
+                        Text("Source:")
+                            .bold()
+                        Text(source.description)
+                        Spacer()
+                    }
+                    .padding(.vertical)
+                    AuthorizationView($account, error: $error)
+                }
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 22.0)
+                        .fill(.gray.opacity(0.17))
+                }
+                .listRowSeparator(.hidden)
+                Button(action: {
+                    loginDetails.inProgressAccount = account
+                    loginDetails.enteredEmail = emailAddress
+                    path.append("ManualAccountSetup")
+                }) {
+                    Text("account_server_edit_configuration")
+                        .padding(.horizontal)
+                        .underline()
+                }
+                .listRowSeparator(.hidden)
             }
+            Spacer(minLength: 64.0)
+            // TYPE SELECTION FLOW
             if error != nil || showManual {
                 Button(
                     action: {
@@ -74,13 +110,12 @@ struct AccountInformation: View {
                     .listRowSeparator(.hidden)
                     .buttonStyle(.plain)
             }
-            //TEMP DEMO BUTTON
+            // TEMP DEMO BUTTON
             Button(action: {
                 Task {
-                    guard var account: Account = try? await .autoconfigured("demoEmail@gmail.com") else {
+                    guard let account: Account = try? await .autoconfigured("demoEmail@gmail.com") else {
                         return
                     }
-                    account.authorization = loginAuth
                     accountManager.set(account)
                 }
             }) {
@@ -94,11 +129,7 @@ struct AccountInformation: View {
             .listRowSeparator(.hidden)
             .buttonStyle(.borderedProminent)
         }
-        .scrollContentBackground(.hidden)
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
-        #endif
         .navigationTitle("account_server_information_title")
-
+        .scrollContentBackground(.hidden)
     }
 }

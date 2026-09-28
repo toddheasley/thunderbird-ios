@@ -72,26 +72,26 @@ public final class AccountManager {
     }
 
     public func checkAndRenewExpirations() async {
-        var updatedAccounts: [Account] = []
         for account in allAccounts {
-            let serverAuth: Authorization = account.authorization
-            guard account.incomingServer?.authenticationType == .oAuth2, serverAuth.isExpired else {
+            guard account.authenticationType == .oAuth2, account.authorization.isExpired,
+                let refreshToken: String = account.authorization.refreshToken,
+                let user: String = account.incomingServer?.username
+            else {
                 continue
             }
             do {
-                var account = account
+                var account: Account = account
+                guard let authConfig: OAuth2.Configuration = try await account.authConfig else {
+                    throw URLError(.unsupportedURL)
+                }
                 account.authorization = try await renewExpiredToken(
-                    authConfig: account.authConfig!,
-                    refreshToken: serverAuth.refreshToken!,
-                    user: serverAuth.user
+                    authConfig: authConfig,
+                    refreshToken: refreshToken,
+                    user: user
                 )
-                updatedAccounts.append(account)
             } catch {
                 self.error = .authorization(error)
             }
-        }
-        for account in updatedAccounts {
-            self.set(account)
         }
     }
 
