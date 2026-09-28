@@ -18,7 +18,8 @@ struct AccountView: View {
         self.init(Account(emailAddress))
     }
 
-    init(_ account: Account = Account()) {
+    init(_ account: Account? = nil) {
+        let account: Account = account ?? Account()
         self.account = account
         destination = account.servers.isEmpty ? .add : .edit
     }

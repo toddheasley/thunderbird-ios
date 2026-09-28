@@ -19,7 +19,8 @@ struct ContentView: View {
                 }
         } else {
             NavigationStack {
-                EmailListView()
+                // EmailListView()
+                AccountListView()
             }
             .task {
                 isPresented = false
