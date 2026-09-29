@@ -9,14 +9,16 @@ import SwiftUI
 struct AccountEditView: View {
     init(
         _ account: Binding<Account>,
-        path: Binding<NavigationPath> = .constant(NavigationPath())
+        path: Binding<NavigationPath> = .constant(NavigationPath()),
+        isPresented: Binding<Bool> = .constant(false)
     ) {
+        _isPresented = isPresented
         _account = account
         _path = path
     }
 
-    @Environment(\.dismiss) private var dismiss: DismissAction
     @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Binding private var isPresented: Bool
     @Binding private var account: Account
     @Binding private var path: NavigationPath
     @State private var jmapServer: Server = Server(.jmap)
@@ -26,7 +28,7 @@ struct AccountEditView: View {
     @State private var emailAddressLabel: String = ""
     @State private var emailAddressValue: String = ""
     @State private var name: String = ""
-    @State private var isPresented: Bool = false
+    @State private var isTesting: Bool = false
 
     @State private var error: Error? = nil {
         didSet { accountManager.error = error != nil ? AccountError(error!) : nil }
@@ -34,11 +36,11 @@ struct AccountEditView: View {
 
     private func save() {
         accountManager.set(account)
-        dismiss()
+        isPresented = false
     }
 
     private func test() {
-        isPresented = true
+        isTesting = true
     }
 
     // MARK: View
@@ -92,7 +94,7 @@ struct AccountEditView: View {
             AccountSaveButton { save() }
                 .buttonStyle(.borderedProminent)
         }
-        .sheet(isPresented: $isPresented) {
+        .sheet(isPresented: $isTesting) {
             AccountTestView(account)
                 .presentationDragIndicator(.visible)
         }

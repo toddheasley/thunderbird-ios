@@ -18,13 +18,15 @@ struct AccountView: View {
         self.init(Account(emailAddress))
     }
 
-    init(_ account: Account? = nil) {
+    init(_ account: Account? = nil, isPresented: Binding<Bool> = .constant(false)) {
+        _isPresented = isPresented
         let account: Account = account ?? Account()
         self.account = account
         destination = account.servers.isEmpty ? .add : .edit
     }
 
     @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Binding private var isPresented: Bool
     @State private var account: Account
     @State private var path: NavigationPath = NavigationPath()
     private let destination: AccountDestination
@@ -35,13 +37,13 @@ struct AccountView: View {
             ZStack {
                 switch destination {
                 case .edit:
-                    AccountEditView($account)
+                    AccountEditView($account, isPresented: $isPresented)
                 default:
                     AccountAddView($account, path: $path, autofocus: true)
                         .navigationDestination(for: AccountDestination.self) { destination in
                             switch destination {
-                            case .auto: AccountAutoView($account, path: $path)
-                            default: AccountEditView($account)
+                            case .auto: AccountAutoView($account, path: $path, isPresented: $isPresented)
+                            default: AccountEditView($account, isPresented: $isPresented)
                             }
                         }
                 }

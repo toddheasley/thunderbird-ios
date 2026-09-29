@@ -7,20 +7,25 @@ import Core
 import SwiftUI
 
 struct AccountAutoView: View {
-    init(_ account: Binding<Account>, path: Binding<NavigationPath> = .constant(NavigationPath())) {
+    init(
+        _ account: Binding<Account>,
+        path: Binding<NavigationPath> = .constant(NavigationPath()),
+        isPresented: Binding<Bool> = .constant(false)
+    ) {
+        _isPresented = isPresented
         _account = account
         _path = path
     }
 
-    @Environment(\.dismiss) private var dismiss: DismissAction
     @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Binding private var isPresented: Bool
     @Binding private var account: Account
     @Binding private var path: NavigationPath
     @State private var jmapAccount: Account? = nil
     @State private var isRefreshing: Bool = false
     @State private var isJMAPSelected: Bool = false
     @State private var isAutoSelected: Bool = true
-    @State private var isPresented: Bool = false
+    @State private var isTesting: Bool = false
     @State private var error: Error? = nil {
         didSet { accountManager.error = error != nil ? AccountError(error!) : nil }
     }
@@ -46,11 +51,11 @@ struct AccountAutoView: View {
 
     private func save() {
         accountManager.set(selectedAccount)
-        dismiss()
+        isPresented = false
     }
 
     private func test() {
-        isPresented = true
+        isTesting = true
     }
 
     // MARK: View
@@ -100,7 +105,7 @@ struct AccountAutoView: View {
             AccountSaveButton { save() }
                 .buttonStyle(.borderedProminent)
         }
-        .sheet(isPresented: $isPresented) {
+        .sheet(isPresented: $isTesting) {
             AccountTestView(selectedAccount)
                 .presentationDragIndicator(.visible)
         }

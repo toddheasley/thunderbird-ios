@@ -11,21 +11,21 @@ struct ContentView: View {
 
     // MARK: View
     var body: some View {
-        if accountManager.allAccounts.isEmpty {
-            WelcomeScreen($isPresented)
-                .sheet(isPresented: $isPresented) {
-                    AccountView()
-                        .presentationDragIndicator(.visible)
+        ZStack {
+            if accountManager.allAccounts.isEmpty {
+                WelcomeScreen($isPresented)
+            } else {
+                NavigationStack {
+                    AccountListView()
                 }
-        } else {
-            NavigationStack {
-                // EmailListView()
-                AccountListView()
             }
-            .task {
-                isPresented = false
-                await accountManager.checkAndRenewExpirations()
-            }
+        }
+        .sheet(isPresented: $isPresented) {
+            AccountView(isPresented: $isPresented)
+                .presentationDragIndicator(.visible)
+        }
+        .task {
+            await accountManager.checkAndRenewExpirations()
         }
     }
 }

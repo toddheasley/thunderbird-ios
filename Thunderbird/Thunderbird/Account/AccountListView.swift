@@ -48,7 +48,7 @@ struct AccountListView: View {
         }
         .sheet(isPresented: $isPresented, onDismiss: { account = nil }) {
             NavigationStack {
-                AccountView(account)
+                AccountView(account, isPresented: $isPresented)
             }
             .presentationDragIndicator(.visible)
         }
