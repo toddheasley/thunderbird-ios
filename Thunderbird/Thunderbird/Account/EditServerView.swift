@@ -76,12 +76,7 @@ struct EditServerView: View {
 
                 }
             }
-            AuthorizationView(
-                $account.authorization,
-                error: $error,
-                for: server.username,
-                authenticationType: server.authenticationType,
-            )
+            AuthorizationView($account, error: $error, isEditable: true)
         }
         .textFieldStyle(.roundedBorder)
         #if os(iOS)
