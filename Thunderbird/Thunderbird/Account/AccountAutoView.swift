@@ -25,6 +25,13 @@ struct AccountAutoView: View {
         didSet { accountManager.error = error != nil ? AccountError(error!) : nil }
     }
 
+    private var selectedAccount: Account {
+        if isJMAPSelected, let jmapAccount {
+            return jmapAccount
+        }
+        return account
+    }
+
     private func refresh() async {
         accountManager.error = nil
         isRefreshing = true
@@ -38,11 +45,7 @@ struct AccountAutoView: View {
     }
 
     private func save() {
-        if isJMAPSelected, let jmapAccount {
-            accountManager.set(jmapAccount)
-        } else {
-            accountManager.set(account)
-        }
+        accountManager.set(selectedAccount)
         dismiss()
     }
 
@@ -75,11 +78,7 @@ struct AccountAutoView: View {
                 }
                 .fullToggleStyle()
                 .onChange(of: isAutoSelected) {
-                    if jmapAccount != nil {
-                        isJMAPSelected = !isAutoSelected
-                    } else {
-                        isAutoSelected = true
-                    }
+                    isJMAPSelected = !isAutoSelected
                 }
                 AuthorizationView($account, error: $error)
                     .padding(.vertical, density: .compact)
@@ -102,7 +101,7 @@ struct AccountAutoView: View {
                 .buttonStyle(.borderedProminent)
         }
         .sheet(isPresented: $isPresented) {
-            AccountTestView(account)
+            AccountTestView(selectedAccount)
                 .presentationDragIndicator(.visible)
         }
         .refreshable(action: {
