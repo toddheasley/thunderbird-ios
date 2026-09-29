@@ -87,6 +87,9 @@ struct AccountAutoView: View {
                 }
                 AuthorizationView($account, error: $error)
                     .padding(.vertical, density: .compact)
+                    .onChange(of: account.authenticationType) {
+                        jmapAccount?.authenticationType = account.authenticationType
+                    }
                 Divider()
                 HStack {
                     Spacer()
