@@ -29,15 +29,8 @@ struct AccountTests {
 }
 
 extension AccountTests {
-    @Test func autoconfig() async throws {
-        var account: Account = try await .autoconfig("example@fastmail.com", isJMAPAvailable: true)
-        #expect(account.incomingServer?.serverProtocol == .jmap)
-        #expect(account.incomingServer?.hostname == "api.fastmail.com")
-        #expect(account.incomingServer?.port == 443)
-        #expect(account.outgoingServer?.serverProtocol == .jmap)
-        #expect(account.outgoingServer?.hostname == "api.fastmail.com")
-        #expect(account.outgoingServer?.port == 443)
-        account = try await .autoconfig("example@fastmail.com")
+    @Test func autoconfigured() async throws {
+        let account: Account = try await .autoconfigured("example@fastmail.com")
         #expect(account.incomingServer?.serverProtocol == .imap)
         #expect(account.incomingServer?.hostname == "imap.fastmail.com")
         #expect(account.incomingServer?.port == 993)
@@ -64,7 +57,7 @@ extension AccountTests {
 extension AccountTests {
     @Test(.enabled(if: isKeychainAvailable)) func authorization() async throws {
         URLCredentialStorage.shared.deleteAuthorizations()
-        var account: Account = try await .autoconfig("example@fastmail.com", isJMAPAvailable: true)
+        var account: Account = try await .autoconfigured("example@fastmail.com")
         #expect(account.authorization == .none)
         account.authorization =
             .oauth(

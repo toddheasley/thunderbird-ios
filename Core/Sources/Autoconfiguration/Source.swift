@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 /// Autoconfig locations to query, in order of trust: email provider subdomain or well-known, then ISPDB
-public enum Source: CaseIterable, CustomStringConvertible {
+public enum Source: String, CaseIterable, Codable, CustomStringConvertible, Sendable {
     case provider, wellKnown, ispDB  // Order of trust
 
     // MARK: CustomStringConvertible

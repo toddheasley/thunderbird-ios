@@ -6,26 +6,6 @@ import Foundation
 import CryptoKit
 
 public struct OAuth2: Decodable {
-    public let authURL: URL
-    public let tokenURL: URL
-    public let scope: [String]
-    public let issuer: String
-
-    // MARK: Codable
-    public init(from decoder: any Decoder) throws {
-        let container: KeyedDecodingContainer = try decoder.container(keyedBy: Key.self)
-        self.tokenURL = try container.decode(URL.self, forKey: .tokenURL)
-        self.authURL = try container.decode(URL.self, forKey: .authURL)
-        self.issuer = try container.decode(String.self, forKey: .issuer)
-        self.scope = try container.decode(String.self, forKey: .scope).components(separatedBy: " ")
-    }
-
-    private enum Key: CodingKey {
-        case authURL, issuer, scope, tokenURL
-    }
-}
-
-extension OAuth2 {
     public struct PKCE: Equatable, Sendable {
         public let codeVerifier: String
         public let codeChallenge: String
@@ -130,6 +110,38 @@ extension OAuth2 {
                 clientID: clientID
             )
         }
+    }
+
+    /// Configure with application-specific OAuth2 configurations.
+    nonisolated(unsafe) public static var configurations: [Configuration] = []
+
+    public static func configuration(_ emailAddress: String) async throws -> Self.Configuration {
+        let records: [MXRecord] = try await DNSResolver.queryMX(emailAddress)
+        for record in records {
+            for configuration in configurations {
+                guard configuration.matches(record.host) else { continue }
+                return configuration
+            }
+        }
+        throw URLError(.unsupportedURL)
+    }
+
+    public let authURL: URL
+    public let tokenURL: URL
+    public let scope: [String]
+    public let issuer: String
+
+    // MARK: Decodable
+    public init(from decoder: any Decoder) throws {
+        let container: KeyedDecodingContainer = try decoder.container(keyedBy: Key.self)
+        self.tokenURL = try container.decode(URL.self, forKey: .tokenURL)
+        self.authURL = try container.decode(URL.self, forKey: .authURL)
+        self.issuer = try container.decode(String.self, forKey: .issuer)
+        self.scope = try container.decode(String.self, forKey: .scope).components(separatedBy: " ")
+    }
+
+    private enum Key: CodingKey {
+        case authURL, issuer, scope, tokenURL
     }
 }
 
