@@ -241,6 +241,34 @@ extension Account {
     nonisolated(unsafe) private static var clients: [UUID: Any] = [:]
 }
 
+extension Account {
+    public func emails(in mailbox: Mailbox = Mailbox("INBOX", role: .inbox)) async throws -> [Email] {
+        switch emailProtocol {
+        case .imap:
+            let client: IMAPClient = try await imapClient
+            try await client.select(mailbox: IMAP.Mailbox.Name(mailbox.name))
+            let messages: MessageSet = try await client.fetch()
+            return messages.keys.sorted().reversed().map { Email(messages[$0]!) }
+        case .jmap:
+            throw AccountError.emailAddressNotSupported
+        }
+    }
+
+    public func email(_ email: Email) async throws -> Email {
+        switch emailProtocol {
+        case .imap:
+            guard let uid: UID = email.uid else {
+                throw IMAPError.capabilityNotSupported("UID")
+            }
+            let client: IMAPClient = try await imapClient
+            let message: Message = try await client.fetch(uid: uid)
+            return Email(message)
+        case .jmap:
+            throw AccountError.emailAddressNotSupported
+        }
+    }
+}
+
 private extension EmailAddress {
     var isFastmail: Bool {
         get async throws {
