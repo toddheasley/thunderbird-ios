@@ -48,7 +48,22 @@ struct EmailListView: View {
                         await refresh()
                     }
                 } else {
-                    ContentUnavailableView("empty_inbox", systemImage: "envelope")
+                    VStack {
+                        List(TempEmail.sampleData, id: \.uuid, selection: $selections) { email in
+                            NavigationLink(destination: {
+                                ReadEmailView(email)
+                            }) {
+                                EmailCellView(email: email)
+                            }
+                            .listRowSeparator(.hidden)
+                            .navigationLinkIndicatorVisibility(.hidden)
+                            .accessibilityHidden(showDrawer)
+                        }
+                        .listStyle(.plain)
+                    }
+                    .refreshable {
+                        await refresh()
+                    }
                 }
                 Button {
                     path.append("compose")
