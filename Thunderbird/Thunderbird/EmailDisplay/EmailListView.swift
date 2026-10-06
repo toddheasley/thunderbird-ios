@@ -2,101 +2,53 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Account
+import Bolt
+import Core
 import SwiftUI
 
 struct EmailListView: View {
     @Environment(AccountManager.self) private var accountManager: AccountManager
+    @State private var emails: [Email] = []
+    @State private var isRefreshing: Bool = false
+    @State private var path: NavigationPath = NavigationPath()
     @State private var selections: Set<UUID> = []
     @State private var showDrawer: Bool = false
-    @State private var path: NavigationPath = NavigationPath()
-
     #if os(iOS)
-    @State var editMode: EditMode = .inactive
+    @State private var editMode: EditMode = .inactive
     #endif
-    let tempEmails = TempEmail.sampleData
 
-    //Hardcoded for testing
-    let attributedString = try? NSMutableAttributedString(
-        data: Data(
-            """
-            <html>
-            <body>
-            <h2>This is a test email with a bit of text</h2>
-            <p>Its doing its best to model how an email might look</p>
-            </body>
-            </html>
-            """.utf8),
-        options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil
-    )
-
-    func sortEmails() {
-        //Not yet implemented
-        AlertManager.shared.showAlert = true
-        AlertManager.shared.alertTitle = "Sort Emails"
-    }
-
-    func selectAll() {
-        for tempEmail in tempEmails {
-            selections.insert(tempEmail.uuid)
+    private func refresh() async {
+        guard let account: Account = accountManager.allAccounts.first else { return }
+        isRefreshing = true
+        if let emails: [Email] = try? await account.emails() {
+            self.emails = emails
         }
+        isRefreshing = false
     }
 
-    //TODO: replace with backend unread state call
-    func markAllRead() {
-        for tempEmail in tempEmails {
-            tempEmail.unread = false
-            tempEmail.newEmail = false
-        }
-    }
-
+    // MARK: View
     var body: some View {
         NavigationStack(path: $path) {
             ZStack(alignment: .bottomTrailing) {
-                if tempEmails.isEmpty {
+                if !emails.isEmpty {
                     VStack {
-                        Text("empty_inbox")
-                            .padding(.bottom, 5)
-                        Text("new_messages_will_appear")
-                            .padding(.bottom, 10)
-                        Button {
-                            //Do Nothing
-                        } label: {
-                            Text("add_another_account")
-                        }.buttonBorderShape(.capsule)
-                            .buttonStyle(.bordered)
-                            .foregroundStyle(.black)
-                        Spacer()
-                    }.accessibilityHidden(showDrawer)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    VStack {
-                        List(tempEmails, id: \.uuid, selection: $selections) { email in
-                            NavigationLink {
+                        List(emails, id: \.id, selection: $selections) { email in
+                            NavigationLink(destination: {
                                 ReadEmailView(email)
-                            } label: {
+                            }) {
                                 EmailCellView(email: email)
                             }
-                            .contentShape(Rectangle())
-                            #if os(iOS)
-                            .simultaneousGesture(
-                                LongPressGesture().onEnded { _ in
-                                    withAnimation {
-                                        editMode = .active
-                                    }
-                                }
-                            )
-                            #endif
                             .listRowSeparator(.hidden)
                             .navigationLinkIndicatorVisibility(.hidden)
                             .accessibilityHidden(showDrawer)
                         }
+                        .listStyle(.plain)
                     }
-                    #if os(iOS)
-                    .environment(\.editMode, $editMode)
-                    #endif
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
+                    .refreshable {
+                        await refresh()
+                    }
+                } else {
+                    ContentUnavailableView("empty_inbox", systemImage: "envelope")
                 }
                 Button {
                     path.append("compose")
@@ -120,9 +72,6 @@ struct EmailListView: View {
                     .accessibilityHidden(!showDrawer)
             }
             .navigationTitle("inbox_header")
-            #if os(iOS)
-            .navigationBarBackButtonHidden(editMode.isEditing || showDrawer)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .leading) {
                     Button {
@@ -131,78 +80,21 @@ struct EmailListView: View {
                         Label("Account", systemImage: "line.3.horizontal").labelStyle(.iconOnly)
                     }.accessibilityHidden(showDrawer)
                 }
-                #if os(iOS)
-                ToolbarItem(placement: .cancellationAction) {
-                    if editMode.isEditing == true {
-                        Button(
-                            "close_button", systemImage: "xmark",
-                            action: {
-                                withAnimation {
-                                    editMode = .inactive
-                                }
-                            })
-                    }
-                }
-                #endif
-                ToolbarItem(placement: .trailing) {
-                    Menu {
-                        Button(
-                            "date_sort_button",
-                            action: {
-                                sortEmails()
-                            })
-                        Button(
-                            "read_status_sort_button",
-                            action: {
-                                sortEmails()
-                            })
-                        Button(
-                            "has_attachments_sort_button",
-                            action: {
-                                sortEmails()
-                            })
-                    } label: {
-                        Label("sort_button", systemImage: "line.3.horizontal.decrease", )
-                    }.accessibilityHidden(showDrawer)
-                }
-                ToolbarItem(placement: .trailing) {
-                    Menu {
-                        #if os(iOS)
-                        Button(
-                            editMode.isEditing ? "done_button" : "select_all_button",
-                            action: {
-                                withAnimation {
-                                    editMode = editMode.isEditing ? .inactive : .active
-                                }
-                                selectAll()
-                            })
-                        #endif
-                        Button(
-                            "mark_all_read_button",
-                            action: {
-                                markAllRead()
-                            })
-                        Button(
-                            "account_sign_out_button",
-                            action: {
-                                accountManager.deleteAccounts()
-                            })
-                    } label: {
-                        Label("options_button", systemImage: "ellipsis")
-                    }.accessibilityHidden(showDrawer)
-                }
+            }
+            .task {
+                await refresh()
             }
         }
     }
 }
 
-#Preview("Email List") {
+#Preview("Email List View") {
     @Previewable @State var flags: FeatureFlags = FeatureFlags(distribution: .current)
     @Previewable @State var accountManager: AccountManager = AccountManager()
 
     EmailListView()
-        .environment(flags)
         .environment(accountManager)
+        .environment(flags)
 }
 
 private extension ToolbarItemPlacement {
