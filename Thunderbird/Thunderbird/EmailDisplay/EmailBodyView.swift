@@ -21,7 +21,7 @@ struct EmailBodyView: View {
                 return keyboardShown
             },
             set: { newValue in
-                if newValue == true && editable {
+                if editable {
                     keyboardShown = newValue
                 }
             }
@@ -48,8 +48,6 @@ struct EmailBodyView: View {
 
             if editable {
                 ComposeToolbar(textAttributes: textAttributes, keyboardShown: focusBinding, selection: $selection)
-                    .background(.ultraThinMaterial)
-                    .opacity(keyboardShown ? 1 : 0)
                     .frame(height: keyboardShown ? 44 : 0)
                     .animation(.easeIn(duration: 0.25), value: keyboardShown)
             }
