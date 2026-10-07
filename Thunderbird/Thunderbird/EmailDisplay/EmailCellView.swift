@@ -2,12 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import EmailAddress
+import Bolt
+import Core
 import SwiftUI
 
 struct EmailCellView: View {
-    let email: TempEmail
-    @Environment(FeatureFlags.self) private var flags: FeatureFlags
     let senderText: String
     let headerText: String
     let bodyText: String
@@ -20,6 +19,10 @@ struct EmailCellView: View {
     let hasAttachment: Bool
     let isThread: Bool
 
+    @Environment(FeatureFlags.self) private var flags: FeatureFlags
+    private let tempEmail: TempEmail?
+    private let email: Email?
+
     init(email: TempEmail) {
         self.senderText = email.from[0].label ?? email.from[0].value
         self.headerText = email.headerText
@@ -30,7 +33,24 @@ struct EmailCellView: View {
         self.hasAttachment = email.attachments != nil
         self.isThread = email.isThread
         self.pinned = email.pinned
+        self.tempEmail = email
+        self.email = nil
+    }
+
+    init(email: Email) {
+        self.senderText = email.sender.first?.addresses.first?.description ?? ""
+        self.headerText = email.subject ?? "Untitled"
+        self.bodyText = "Body text"
+        self.dateSent = email.sent ?? Date()
+        self.unread = false
+        self.newEmail = false
+        self.hasAttachment = false
+        self.isThread = false
+        self.pinned = false
+
+        self.tempEmail = nil
         self.email = email
+
     }
 
     var body: some View {
