@@ -15,9 +15,7 @@ struct ContentView: View {
             if accountManager.allAccounts.isEmpty {
                 WelcomeScreen($isPresented)
             } else {
-                NavigationStack {
-                    AccountListView()
-                }
+                EmailListView()
             }
         }
         .sheet(isPresented: $isPresented) {

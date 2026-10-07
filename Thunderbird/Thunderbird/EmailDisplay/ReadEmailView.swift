@@ -2,150 +2,174 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import EmailAddress
+import Bolt
+import Core
 import SwiftUI
 import WebKit
 
 struct ReadEmailView: View {
-    init(_ email: TempEmail) {
-        self.email = email
+    init(_ temptEmail: TempEmail) {
+        self.tempEmail = temptEmail
+        email = nil
     }
 
-    private var email: TempEmail
+    init(_ email: Email) {
+        self.email = email
+        tempEmail = nil
+    }
+
+    @Environment(AccountManager.self) private var accountManager: AccountManager
+    @State private var isRefreshing: Bool = false
+    @State private var email: Email?
+    private let tempEmail: TempEmail?
+
+    private func refresh() async {
+        guard let account: Account = accountManager.allAccounts.first,
+            let email
+        else { return }
+        isRefreshing = true
+        self.email = (try? await account.email(email)) ?? email
+        isRefreshing = false
+    }
 
     var body: some View {
-        NavigationView {
+        if let email {
+            VStack {
+                WebView(htmlString: email.body?.html() ?? "")
+                    .ignoresSafeArea()
+            }
+            .task {
+                await refresh()
+            }
+        } else if let tempEmail {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
-                    Text(email.headerText)
+                    Text(tempEmail.headerText)
                         .font(.title3)
                     Spacer()
-                    if email.attachments != nil {
+                    if tempEmail.attachments != nil {
                         Image(systemName: "paperclip").font(.caption)
                     }
                 }
-
                 ScrollView {
                     VStack(alignment: .leading) {
-                        SenderView(email: email)
-
-                        EmailBodyView(html: email.bodyText, editable: false)
-
-                        if email.attachments != nil {
-                            AttachmentBlockView(email.attachments)
+                        SenderView(email: tempEmail)
+                        EmailBodyView(html: tempEmail.bodyText, editable: false)
+                        if tempEmail.attachments != nil {
+                            AttachmentBlockView(tempEmail.attachments)
                         }
                     }
                 }
-
-            }.padding()
-                .toolbar {
-                    ToolbarItem(placement: .trailing) {
-                        Button(action: {
-                            AlertManager.shared.showAlert = true
-                            AlertManager.shared.alertTitle = "Archive"
-                        }) {
-                            Image(systemName: "archivebox")
-                                .foregroundStyle(.foreground)
-                        }
-                    }
-                    ToolbarItem(placement: .trailing) {
-                        Menu {
-                            Button(
-                                "delete_button",
-                                action: {
-
-                                })
-                            Button(
-                                "archive_button",
-                                action: {
-
-                                })
-                            Button(
-                                "mark_read_button",
-                                action: {
-
-                                })
-                            Button(
-                                "mark_spam_button",
-                                action: {
-
-                                })
-                            Button(
-                                "flag_button",
-                                action: {
-
-                                })
-                            Button(
-                                "mute_button",
-                                action: {
-
-                                })
-                            if email.pinned {
-                                Button(
-                                    "unpin_button",
-                                    action: {
-
-                                    })
-                            } else {
-                                Button(
-                                    "pin_button",
-                                    action: {
-
-                                    })
-                            }
-
-                            Button(
-                                "move_button",
-                                action: {
-
-                                })
-
-                        } label: {
-                            Label("options_button", systemImage: "ellipsis")
-                        }
-                    }
-                    ToolbarItem(placement: .bottom) {
-                        NavigationLink {
-                            ComposeView(email: email.asEmail().asReply(all: false))
-                        } label: {
-                            Image(systemName: "arrowshape.turn.up.left")
-                                .foregroundStyle(.foreground)
-                        }
-                    }
-                    ToolbarItem(placement: .bottom) {
-                        NavigationLink {
-                            ComposeView(email: email.asEmail().asReply(all: true))
-                        } label: {
-                            Image(systemName: "arrowshape.turn.up.left.2")
-                                .foregroundStyle(.foreground)
-                        }
-                    }
-                    ToolbarItem(placement: .bottom) {
-                        Button(action: {
-                            AlertManager.shared.showAlert = true
-                            AlertManager.shared.alertTitle = "Trash"
-                        }) {
-                            Image(systemName: "trash")
-                                .foregroundStyle(.foreground)
-                        }
-                    }
-                    ToolbarItem(placement: .bottom) {
-                        NavigationLink {
-                            ComposeView(email: email.asEmail())
-                        } label: {
-                            Image(systemName: "arrowshape.turn.up.right")
-                                .foregroundStyle(.foreground)
-                        }
-                    }
-                    ToolbarItem(placement: .bottom) {
-                        Button(action: {
-                            AlertManager.shared.showAlert = true
-                            AlertManager.shared.alertTitle = "More"
-                        }) {
-                            Label("options_button", systemImage: "ellipsis")
-                        }
+            }
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .trailing) {
+                    Button(action: {
+                        AlertManager.shared.showAlert = true
+                        AlertManager.shared.alertTitle = "Archive"
+                    }) {
+                        Image(systemName: "archivebox")
+                            .foregroundStyle(.foreground)
                     }
                 }
+                ToolbarItem(placement: .trailing) {
+                    Menu {
+                        Button(
+                            "delete_button",
+                            action: {
+
+                            })
+                        Button(
+                            "archive_button",
+                            action: {
+
+                            })
+                        Button(
+                            "mark_read_button",
+                            action: {
+
+                            })
+                        Button(
+                            "mark_spam_button",
+                            action: {
+
+                            })
+                        Button(
+                            "flag_button",
+                            action: {
+
+                            })
+                        Button(
+                            "mute_button",
+                            action: {
+
+                            })
+                        if tempEmail.pinned {
+                            Button(
+                                "unpin_button",
+                                action: {
+
+                                })
+                        } else {
+                            Button(
+                                "pin_button",
+                                action: {
+
+                                })
+                        }
+
+                        Button(
+                            "move_button",
+                            action: {
+
+                            })
+
+                    } label: {
+                        Label("options_button", systemImage: "ellipsis")
+                    }
+                }
+                ToolbarItem(placement: .bottom) {
+                    NavigationLink {
+                        ComposeView(email: tempEmail.asEmail().asReply(all: false))
+                    } label: {
+                        Image(systemName: "arrowshape.turn.up.left")
+                            .foregroundStyle(.foreground)
+                    }
+                }
+                ToolbarItem(placement: .bottom) {
+                    NavigationLink {
+                        ComposeView(email: tempEmail.asEmail().asReply(all: true))
+                    } label: {
+                        Image(systemName: "arrowshape.turn.up.left.2")
+                            .foregroundStyle(.foreground)
+                    }
+                }
+                ToolbarItem(placement: .bottom) {
+                    Button(action: {
+                        AlertManager.shared.showAlert = true
+                        AlertManager.shared.alertTitle = "Trash"
+                    }) {
+                        Image(systemName: "trash")
+                            .foregroundStyle(.foreground)
+                    }
+                }
+                ToolbarItem(placement: .bottom) {
+                    NavigationLink {
+                        ComposeView(email: tempEmail.asEmail())
+                    } label: {
+                        Image(systemName: "arrowshape.turn.up.right")
+                            .foregroundStyle(.foreground)
+                    }
+                }
+                ToolbarItem(placement: .bottom) {
+                    Button(action: {
+                        AlertManager.shared.showAlert = true
+                        AlertManager.shared.alertTitle = "More"
+                    }) {
+                        Label("options_button", systemImage: "ellipsis")
+                    }
+                }
+            }
         }
     }
 }
@@ -165,7 +189,6 @@ struct AttachmentBlockView: View {
                 SingleAttachment()
             }
         }
-
     }
 }
 
