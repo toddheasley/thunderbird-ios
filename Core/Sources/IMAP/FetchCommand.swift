@@ -83,7 +83,9 @@ class FetchHandler: IMAPCommandHandler, @unchecked Sendable {
                 }
                 streaming = nil
             case .finish:
-                messages[sequenceNumber!] = Message(components)
+                if let sequenceNumber {
+                    messages[sequenceNumber] = Message(components)
+                }
                 sequenceNumber = nil
                 components = []
             default:
