@@ -29,7 +29,23 @@ struct ComposeToolbar: View {
     @Binding private var keyboardShown: Bool
     @Binding private var selection: String
 
-    var body: some View {
+    var leftSideToolbar: some View {
+        HStack {
+            if keyboardShown {
+                textEditorToolbar
+            } else {
+                EditorToolbarButton(systemImage: "textformat", isActive: false) {
+                    keyboardShown = true
+                }
+            }
+        }
+        .background(.ultraThinMaterial, in: Capsule())
+        .shadow(radius: 1)
+        .frame(height: 44)
+        .padding(.horizontal, 16)
+    }
+
+    var textEditorToolbar: some View {
         // Inline bindings allow us to leave the properties as private (set)
         // within `TextAttributes`, and still respond to events.
         let foregroundColor = Binding<Color>(
@@ -42,12 +58,10 @@ struct ComposeToolbar: View {
             set: { textAttributes.setBackgroundColor(PlatformColor($0)) }
         )
 
-        ScrollView(.horizontal) {
-            Divider()
-
+        return ScrollView(.horizontal) {
             HStack(spacing: 4) {
-                EditorToolbarButton(systemImage: "keyboard.chevron.compact.down", isActive: false) {
-                    keyboardShown.toggle()
+                EditorToolbarButton(systemImage: "checkmark", isActive: false) {
+                    keyboardShown = false
                 }
 
                 ColorPicker("", selection: foregroundColor, supportsOpacity: false)
@@ -156,17 +170,52 @@ struct ComposeToolbar: View {
 
                 Divider()
                     .frame(height: 20)
-
-                EditorToolbarButton(systemImage: "arrow.uturn.backward", isActive: false) {
-                    textAttributes.undo()
-                }
-                EditorToolbarButton(systemImage: "arrow.uturn.forward", isActive: false) {
-                    textAttributes.redo()
-                }
             }
         }
         .scrollIndicators(.hidden)
+    }
+
+    var rightSideToolbar: some View {
+        HStack {
+            if keyboardShown {
+                EditorToolbarButton(systemImage: "arrow.uturn.backward", isActive: false) {
+                    textAttributes.undo()
+                }
+
+                EditorToolbarButton(systemImage: "arrow.uturn.forward", isActive: false) {
+                    textAttributes.redo()
+                }
+            } else {
+                EditorToolbarButton(systemImage: "paperclip", isActive: false) {
+                    print("attachments")
+                }
+
+                // TODO: WAITING ON FINAL ICON
+                EditorToolbarButton(systemImage: "paperplane.circle", isActive: false) {
+                    print("send later")
+                }
+
+                EditorToolbarButton(systemImage: "ellipsis", isActive: false) {
+                    print("more")
+                }
+            }
+        }
+        .background(.ultraThinMaterial, in: Capsule())
+        .shadow(radius: 1)
         .frame(height: 44)
+        .padding(.trailing, 16)
+    }
+
+    var body: some View {
+        HStack {
+            leftSideToolbar
+                .padding(.bottom, (keyboardShown ? 8 : 16))
+
+            Spacer()
+
+            rightSideToolbar
+                .padding(.bottom, (keyboardShown ? 8 : 16))
+        }
     }
 
     private func clearLinkInfo() {
