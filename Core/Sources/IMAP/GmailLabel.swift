@@ -5,6 +5,7 @@
 import Foundation
 import MIME
 import NIOIMAPCore
+import NIOCore
 
 public typealias GmailLabel = NIOIMAPCore.GmailLabel
 
@@ -12,4 +13,10 @@ extension GmailLabel: @retroactive CustomStringConvertible {
 
     // MARK: CustomStringConvertible
     public var description: String { makeDisplayString() }
+
+    // MARK: Sample data for tests
+    public static let testLabels = [
+        GmailLabel(ByteBuffer(string: "\\starred")),
+        GmailLabel(ByteBuffer(string: "\\important"))
+    ]
 }
