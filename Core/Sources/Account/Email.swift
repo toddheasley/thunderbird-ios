@@ -23,6 +23,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
     public let inReplyTo: [String]
     public var subject: String?
     public var body: EmailBody?
+    public var flags: Set<Flag>
     public let blobID: String?
     public let uid: UID?
 
@@ -40,6 +41,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         inReplyTo: [String] = [],
         subject: String? = nil,
         body: EmailBody? = nil,
+        flags: Set<Flag> = [],
         blobID: String? = nil,
         uid: UID? = nil,
         id: String? = nil
@@ -57,6 +59,7 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         self.inReplyTo = inReplyTo
         self.subject = subject
         self.body = body
+        self.flags = flags
         self.blobID = blobID
         self.uid = uid
         self.id = id ?? UUID().uuidString(1)
@@ -102,6 +105,7 @@ extension Email {
             inReplyTo: message.inReplyTo,
             subject: message.envelope.subject,
             body: try? EmailBody(body: message.body),
+            flags: message.flags,
             uid: message.uid,
             id: message.emailID ?? message.gmailID
         )
@@ -159,6 +163,39 @@ extension Email {
         }
 
         return newEmail
+    }
+}
+
+// MARK: - Flag recognition computed properties
+
+// Represents IMAP flags
+// https://datatracker.ietf.org/doc/html/rfc9051#name-flags-message-attribute
+public enum FlagType: String, Sendable {
+    case answered = "answered"
+    case deleted = "deleted"
+    case draft = "draft"
+    case flagged = "flagged"
+    case recent = "recent"
+    case seen = "seen"
+}
+
+extension Email {
+    /// Identifies if a given flag exists within the emails set of `Flag`s.
+    public func hasFlag(_ flag: FlagType) -> Bool {
+        switch flag {
+        case .answered:
+            return flags.contains(.answered)
+        case .deleted:
+            return flags.contains(.deleted)
+        case .draft:
+            return flags.contains(.draft)
+        case .flagged:
+            return flags.contains(.flagged)
+        case .seen:
+            return flags.contains(.seen)
+        default:
+            return false
+        }
     }
 }
 
