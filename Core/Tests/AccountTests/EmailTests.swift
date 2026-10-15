@@ -43,6 +43,8 @@ struct EmailTests {
                 "1598"
             ])
         #expect(aol.id == "AAYqCTjUMm7xS26Ui3FBV9j4skS")
+        #expect(aol.hasFlag(.seen))
+        #expect(aol.hasFlag(.answered))
 
         let gmail: Email = Email(IMAP.Message.gmail)
         #expect(
@@ -64,6 +66,10 @@ struct EmailTests {
                 "8509702061865707498"
             ])
         #expect(gmail.id == "1865707498850970206")
+        #expect(gmail.hasFlag(.seen))
+        #expect(gmail.hasFlag(.flagged))
+        #expect(gmail.hasLabel(.starred))
+        #expect(gmail.hasLabel(.important))
     }
 
     @Test func jmapEmailInit() {
@@ -116,7 +122,7 @@ private extension IMAP.Message {
                 inReplyTo: nil,
                 messageID: "<4addb7e5-9bfa-48f6-833a-b7cd846064dc@example.com>"
             ),
-            flags: [],
+            flags: [.seen, .answered],
             gmailLabels: [],
             gmailMessageID: nil,
             gmailThreadID: nil,
@@ -151,8 +157,8 @@ private extension IMAP.Message {
                 inReplyTo: nil,
                 messageID: "<fd838b6b-4245-406c-91b5-21f5d359135d@example.com>"
             ),
-            flags: [],
-            gmailLabels: [],
+            flags: [.seen, .flagged],
+            gmailLabels: GmailLabel.testLabels,
             gmailMessageID: 1_865_707_498_850_970_206,
             gmailThreadID: 8_509_702_061_865_707_498,
             internalDate: Date(timeIntervalSince1970: 1781993898.0),

@@ -23,6 +23,8 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
     public let inReplyTo: [String]
     public var subject: String?
     public var body: EmailBody?
+    public var flags: Set<Flag>
+    public var labels: Set<GmailLabel>
     public let blobID: String?
     public let uid: UID?
 
@@ -40,6 +42,8 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         inReplyTo: [String] = [],
         subject: String? = nil,
         body: EmailBody? = nil,
+        flags: Set<Flag> = [],
+        labels: Set<GmailLabel> = [],
         blobID: String? = nil,
         uid: UID? = nil,
         id: String? = nil
@@ -57,6 +61,8 @@ public struct Email: CustomStringConvertible, Identifiable, Sendable {
         self.inReplyTo = inReplyTo
         self.subject = subject
         self.body = body
+        self.flags = flags
+        self.labels = labels
         self.blobID = blobID
         self.uid = uid
         self.id = id ?? UUID().uuidString(1)
@@ -102,6 +108,8 @@ extension Email {
             inReplyTo: message.inReplyTo,
             subject: message.envelope.subject,
             body: try? EmailBody(body: message.body),
+            flags: message.flags,
+            labels: message.gmailLabels,
             uid: message.uid,
             id: message.emailID ?? message.gmailID
         )
@@ -159,6 +167,68 @@ extension Email {
         }
 
         return newEmail
+    }
+}
+
+// MARK: - Flag recognition computed properties
+
+// Represents IMAP flags
+// https://datatracker.ietf.org/doc/html/rfc9051#name-flags-message-attribute
+public enum FlagType: String, Sendable {
+    case answered = "answered"
+    case deleted = "deleted"
+    case draft = "draft"
+    case flagged = "flagged"
+    case recent = "recent"
+    case seen = "seen"
+}
+
+// Represents Gmail labels
+// https://developers.google.com/workspace/gmail/api/guides/labels
+public enum LabelType: String, Sendable {
+    case inbox = "\\inbox"
+    case spam = "\\spam"
+    case trash = "\\trash"
+    case unread = "\\unread"
+    case starred = "\\starred"
+    case important = "\\important"
+    case sent = "\\sent"
+    case draft = "\\draft"
+    case personal = "\\category_personal"
+    case social = "\\category_social"
+    case promotions = "\\category_promotions"
+    case updates = "\\category_updates"
+    case forums = "\\category_forums"
+}
+
+extension Email {
+    /// Identifies if a given flag exists within the emails set of `Flag`s.
+    public func hasFlag(_ flag: FlagType) -> Bool {
+        switch flag {
+        case .answered:
+            return flags.contains(.answered)
+        case .deleted:
+            return flags.contains(.deleted)
+        case .draft:
+            return flags.contains(.draft)
+        case .flagged:
+            return flags.contains(.flagged)
+        case .seen:
+            return flags.contains(.seen)
+        default:
+            return false
+        }
+    }
+
+    /// Identifies if a given label exists within the emails set of `GmailLabel`s.
+    public func hasLabel(_ gmailLabel: LabelType) -> Bool {
+        for label in labels {
+            if label.description.lowercased() == gmailLabel.rawValue {
+                return true
+            }
+        }
+
+        return false
     }
 }
 
