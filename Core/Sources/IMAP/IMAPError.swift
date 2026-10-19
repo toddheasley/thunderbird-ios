@@ -8,6 +8,7 @@ import NIOIMAPCore
 /// ``IMAPClient`` throws `IMAPError`.
 public enum IMAPError: Error, CustomStringConvertible, Equatable {
     case alreadyConnected
+    case authenticationCredentialNotFound
     case capabilityNotSupported(_ description: String)
     case commandFailed(_ description: String)
     case commandNotSupported(_ description: String)
@@ -41,6 +42,7 @@ public enum IMAPError: Error, CustomStringConvertible, Equatable {
     public var description: String {
         switch self {
         case .alreadyConnected: "Already connected"
+        case .authenticationCredentialNotFound: "Authentication credential not found"
         case .capabilityNotSupported(let description), .commandNotSupported(let description): "\(description.capitalized(.sentence)) not supported"
         case .commandFailed(let description): "\(description.capitalized(.sentence))"
         case .notConnected: "Not connected"
