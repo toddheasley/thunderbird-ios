@@ -2,25 +2,40 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Foundation
 import NIOCore
 import NIOIMAPCore
 
 public enum Authentication: CustomStringConvertible, Equatable, Sendable {
     public typealias Mechanism = AuthenticationMechanism
 
-    case xoauth2(_ user: String, token: String)
     case plain(_ user: String, password: String)
+    case xoauth2(_ user: String, token: String)
 
     public var mechanism: Mechanism {
         switch self {
-        case .xoauth2: .xOAuth2
         case .plain: .plain
+        case .xoauth2: .xOAuth2
         }
     }
 
     public var user: String {
         switch self {
-        case .xoauth2(let user, _), .plain(let user, _): user
+        case .plain(let user, _), .xoauth2(let user, _): user
+        }
+    }
+
+    var initialResponse: InitialResponse {
+        get throws {
+            switch self {
+            case .plain(let user, let password):
+                guard let data: Data = "\(user)\(password)".data(using: .utf8) else {
+                    throw IMAPError.authenticationEncodingFailed(description)
+                }
+                return InitialResponse(ByteBuffer(bytes: data.base64EncodedData()))
+            case .xoauth2(let user, let token):
+                fatalError("Authentication.initialResponse not implemented for case .xoauth2")
+            }
         }
     }
 

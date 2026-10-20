@@ -19,6 +19,13 @@ struct AuthenticateCommand: IMAPCommand {
     var name: String { "authenticate \"\(authentication.user)\"" }
 
     func tagged(_ tag: String) -> NIOIMAPCore.TaggedCommand {
-        TaggedCommand(tag: tag, command: .authenticate(mechanism: authentication.mechanism, initialResponse: nil))
+        TaggedCommand(
+            tag: tag,
+            command:
+                .authenticate(
+                    mechanism: authentication.mechanism,
+                    initialResponse: try? authentication.initialResponse
+                )
+        )
     }
 }

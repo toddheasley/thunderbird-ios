@@ -18,7 +18,6 @@ public class IMAPClient {
     public var isIdling: Bool { idleHandler != nil }
 
     public func isSupported(_ capability: Capability) throws {
-        print(capabilities)
         guard capabilities.contains(capability) else {
             throw IMAPError.capabilityNotSupported(capability)
         }
@@ -65,14 +64,13 @@ public class IMAPClient {
         switch authentication {
         case .xoauth2:
             try isSupported(.authenticate(.xOAuth2))
-
+            throw IMAPError.commandNotSupported("AUTHENTICATE XOAUTH2")
         case .plain(let user, let password):
             do {
                 try isSupported(.saslIR)
                 let capabilities: [Capability] = try await execute(command: AuthenticateCommand(authentication))
                 merge(capabilities: capabilities)
             } catch {
-                logger?.info("SASL-IR not supported")
                 try await login(username: user, password: password)
             }
         }

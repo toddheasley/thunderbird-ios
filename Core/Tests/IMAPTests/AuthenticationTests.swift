@@ -6,6 +6,9 @@
 import Testing
 
 struct AuthenticationTests {
+    @Test func initialResponse() throws {
+
+    }
 
     // MARK: CustomStringConvertible
     @Test func description() {
