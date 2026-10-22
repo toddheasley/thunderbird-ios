@@ -13,8 +13,8 @@ struct AuthenticateCommand: IMAPCommand {
     }
 
     // MARK: IMAPCommand
-    typealias Result = [Capability]  // Void
-    typealias Handler = CapabilityHandler  // VoidResultHandler
+    typealias Result = [Capability]
+    typealias Handler = CapabilityHandler
 
     var name: String { "authenticate \"\(authentication.user)\"" }
 
