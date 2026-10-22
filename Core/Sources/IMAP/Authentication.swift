@@ -29,12 +29,10 @@ public enum Authentication: CustomStringConvertible, Equatable, Sendable {
         get throws {
             switch self {
             case .plain(let user, let password):
-                guard let data: Data = "\(user)\(password)".data(using: .utf8) else {
-                    throw IMAPError.authenticationEncodingFailed(description)
-                }
-                return InitialResponse(ByteBuffer(bytes: data.base64EncodedData()))
-            case .xoauth2(let user, let token):
-                fatalError("Authentication.initialResponse not implemented for case .xoauth2")
+                let data: Data = Data([0]) + Data(user.utf8) + Data([0]) + Data(password.utf8)
+                return InitialResponse(ByteBuffer(bytes: data))
+            case .xoauth2:
+                fatalError("Authentication.initialResponse not implemented for case xoauth2")
             }
         }
     }
